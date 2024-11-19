@@ -1,0 +1,167 @@
+.div1 {
+   padding-bottom: 80px;
+}
+
+.sec1 {
+   max-width: 1440px;
+   margin: auto;
+   padding-left: 1rem;
+   padding-right: 1rem;
+   display: block;
+}
+
+.div2,
+.div3 {
+   /* display: flex; */
+   /* width: 100; */
+   justify-content: start;
+   align-items: stretch;
+}
+
+.div4 {
+   display: flex;
+   display: -webkit-box;
+   -webkit-box-orient: vertical;
+   -webkit-box-direction: normal;
+   display: flex;
+   flex-direction: column;
+   /* width: 100; */
+
+}
+
+.div4>:not(img) {
+   width: 100%;
+}
+
+.section-titulo {
+   display: flex;
+   justify-content: center;
+   text-align: center;
+   position: relative;
+   padding: 15px 0;
+}
+
+.titulo-container {
+   position: relative;
+   color: black;
+   font-weight: 100;
+}
+
+.titulo-underline {
+   width: 100%;
+   height: 13px;
+   background: rgb(239, 4, 196);
+   opacity: 0.30;
+   top: 27px;
+   position: absolute;
+
+}
+
+.titulo-text {
+   color: #222;
+   font-size: 2rem;
+   font-family: "Pridi", serif;
+   font-weight: 600;
+   padding: 0 1rem;
+}
+
+.div5 {
+   height: 100;
+   width: 100;
+}
+
+.div6 {
+   display: flex;
+   /* touch-action: pan-y; */
+   align-items: center;
+   justify-content: center;
+   padding: 0 !important;
+   margin: 0;
+   width: 100%;
+   /* position: relative; */
+}
+
+.div7 {
+   overflow: hidden;
+   width: 100%;
+   max-width: 100%;
+   padding: 20px 0 5px;
+}
+
+.div8 {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   position: relative;
+   transform: translate3d(0%, 0px, 0px);
+   /* width: 500%; */
+}
+
+#products {
+   display: flex;
+   overflow: hidden;
+   /* Impede que itens "quebrados" apareçam */
+   justify-content: space-between;
+   gap: 10px;
+   /* Espaço entre os cards */
+}
+
+#products article {
+   flex: 1 1 calc(25% - 16px);
+   /* Largura para 4 cards */
+   /* max-width: 300px; */
+   min-width: 200px;
+   /* Controle de largura mínima */
+   box-sizing: border-box;
+   /* Inclui padding e border */
+}
+
+#products article img {
+   width: 100%;
+   /* Ajusta ao tamanho do pai */
+   height: auto;
+   /* Mantém a proporção da imagem */
+   /* max-height: 200px; */
+   /* Limita a altura máxima */
+   object-fit: contain;
+   /* Garante que a imagem não estoure */
+   display: block;
+   /* Remove espaço extra de imagens inline */
+}
+
+
+#pagination-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   position: absolute;
+   right: 0;
+   left: 0;
+   margin-top: 1rem;
+   gap: 12px;
+   padding-top: 0.5rem;
+}
+
+#newProducts-page-buttons,
+#recommended-page-buttons {
+   display: flex;
+   gap: 0.5rem;
+}
+
+#newProducts-page-buttons button,
+#recommended-page-buttons button {
+   width: 12px;
+   height: 12px;
+   border-radius: 50%;
+   border: none;
+   background-color: #f799c9;
+   color: #333;
+   font-weight: bold;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+#page-buttons button.active {
+   background-color: #a10971;
+   color: white;
+}
