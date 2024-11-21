@@ -5,6 +5,8 @@ import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import Container from "./components/Container";
 import WhatsAppButon from "./components/MicroComponents/WhatsappButon";
+import CartProvider from "@/providers/CartProvider";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,15 +25,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <body className={`${poppins.className} text-slate-700`}>
-        <div className="flex flex-col min-h-screen">
-          <NavBar />
-          <Container>
-            <main className="flex-grow">{children}</main>
-          </Container>
-          <WhatsAppButon />
-          <Footer />
-        </div>
+      <body className={`${poppins.className} text-slate-700 bg-[#fafafa]`}>
+        <Toaster
+          toastOptions={{
+            style: {
+              background: "rgb(51 65 85)",
+              color: "#fff",
+            },
+          }}
+        />
+        <CartProvider>
+          <div className="flex flex-col min-h-screen">
+            <NavBar />
+            <Container>
+              <main className="flex-grow">{children}</main>
+            </Container>
+            <WhatsAppButon />
+            <Footer />
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

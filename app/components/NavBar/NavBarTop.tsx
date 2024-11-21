@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AccountCircle, LocalMallRounded } from "@mui/icons-material";
+import { LocalMallRounded } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const NavBarTop = () => {
   let cartItensCount: number = 7;
@@ -37,7 +38,7 @@ const NavBarTop = () => {
 
       <div className="flex flex-row h-full gap-4 items-center md:mr-2 xl:mr-0">
         <div className="cartDiv h-full relative">
-          <a href="#" className="h-full">
+          <a href="/carrinho" className="h-full">
             <button className="cart-btn">
               <div
                 id="cartItemCounter"
@@ -58,10 +59,7 @@ const NavBarTop = () => {
         <div>
           <a href="#">
             <button className="login-btn">
-              <AccountCircle
-                fontSize="large"
-                className="text-pinkSecondary md:text-[2.5rem]"
-              />
+              <AccountCircleIcon className="text-pinkSecondary md:text-[2.5rem]" />
             </button>
           </a>
         </div>

@@ -42,15 +42,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className="col-span-1
       cursor-pointer
       border-[1.2px]
-      border-pink-500
+      border-pink-200
       bg-pink-100
       rounded-xl
       trasition
       hover:scale-105
       text-center
-      text-sm w-full p-2"
+      text-sm w-full p-2
+      border-solid"
       >
-        <div id="productCard">
+        <div id="productCard" className="">
           <div>
             <div
               className="m-2 items-start justify-start flex flex-col gap-2 text-slate-900"
@@ -81,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     <div
                       key={idx}
                       style={{ backgroundColor: image.color_code }}
-                      className="rounded-full w-6 h-6 items-center justify-center hover:scale-125 cursor-pointer"
+                      className="rounded-full w-6 h-6 items-center justify-center hover:scale-125 cursor-pointer my-2"
                       onClick={(e) => {
                         e.stopPropagation();
                         const selectedImg = product.images.find(
@@ -98,16 +99,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </div>
                   ))}
               </div>
+              <hr className="w-full font-medium text-lg text-pink-200 border-[0.5px] border-solid" />
+
               <div>
-                <p className="text-start text-lg font-medium">
+                <p className="text-start text-lg font-medium m-0 p-0">
                   {product.brand}
                 </p>
               </div>
-              <div className="min-h-14">
+
+              <div className="min-h-14 m-0 p-0">
                 <h2 className="text-start font-semibold text-lg ">
                   {product.name.toUpperCase()}
                 </h2>
               </div>
+
               <div>
                 <p className="">
                   R${" "}
@@ -145,8 +150,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 console.log("adiciona ao carrinho"); // TODO : esta botão deve adicionar ao carrinho.
               }}
             >
-              <div className="justify-center w-full bg-pinkSecondary hover:bg-black hover:text-pinkSecondary text-black rounded-3xl p-2">
-                <button> ADICIONAR AO CARRINHO</button>
+              <div className="justify-center w-full bg-pinkSecondary hover:bg-black hover:text-pinkSecondary text-black rounded-3xl p-2 font-medium text-lg">
+                <button> ADICIONAR À SACOLA</button>
               </div>
             </div>
           </div>

@@ -40,7 +40,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         <div className="max-md:row-span-3 md:col-span-3">
           <div
             id="Main__Image"
-            className="relative w-full h-full md:aspect-[3/4]"
+            className="relative w-full h-full md:aspect-square"
           >
             <img
               src={
@@ -48,7 +48,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                 "/assets/placeholder.jpg"
               }
               alt={`Imagem principal de ${productName}`}
-              className="object-cover h-full"
+              className="object-cover w-full h-full"
             />
           </div>
         </div>

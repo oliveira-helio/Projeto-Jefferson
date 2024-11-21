@@ -25,7 +25,7 @@ const Carousel: React.FC<CarouselProps> = ({
 }) => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 4;
+  const visibleCount = 3;
 
   const handleNext = () => {
     if (startIndex + visibleCount < images.length) {
@@ -53,7 +53,7 @@ const Carousel: React.FC<CarouselProps> = ({
             <div
               key={idx}
               onClick={() => onItemSelect(startIndex + idx)} // Chama a função para atualizar os estados
-              className={`cursor-pointer rounded-md overflow-hidden ${
+              className={`cursor-pointer rounded-md overflow-hidden p-1 ${
                 selectedImageIndex === startIndex + idx
                   ? "border-solid border-pink-500 scale-105"
                   : "border-none"
@@ -75,8 +75,8 @@ const Carousel: React.FC<CarouselProps> = ({
             disabled={startIndex === 0}
             className={`absolute top-1  p-2  rounded-full transform -translate-y-1/2 w-10 h-10 items-centers  ${
               startIndex === 0
-                ? "cursor-default opacity-90 bg-opacity-90 bg-pink-100"
-                : "cursor-pointer bg-pink-200"
+                ? "cursor-default opacity-95 bg-opacity-90 bg-pink-100 text-slate-500"
+                : "cursor-pointer bg-pink-200 text-slate-800"
             }`}
             onClick={handlePrev}
           >
@@ -85,7 +85,7 @@ const Carousel: React.FC<CarouselProps> = ({
           <button
             className={`absolute  p-2  rounded-full transform -translate-y-1/2 w-10 h-10 items-centers ${
               startIndex + visibleCount >= images.length
-                ? "cursor-default opacity-90 bg-opacity-90 bg-pink-100"
+                ? "cursor-default opacity-95 bg-opacity-90 bg-pink-100 text-slate-500"
                 : "cursor-pointer bg-pink-200"
             }`}
             onClick={handleNext}
