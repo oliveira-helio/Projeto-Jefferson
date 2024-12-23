@@ -4,4 +4,6 @@ const formatCurrency = (value: number) =>
     currency: "BRL",
   }).format(value);
 
-export default formatCurrency;
+//  TODO colocar handleQtyIncreaser e handleQtyDecrease aqui para usar no quantity selector em mais de um lugar
+
+export { formatCurrency };

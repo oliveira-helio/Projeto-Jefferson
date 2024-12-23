@@ -25,7 +25,7 @@ const Carousel: React.FC<CarouselProps> = ({
 }) => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 3;
+  const visibleCount = isMobile ? 1 : 3;
 
   const handleNext = () => {
     if (startIndex + visibleCount < images.length) {
@@ -40,11 +40,11 @@ const Carousel: React.FC<CarouselProps> = ({
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full w-full">
       {/* Galeria de Imagens */}
       <div
         className={`flex ${
-          isMobile ? "flex-row overflow-x-auto" : "flex-col h-full"
+          isMobile ? "flex-row overflow-x-auto w-full p-4" : "flex-col h-full"
         } gap-2`}
       >
         {images

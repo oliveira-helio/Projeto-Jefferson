@@ -1,15 +1,18 @@
+"use client";
 import Link from "next/link";
 import { LocalMallRounded } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useCart } from "@/app/Hooks/useCart";
 
 const NavBarTop = () => {
-  let cartItensCount: number = 7;
+  const { cartTotalQty } = useCart();
+
   return (
     <div className="flex flex-row items-center justify-between p-0 max-h-28 w-full">
       <div className=" p-0 m-0">
         <Link href={"/"}>
           <img
-            className="h-16 md:h-24 w-auto"
+            className="h-24 w-auto"
             src="/assets/img/Logo1.png"
             alt="Logo da loja"
           />
@@ -43,10 +46,10 @@ const NavBarTop = () => {
               <div
                 id="cartItemCounter"
                 className={`absolute -right-1 -top-1 box-border rounded-full text-white bg-black  w-4 text-xs z-10 ${
-                  cartItensCount === 0 ? "hidden" : ""
+                  cartTotalQty === 0 ? "hidden" : ""
                 }`}
               >
-                {cartItensCount}
+                {cartTotalQty}
               </div>
               <LocalMallRounded
                 fontSize="large"
@@ -59,7 +62,10 @@ const NavBarTop = () => {
         <div>
           <a href="#">
             <button className="login-btn">
-              <AccountCircleIcon className="text-pinkSecondary md:text-[2.5rem]" />
+              <AccountCircleIcon
+                fontSize="large"
+                className="text-pinkSecondary md:text-[2.5rem]"
+              />
             </button>
           </a>
         </div>

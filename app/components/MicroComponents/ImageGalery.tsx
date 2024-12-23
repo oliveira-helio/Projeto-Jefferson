@@ -13,7 +13,7 @@ interface ImageGalleryProps {
   images: Image[];
   productName: string;
   selectedImageIndex: number;
-  onItemSelect: (index: number) => void; // Nova prop
+  onItemSelect: (index: number) => void;
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({
@@ -25,9 +25,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   return (
     <div className="flex flex-col w-full">
       {/* Container para a galeria e a imagem principal */}
-      <div className="grid max-md:grid-flow-row max-md:grid-rows-4 md:grid-cols-4 md:grid-flow-col gap-2 w-full">
+      <div className="grid md:grid-cols-4 gap-2 w-full">
         {/* Galeria de imagens */}
-        <div className="max-md:row-span-1 md:col-span-1">
+
+        <div className="md:col-span-1">
           <Carousel
             images={images}
             productName={productName}
@@ -37,7 +38,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         </div>
 
         {/* Imagem principal */}
-        <div className="max-md:row-span-3 md:col-span-3">
+        <div className="hidden md:block md:col-span-3">
           <div
             id="Main__Image"
             className="relative w-full h-full md:aspect-square"

@@ -2,12 +2,40 @@
 import { MdArrowBack } from "react-icons/md";
 import { useCart } from "../Hooks/useCart";
 import Link from "next/link";
-import formatCurrency from "@/utils/utilitaryFunctions";
+import { formatCurrency } from "@/utils/utilitaryFunctions";
 import { Delete } from "@mui/icons-material";
+import Button from "../components/MicroComponents/Button";
+import ItemContent from "./ItemContent";
+import { useEffect, useState } from "react";
 
 const CartClient = () => {
-  const { cartProducts } = useCart();
-  console.log(cartProducts);
+  const { handleclearCart, cartProducts } = useCart();
+  // console.log(cartProducts);
+
+  const frete: number = 12;
+  const [cartSubTotal, setCartSubTotal] = useState(0);
+  const [cartFrete, setCartFrete] = useState(0);
+  const [cartDiscount, setCartDiscount] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+
+  useEffect(() => {
+    if (cartProducts && cartProducts.length !== 0) {
+      const subTotal = cartProducts.reduce(
+        (total, product) => total + product.price * product.quantity,
+        0
+      );
+
+      const freteTotal = cartProducts.reduce(
+        (total, product) => total + (product.deliveryFee || 0),
+        0
+      );
+
+      setCartSubTotal(subTotal);
+      setCartFrete(freteTotal);
+
+      setCartTotal(subTotal + freteTotal - cartDiscount);
+    }
+  }, [cartProducts, cartDiscount]);
 
   if (!cartProducts || cartProducts.length === 0)
     return (
@@ -75,64 +103,54 @@ const CartClient = () => {
             <div className="">
               {cartProducts &&
                 cartProducts.map((item) => {
-                  return (
-                    <div
-                      key={item.productId}
-                      className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 m-4 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl"
-                    >
-                      <div className="p-1 col-span-3 md:grid md:grid-cols-3 flex flex-row w-full">
-                        <img
-                          src={item.image}
-                          alt="Foto do produto"
-                          className="rounded-xl w-full aspect-square max-md:w-28 md:h-full md:w-full object-cover"
-                        />
-                        <div className="flex flex-col justify-start md:col-span-2 items-center w-full py-2">
-                          <div className="px-4 w-full text-lg font-medium">
-                            {item.name}
-                          </div>
-                          <div className="px-4 w-full text-base font-medium">
-                            {item.color}
-                          </div>
-                          <div className="px-4 w-full text-base font-medium">
-                            {item.brand}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="p-2 flex justify-between md:justify-center items-center">
-                        <div className=" md:hidden ">
-                          <span className="text-lg font-medium">PREÇO</span>
-                        </div>
-                        <div>{formatCurrency(item.price)}</div>
-                      </div>
-
-                      <div className="p-2 flex justify-between md:justify-center items-center">
-                        <div className="md:hidden">
-                          <span className="text-lg font-medium ">
-                            QUANTIDADE
-                          </span>
-                        </div>
-                        <div>{item.quantity}</div>
-                      </div>
-
-                      <div className="p-2 flex justify-between md:justify-center items-center">
-                        <div className="md:hidden">
-                          <span className="text-lg font-medium ">TOTAL</span>
-                        </div>
-                        <div>{formatCurrency(item.price * item.quantity)}</div>
-                      </div>
-
-                      <div className="absolute right-10 max-md:top-6 sm:right-14 md:right-6 md:bottom-3 lg:right-10 xl:right-12 2xl:right-14 3xl:right-16 ">
-                        <Delete className="w-full text-[1.5rem]" />
-                        <p className="text-xs">REMOVER</p>
-                      </div>
-                    </div>
-                  );
+                  return <ItemContent item={item} key={item.productId} />;
                 })}
             </div>
+
+            <div className="flex justify-between border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl m-4 py-2 px-4">
+              <p className="text-2xl font-semibold text-pinkSecondary">
+                SUBTOTAL:
+              </p>
+              <p className="text-2xl font-semibold text-pinkSecondary">
+                {formatCurrency(cartSubTotal)}
+              </p>
+            </div>
+
+            <div className="flex">
+              <button
+                className="flex flex-row items-center p-2 m-2 gap-2 underline font-medium"
+                onClick={() => {
+                  handleclearCart();
+                }}
+              >
+                <Delete className="text-[2rem] text-red-800" />
+                <p className="text-sm ">LIMPAR CARRINHO</p>
+              </button>
+            </div>
           </div>
-          <div className="border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 w-[30%] min-h-[65vh]">
-            <span>bbbbbbbbbb</span>
+
+          <div className="flex justify-between border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 w-full md:w-[30%] min-h-[65vh] flex-col">
+            <div className="h-40 w-full border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 ">
+              FRETE VAI AQUI DENTRO:
+              {formatCurrency(Number(cartFrete))}
+            </div>
+            <div>
+              <div className="flex justify-between">
+                <p className="text-2xl font-bold text-pinkSecondary">TOTAL:</p>
+                <p>
+                  {cartProducts && (
+                    <span className="text-2xl font-bold text-slate-800">
+                      {formatCurrency(cartTotal)}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <Button
+                custom="flex w-[30%] md:w-full h-10 justify-self-end"
+                label="FINALIZAR COMPRA"
+                onClick={() => {}}
+              />
+            </div>
           </div>
         </div>
       </div>

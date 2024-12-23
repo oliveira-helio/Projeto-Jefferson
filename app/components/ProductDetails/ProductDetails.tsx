@@ -4,22 +4,30 @@ import { useParams } from "next/navigation";
 import { MdCheckCircle } from "react-icons/md";
 import { Product, ProductDetailsProps } from "@/utils/interfaces";
 import apiAdress from "@/utils/api";
-import { CartProductType, SelectedColorType } from "@/utils/types";
+import {
+  CartProductType,
+  DeliveryInfoType,
+  SelectedColorType,
+} from "@/utils/types";
 import ZipCodeForm from "../MicroComponents/ZipCodeForm";
 import ColorSelector from "../MicroComponents/ColorSelector";
 import QuantitySelector from "../MicroComponents/QuantitySelector";
-import Button from "../MicroComponents/ButtomAddToCart";
+import Button from "../MicroComponents/Button";
 import ImageGallery from "../MicroComponents/ImageGalery";
 import StyledRattingHeart from "../MicroComponents/StyledRattingHeart";
 import { useCart } from "@/app/Hooks/useCart";
-import formatCurrency from "@/utils/utilitaryFunctions";
+import { formatCurrency } from "@/utils/utilitaryFunctions";
+import Delivery from "../MicroComponents/Delivery";
 
 const ProductDetails: React.FC<ProductDetailsProps> = () => {
+  const [zipCode, setZipCode] = useState<string>("");
+
   const { handleAddProductToCart, cartProducts } = useCart();
   const productId = useParams().productId as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [delivery, setDelivery] = useState<DeliveryInfoType | null>(null);
   const [cartProduct, setCartProduct] = useState<CartProductType>({
     productId: 0,
     name: "",
@@ -32,9 +40,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     barCode: 0,
     image: "",
     quantity: 0,
+    deliveryFee: 0,
+    deliveryCep: "",
+    deliveryType: "",
+    deliveryTime: "",
   });
+
   const [isProductInCart, setIsProductInCart] = useState(false);
-  const [zipCode, setZipCode] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null
   );
@@ -85,11 +97,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       quantity: prev.quantity - 1,
     }));
   }, [cartProduct]);
-
-  const handleZipChange = (newZipCode: string) => {
-    setZipCode(newZipCode);
-    // TODO  Buscar dados de frete
-  };
 
   // console.log("cartProducts ", cartProducts);
 
@@ -145,6 +152,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           barCode: selectedColor.barCode,
           image: selectedColor.imageUrl,
           quantity: prev.quantity || 1,
+          deliveryFee: 10,
+          deliveryCep: "74255060",
+          deliveryType: " pac",
+          deliveryTime: "5 dias",
+          // deliveryFee: delivery.fee || 19.9,
+          // deliveryCep: delivery.cep || "74255060",
+          // deliveryType: delivery.type || " pac",
+          // deliveryTime: delivery.time || "5 dias",
         };
 
         if (
@@ -188,6 +203,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     image_url: string;
     bar_code: number;
   }>;
+
+  const handleZipChange = (newZipCode: string) => {
+    setZipCode(newZipCode);
+    // TODO  Buscar dados de frete
+  };
 
   return (
     <>
@@ -277,25 +297,41 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               <Button
                 label="ADICIONAR À SACOLA"
                 onClick={handleAddToCartClick}
-                className="flex-grow-[0.12] p-2"
+                custom="flex-grow-[0.12] p-2"
               />
             </div>
 
             {/* CEP CONSULTOR */}
-            <div>
-              <ZipCodeForm onZipChange={handleZipChange} />
-              <a
-                href="https://buscacepinter.correios.com.br/app/endereco/index.php?t"
-                className="text-sm text-slate-600"
-                target="_blank"
-                rel="noopener"
-              >
-                Não sei meu CEP
-              </a>
-            </div>
+            {/* <Delivery
+              cep={zipCode}
+              handleCepChange={(cep) => setZipCode(cep)}
+              handleDeliverySelection={(
+                deliveryType,
+                deliveryFee,
+                deliveryTime
+              ) =>
+                setCartProduct((prev) => ({
+                  ...prev,
+                  deliveryType,
+                  deliveryFee,
+                  deliveryCep: zipCode,
+                  deliveryTime,
+                }))
+              }
+              productWeight={product.weight}
+              productLength={product.length}
+              productHeight={product.height}
+              productWidth={product.width}
+            /> */}
+
+            {/* TODO criar componente de busca de cep chamado Delivery com as
+            propriedades: cep, handleCepChangeque deverá ter um formulario
+            caso o cep não tenha sido preenchido, vai buscar os ceps pelo
+            "melhor envio", trazer as opçoes disponiveis, ex. correios pac,
+            correios sedex, etc... com seus respectivos prazos de entrega e
+            valores, e ter opção para o cliente selecionar a opção de entrega */}
 
             {/* FRETE VALUE // TODO FRETE VALUE */}
-            <div></div>
           </div>
         </div>
       </section>

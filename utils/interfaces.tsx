@@ -17,6 +17,10 @@ export interface Product {
   stock: number;
   ratting: number;
   ratting_qt: number;
+  weight: number;
+  height: number;
+  width: number;
+  length: number;
   images: {
     product_id: number;
     image_id: number;

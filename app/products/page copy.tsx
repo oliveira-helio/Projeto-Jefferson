@@ -1,5 +1,244 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Product } from "@/utils/interfaces";
+import ProductCard from "../components/ProductCard/ProductCard";
+import { Range } from "react-range"; // Importando o componente Range do react-range
+import apiAdress from "@/utils/api";
+import debounce from "lodash.debounce";
+
+export default function Products() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Estados para os filtros
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [brand, setBrand] = useState<string | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const [subCategory, setSubCategory] = useState<string | null>(null);
+  const [productType, setProductType] = useState<string | null>(null);
+  const [filteredFilters, setFilteredFilters] = useState<{
+    brands: string[];
+    categories: string[];
+    subCategories: string[];
+    productTypes: string[];
+  }>({
+    brands: [],
+    categories: [],
+    subCategories: [],
+    productTypes: [],
+  });
+
+  // Carrega filtros iniciais e preenche os valores padrão
+  useEffect(() => {
+    const loadInitialFilters = async () => {
+      try {
+        const response = await fetch(`${apiAdress}/filters`);
+        const data = await response.json();
+        setFilteredFilters(data);
+      } catch (error) {
+        console.error("Erro ao carregar filtros iniciais:", error);
+      }
+    };
+
+    loadInitialFilters();
+  }, []);
+
+  // Atualiza os filtros na URL
+  const updateURL = useCallback(() => {
+    const query = new URLSearchParams();
+
+    if (priceRange[0] !== 0 || priceRange[1] !== 1000) {
+      query.append("minPrice", priceRange[0].toString());
+      query.append("maxPrice", priceRange[1].toString());
+    }
+
+    if (brand) query.append("brand", brand);
+    if (category) query.append("category", category);
+    if (subCategory) query.append("subCategory", subCategory);
+    if (productType) query.append("type", productType);
+
+    router.push(`/products?${query.toString()}`, { shallow: true });
+  }, [priceRange, brand, category, subCategory, productType, router]);
+
+  // Carrega os produtos e filtros filtrados
+  const loadProductsAndFilters = useCallback(async () => {
+    setLoading(true);
+    try {
+      const query = new URLSearchParams();
+
+      if (priceRange[0] !== 0 || priceRange[1] !== 1000) {
+        query.append("minPrice", priceRange[0].toString());
+        query.append("maxPrice", priceRange[1].toString());
+      }
+
+      if (brand) query.append("brand", brand);
+      if (category) query.append("category", category);
+      if (subCategory) query.append("subCategory", subCategory);
+      if (productType) query.append("type", productType);
+
+      const response = await fetch(`${apiAdress}/products?${query.toString()}`);
+      const data = await response.json();
+      setProducts(data.products);
+
+      const filteredResponse = await fetch(
+        `${apiAdress}/filters?${query.toString()}`
+      );
+      const filteredData = await filteredResponse.json();
+      setFilteredFilters(filteredData);
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [priceRange, brand, category, subCategory, productType]);
+
+  // Debounce para carregar produtos e atualizar a URL
+  const debouncedUpdate = useCallback(
+    debounce(() => {
+      loadProductsAndFilters();
+      updateURL();
+    }, 700),
+    [loadProductsAndFilters, updateURL]
+  );
+
+  // Efeito para carregar produtos ao mudar os filtros
+  useEffect(() => {
+    debouncedUpdate();
+  }, [priceRange, brand, category, subCategory, productType, debouncedUpdate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-4xl font-medium text-gray-700">
+          Carregando produtos...
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Filtros */}
+      <div className="flex flex-col md:flex-row gap-4 p-4 bg-pink-100 rounded-lg my-6">
+        {/* Outros Filtros */}
+        <div className="lg:min-w-28">
+          <label className="block text-base text-pink-500 font-semibold mb-2">
+            Preço
+          </label>
+          {/* Barra de intervalo para preço */}
+          <Range
+            step={1}
+            min={0}
+            max={1000}
+            values={priceRange}
+            onChange={(values) => setPriceRange(values as [number, number])}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "6px",
+                  width: "100%",
+                  backgroundColor: "#f8b5ef",
+                  borderRadius: "4px",
+                }}
+              >
+                {children}
+              </div>
+            )}
+            renderThumb={({ index, props }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "16px",
+                  width: "16px",
+                  borderRadius: "8px",
+                  backgroundColor: "#bb0bac",
+                }}
+              />
+            )}
+          />
+          <div className="flex justify-between mt-2">
+            <span>R$ {priceRange[0]}</span>
+            <span>R$ {priceRange[1]}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-flow-col max-md:w-full md:flex md:flex-row gap-4 bg-pink-100 rounded-lg ">
+          <div>
+            <label className="block text-base text-pink-500 font-semibold mb-2">
+              Marca
+            </label>
+            <select
+              value={brand || ""}
+              onChange={(e) => setBrand(e.target.value || null)}
+              className="w-full border-gray-300 rounded-lg"
+            >
+              <option value="">Todas</option>
+              {filteredFilters.brands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-base text-pink-500 font-semibold mb-2">
+              Categoria
+            </label>
+            <select
+              value={category || ""}
+              onChange={(e) => setCategory(e.target.value || null)}
+              className="w-full border-gray-300 rounded-lg"
+            >
+              <option value="">Todas</option>
+              {filteredFilters.categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-flow-col max-md:w-full md:flex md:flex-row gap-4 bg-pink-100 rounded-lg ">
+          <div>
+            <label className="block text-base text-pink-500 font-semibold mb-2">
+              Subcategoria
+            </label>
+            <select
+              value={subCategory || ""}
+              onChange={(e) => setSubCategory(e.target.value || null)}
+              className="w-full border-gray-300 rounded-lg"
+            >
+              <option value="">Todas</option>
+              {filteredFilters.subCategories.map((subcategory) => (
+                <option key={subcategory} value={subcategory}>
+                  {subcategory}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-base text-pink-500 font-semibold mb-2">
+              Tipo de Produto
+            </label>
+            <select
+              value={productType || ""}
+              onChange={(e) => setProductType(e.target.value || null)}
+              className="w-full border-gray-300 rounded-lg"
+            >
+              <option value="">Todas</option>
+              {filteredFilters.productTypes.map((type) => ("use client";
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Product } from "@/utils/interfaces";
@@ -470,6 +709,31 @@ export default function Products() {
           </div>
         </div>
       )}
+
+      {/* Lista de Produtos */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center justify-between">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <ProductCard key={product.product_id} product={product} />
+          ))
+        ) : (
+          <div>Nenhum produto encontrado.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Adicione os outros filtros seguindo a mesma lógica */}
+      </div>
 
       {/* Lista de Produtos */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center justify-between">

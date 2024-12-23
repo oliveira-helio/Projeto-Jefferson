@@ -3,8 +3,16 @@ import React, { useEffect, useState } from "react";
 import Container from "../Container";
 import apiAdress from "@/utils/api";
 
+type categoryProps = {
+  category: string;
+  subcategories: {
+    subCategory: string;
+    productTypes: string[];
+  }[];
+}[];
+
 const MenuContainer = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<categoryProps>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -14,18 +22,18 @@ const MenuContainer = () => {
 
         // Converte o objeto de categorias em um array para fácil iteração
         const formattedCategories = Object.entries(data.categories).map(
-          ([categoryName, subcategories]) => ({
+          ([categoryName, subcategories]: [string, any]) => ({
             category: categoryName,
             subcategories: Object.entries(subcategories).map(
-              ([subCategoryName, productTypes]) => ({
+              ([subCategoryName, productTypes]: [string, any]) => ({
                 subCategory: subCategoryName,
-                productTypes,
+                productTypes: Array.isArray(productTypes) ? productTypes : [],
               })
             ),
           })
         );
 
-        setCategories(formattedCategories); // Atualiza o estado com as categorias formatadas
+        setCategories(formattedCategories);
       } catch (error) {
         console.error("Erro ao buscar categorias:", error);
       }
@@ -43,7 +51,7 @@ const MenuContainer = () => {
               <li key={category.category} className="relative p-4 group">
                 <a
                   className="rounded-full text-[#a3115f] py-1.5 px-4 block text-xl font-semibold group-hover:bg-black group-hover:text-[#e65ba5]"
-                  href="#"
+                  href={`/products?category=${category.category}`}
                 >
                   {category.category}
                 </a>
@@ -53,17 +61,16 @@ const MenuContainer = () => {
                     <div key={subCategory.subCategory}>
                       <a
                         className="block p-2 text-lg font-semibold text-[#e65ba5] hover:underline hover:decoration-[#e65ba5]"
-                        href="#"
+                        href={`/products?subCategory=${subCategory.subCategory}`}
                       >
                         {" "}
-                        {/*  TODO  Customizar as subcategorias */}
                         {subCategory.subCategory}
                       </a>
-                      {subCategory.productTypes.map((productType) => (
+                      {subCategory.productTypes.map((productType: string) => (
                         <a
                           key={productType}
                           className="block p-2 text-base font-medium text-[#e65ba5] hover:text-black hover:underline hover:decoration-[#e65ba5]"
-                          href="#"
+                          href={`/products?type=${productType}`}
                         >
                           {productType}
                         </a>

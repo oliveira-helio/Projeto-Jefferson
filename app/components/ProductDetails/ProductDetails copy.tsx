@@ -1,61 +1,43 @@
 "use client";
-import { styled } from "@mui/material/styles";
-import Rating from "@mui/material/Rating";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { MdCheckCircle } from "react-icons/md";
 import { Product, ProductDetailsProps } from "@/utils/interfaces";
 import apiAdress from "@/utils/api";
-import ZipCodeForm from "../MicroComponents/ZipCodeForm";
 import { CartProductType, SelectedColorType } from "@/utils/types";
+import ZipCodeForm from "../MicroComponents/ZipCodeForm";
 import ColorSelector from "../MicroComponents/ColorSelector";
 import QuantitySelector from "../MicroComponents/QuantitySelector";
-import Button from "../MicroComponents/ButtomAddToCart";
+import Button from "../MicroComponents/Button";
 import ImageGallery from "../MicroComponents/ImageGalery";
-
-const StyledRating = styled(Rating)({
-  "& .MuiRating-iconFilled": {
-    color: "#e65ba5",
-  },
-  "& .MuiRating-iconHover": {
-    color: "#f91d7c",
-  },
-});
+import StyledRattingHeart from "../MicroComponents/StyledRattingHeart";
+import { useCart } from "@/app/Hooks/useCart";
+import { formatCurrency } from "@/utils/utilitaryFunctions";
 
 const ProductDetails: React.FC<ProductDetailsProps> = () => {
+  const { handleAddProductToCart, cartProducts } = useCart();
   const productId = useParams().productId as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  const [mainImageUrl, setMainImageUrl] = useState<string>(
-    "/assets/numeros/1.jpg"
-  );
   const [cartProduct, setCartProduct] = useState<CartProductType>({
-    productId: 0, // product.product_id,
-    name: "", // product.name,
-    brand: "", // product.brand,
-    color: "", // SelectedColor.color,
-    colorCode: "", // SelectedColor.colorCode,
-    subCategory: "", // product.sub_category,
-    productType: "", // product.product_type,
-    price: 0, // product.price,
-    barCode: 0, // SelectedColor.barCode,
-    image: "", // SelectedColor.imageUrl,
+    productId: 0,
+    name: "",
+    brand: "",
+    color: "",
+    colorCode: "",
+    subCategory: "",
+    productType: "",
+    price: 0,
+    barCode: 0,
+    image: "",
     quantity: 0,
   });
-  console.log("cartProduct inicial", cartProduct);
-
+  const [isProductInCart, setIsProductInCart] = useState(false);
   const [zipCode, setZipCode] = useState<string>("");
-  const [SelectedColor, setSelectedColor] = useState<SelectedColorType | null>(
+  const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null
   );
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
 
   const handleQtyIncrease = useCallback(() => {
     if (cartProduct.quantity === 99) return;
@@ -65,6 +47,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     }));
   }, [cartProduct]);
 
+  const handleColorSelect = (color: SelectedColorType) => {
+    setSelectedColor(color);
+
+    // Localizar o índice da imagem correspondente à cor selecionada
+    const selectedIndex = product?.images.findIndex(
+      (img) => img.color_code === color.colorCode
+    );
+
+    if (selectedIndex !== undefined && selectedIndex >= 0) {
+      handleItemSelect(selectedIndex); // Atualiza imagem principal e índice selecionado
+    }
+  };
+
+  const handleAddToCartClick = () => {
+    handleAddProductToCart(cartProduct);
+  };
+
+  const handleItemSelect = (index: number) => {
+    const image = product?.images[index];
+    if (image) {
+      setSelectedColor({
+        productId: image.product_id,
+        color: image.color,
+        colorCode: image.color_code,
+        imageUrl: image.image_url,
+        barCode: image.bar_code,
+      });
+      setSelectedImageIndex(index);
+    }
+  };
+
   const handleQtyDecrease = useCallback(() => {
     if (cartProduct.quantity === 1) return;
     setCartProduct((prev) => ({
@@ -72,6 +85,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
       quantity: prev.quantity - 1,
     }));
   }, [cartProduct]);
+
+  const handleZipChange = (newZipCode: string) => {
+    setZipCode(newZipCode);
+    // TODO  Buscar dados de frete
+  };
+
+  // console.log("cartProducts ", cartProducts);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -85,14 +105,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
         } else {
           throw new Error("Produto não encontrado.");
         }
-
-        const genericImage = data.product.images.find(
-          (image: { is_generic: boolean }) => image.is_generic
-        );
-
-        setMainImageUrl(
-          genericImage ? genericImage.image_url : "/assets.numeros/1.jpg"
-        );
 
         const selectedProduct = data.product.images.find(
           (img: { product_id: number; is_generic: boolean }) =>
@@ -118,70 +130,42 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     loadProduct();
   }, [productId]);
 
-  // console.log("productaqui", product);
-
   useEffect(() => {
-    if (SelectedColor && product) {
+    if (selectedColor && product) {
       setCartProduct((prev) => {
         const newCartProduct = {
-          productId: SelectedColor.productId,
+          productId: selectedColor.productId,
           name: product.name,
           brand: product.brand,
-          color: SelectedColor.color,
-          colorCode: SelectedColor.colorCode,
+          color: selectedColor.color,
+          colorCode: selectedColor.colorCode,
           subCategory: product.sub_category,
           productType: product.product_type,
           price: product.price,
-          barCode: SelectedColor.barCode,
-          image: SelectedColor.imageUrl,
+          barCode: selectedColor.barCode,
+          image: selectedColor.imageUrl,
           quantity: prev.quantity || 1,
         };
 
-        if (JSON.stringify(prev) !== JSON.stringify(newCartProduct)) {
+        if (
+          prev.productId !== selectedColor.productId ||
+          prev.colorCode !== selectedColor.colorCode ||
+          prev.quantity !== prev.quantity
+        ) {
           return newCartProduct;
         }
         return prev;
       });
     }
-  }, [product, SelectedColor]);
+  }, [product, selectedColor]);
 
   useEffect(() => {
-    console.log(cartProduct);
+    console.log("produto atual", cartProduct);
   }, [cartProduct]);
 
-  const handleZipChange = (newZipCode: string) => {
-    setZipCode(newZipCode);
-    // TODO  Buscar dados de frete
-  };
-
-  const handleColorSelect = (color: SelectedColorType) => {
-    setSelectedColor(color);
-    setMainImageUrl(color.imageUrl);
-
-    // Localizar o índice da imagem correspondente à cor selecionada
-    const selectedIndex = product?.images.findIndex(
-      (img) => img.color_code === color.colorCode
-    );
-
-    if (selectedIndex !== undefined && selectedIndex >= 0) {
-      handleItemSelect(selectedIndex); // Atualiza imagem principal e índice selecionado
-    }
-  };
-
-  const handleItemSelect = (index: number) => {
-    const image = product?.images[index];
-    if (image) {
-      setMainImageUrl(image.image_url);
-      setSelectedColor({
-        productId: image.product_id,
-        color: image.color,
-        colorCode: image.color_code,
-        imageUrl: image.image_url,
-        barCode: image.bar_code,
-      });
-      setSelectedImageIndex(index);
-    }
-  };
+  useEffect(() => {
+    console.log("Carrinho", cartProducts);
+  }, [cartProducts]);
 
   if (loading) {
     return <div>Carregando produto...</div>; // Exibe um estado de carregamento
@@ -224,7 +208,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           <div className="flex flex-col gap-3 w-full">
             {/* NAME */}
             <div className=" text-2xl text-pink-700 font-semibold ">
-              {product.name} aki só para ocupar mais espaço
+              {product.name} {cartProduct.color} aki só para ocupar mais espaço
             </div>
 
             {/* DESCRIPTION */}
@@ -236,24 +220,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
             </div>
 
             {/* RATTINGS */}
-            <div id="Rattings">
-              <StyledRating
-                value={product.ratting}
-                readOnly
-                precision={0.5}
-                icon={<FavoriteIcon fontSize="medium" />}
-                emptyIcon={<FavoriteBorderIcon fontSize="medium" />}
-                size="large"
-                className="text-4xl"
-                onFocus={() => alert(`avaliações: ${product.ratting}`)} // TODO  Ligar o onfocus
-              />
-            </div>
+            <StyledRattingHeart product={product} />
 
             {/* COLOR SECTION // TODO : criar cores - redondo BackgroundColor */}
             <div id="Color__Selector">
               <ColorSelector
                 colors={uniqueColors}
-                selectedColor={SelectedColor}
+                selectedColor={selectedColor}
                 onColorSelect={handleColorSelect}
               />
             </div>
@@ -286,12 +259,25 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
             </div>
 
             {/* BOTÃO SACOLA */}
+            <>
+              {cartProducts?.some(
+                (item) =>
+                  item.productId === cartProduct.productId &&
+                  item.colorCode === cartProduct.colorCode
+              ) ? (
+                <p className="text-slate-600 flex items-center">
+                  <MdCheckCircle className="text-teal-500" size={18} />
+                  <span> Produto adicionado ao carrinho</span>
+                </p>
+              ) : (
+                ""
+              )}
+            </>
             <div>
               <Button
                 label="ADICIONAR À SACOLA"
-                onClick={() => {}}
-                className="flex-grow-[0.12] p-2"
-                // TODO : implementar o botão de sacola após criar o carrinho
+                onClick={handleAddToCartClick}
+                custom="flex-grow-[0.12] p-2"
               />
             </div>
 
