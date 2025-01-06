@@ -63,7 +63,14 @@ const Input: React.FC<InputProps> = ({
                     peer-placeholder-shown:translate-y-0
                     peer-focus:scale-75
                     peer-focus:-translate-y-4" 
-                htmlFor={id}>{label}</label>
+                htmlFor={id}>{label}
+            </label>
+            {errors[id] && (
+                <span className="text-red-500 text-sm">
+                  {errors[id].message?.toString()}
+                </span>
+            )}
+            
         </div>
      );
 }

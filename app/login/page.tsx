@@ -1,12 +1,13 @@
 import Container from "../components/Container";
 import FormWrap from "../components/FormWrap";
-import RegisterForm from "./RegisterForm";
+import LoginForm from "./LoginForm";
+
 
 const register = () => {
     return ( 
     <Container>
         <FormWrap>
-            <RegisterForm/>
+            <LoginForm/>
         </FormWrap>
     </Container> );
 }

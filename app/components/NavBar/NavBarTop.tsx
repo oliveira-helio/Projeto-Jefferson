@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { LocalMallRounded } from "@mui/icons-material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useCart } from "@/app/Hooks/useCart";
+import UserMenu from "./UserMenu";
 
 const NavBarTop = () => {
   const { cartTotalQty } = useCart();
@@ -39,34 +39,44 @@ const NavBarTop = () => {
         </form>
       </div>
 
-      <div className="flex flex-row h-full gap-4 items-center md:mr-2 xl:mr-0">
+      <div className="flex flex-row h-full gap-1 items-center md:mr-2 xl:mr-0">
         <div className="cartDiv h-full relative">
           <a href="/carrinho" className="h-full">
             <button className="cart-btn">
               <div
                 id="cartItemCounter"
-                className={`absolute -right-1 -top-1 box-border rounded-full text-white bg-black  w-4 text-xs z-10 ${
+                className={`absolute right-px top-0.5 box-border rounded-full text-white bg-black w-4 text-xs z-10 ${
                   cartTotalQty === 0 ? "hidden" : ""
                 }`}
               >
                 {cartTotalQty}
               </div>
-              <LocalMallRounded
-                fontSize="large"
-                className="relative self-center justify-center box-border text-pinkSecondary md:text-[2.5rem]"
-              ></LocalMallRounded>
+              <div 
+                className="
+                text-pinkSecondary 
+                  text-4xl
+                  md:text-[2.25rem] 
+                  p-2 
+                  border-[1px] 
+                  border-pinkSecondary 
+                  flex 
+                  flex-row 
+                  items-center 
+                  gap-1 
+                  rounded-3xl 
+                  cursor-pointer
+                  hover:shadow-md
+                  transition"
+              >
+                <LocalMallRounded fontSize='inherit' />
+              </div>
             </button>
           </a>
         </div>
 
         <div>
           <a href="#">
-            <button className="login-btn">
-              <AccountCircleIcon
-                fontSize="large"
-                className="text-pinkSecondary md:text-[2.5rem]"
-              />
-            </button>
+            <UserMenu/>
           </a>
         </div>
       </div>

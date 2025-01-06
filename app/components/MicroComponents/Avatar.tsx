@@ -17,7 +17,7 @@ const Avatar: React.FC<AvatarProps> = ({ src }) => {
       />
     );
   }
-  return <AccountCircleIcon style={{ fontSize: 24 }} />;
+  return <AccountCircleIcon style={{ fontSize: 32 }} />;
 };
 
 export default Avatar;
