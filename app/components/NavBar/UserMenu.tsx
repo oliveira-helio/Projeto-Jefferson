@@ -5,6 +5,7 @@ import Avatar from "../MicroComponents/Avatar";
 import { AiFillCaretDown } from "react-icons/ai";
 import Link from "next/link";
 import UserMenuItem from "./UserMenuItens";
+import BackDrop from "../MicroComponents/BackDrop";
 
 const UserMenu = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -81,6 +82,7 @@ const UserMenu = () => {
         )
         }
     </div>
+    {isUserMenuOpen ? <BackDrop onClick={toggleOpen} /> : null}
     </>
      );
 }

@@ -156,6 +156,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           deliveryCep: "74255060",
           deliveryType: " pac",
           deliveryTime: "5 dias",
+          // TODO : adicionar dados de frete dinamicamente
           // deliveryFee: delivery.fee || 19.9,
           // deliveryCep: delivery.cep || "74255060",
           // deliveryType: delivery.type || " pac",
