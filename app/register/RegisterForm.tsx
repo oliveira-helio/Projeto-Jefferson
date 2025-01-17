@@ -23,7 +23,20 @@ const RegisterForm = () => {
 
 	const onSubmit: SubmitHandler<FieldValues> = (data) => {
 		setIsLoading(true);
+		try { 
+			fetch(`${apiAdress}/register`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+		} catch (error) {
+			console.log("Erro ao realizar o cadastro:", error);
+		};
+		setIsLoading(false);
 		console.log(data);
+		window.location.href = "/"
 	};
 
 	const googleAuth = () => {

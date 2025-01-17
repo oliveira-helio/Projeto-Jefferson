@@ -9,8 +9,9 @@ import ItemContent from "./ItemContent";
 import { useEffect, useState } from "react";
 
 const CartClient = () => {
-  const { handleclearCart, cartProducts } = useCart();
-  // console.log(cartProducts);
+  const { handleclearCart, cartProducts, cart } = useCart();
+  console.log("cartProducts",cartProducts);
+  console.log("cart",cart);
 
   const frete: number = 12;
   const [cartSubTotal, setCartSubTotal] = useState(0);

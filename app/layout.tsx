@@ -7,6 +7,8 @@ import Container from "./components/Container";
 import WhatsAppButon from "./components/MicroComponents/WhatsappButon";
 import CartProvider from "@/providers/CartProvider";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from '@/app/Hooks/AuthContext';
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -34,16 +36,20 @@ export default function RootLayout({
             },
           }}
         />
+        <AuthProvider>
         <CartProvider>
-          <div className="flex flex-col min-h-screen">
-            <NavBar />
-            <Container>
-              <main className="flex-grow">{children}</main>
-            </Container>
-            <WhatsAppButon />
-            <Footer />
-          </div>
+
+              <div className="flex flex-col min-h-screen">
+                <NavBar />
+                <Container>
+                  <main className="flex-grow">{children}</main>
+                </Container>
+                <WhatsAppButon />
+                <Footer />
+              </div>
+
         </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
