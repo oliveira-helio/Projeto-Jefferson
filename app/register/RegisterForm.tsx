@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
-import Button from "../components/MicroComponents/Button";
-import Input from "../components/Inputs/Input";
+import Button from "../../components/MicroComponents/Button";
+import Input from "../../components/Inputs/Input";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { FaFacebookF } from "react-icons/fa";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";

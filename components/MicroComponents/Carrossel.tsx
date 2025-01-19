@@ -6,6 +6,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 
 interface CarrosselProps {
   products: Product[];
+  children: React.ReactNode;
 }
 
 const Carrossel: React.FC<CarrosselProps> = ({ products }) => {

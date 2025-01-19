@@ -1,7 +1,7 @@
 "use client";
-import TopBanner from "./components/TopBanner/TopBanner";
-import TopSellers from "./components/TopSellers/TopSellers";
-import Recommended from "./components/Recomended/Recommended";
+import TopBanner from "../components/TopBanner/TopBanner";
+import TopSellers from "../components/TopSellers/TopSellers";
+import Recommended from "../components/Recomended/Recommended";
 
 
 export default function Home() {

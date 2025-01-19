@@ -1,13 +1,13 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import NavBar from "./components/NavBar/NavBar";
-import Footer from "./components/Footer/Footer";
-import Container from "./components/Container";
-import WhatsAppButon from "./components/MicroComponents/WhatsappButon";
+import NavBar from "../components/NavBar/NavBar";
+import Footer from "../components/Footer/Footer";
+import Container from "../components/Container";
+import WhatsAppButon from "../components/MicroComponents/WhatsappButon";
 import CartProvider from "@/providers/CartProvider";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from '@/app/Hooks/AuthContext';
+import { AuthProvider } from '@/Contexts/AuthContext';
 
 
 const poppins = Poppins({
@@ -36,8 +36,8 @@ export default function RootLayout({
             },
           }}
         />
-        <AuthProvider>
         <CartProvider>
+        <AuthProvider>
 
               <div className="flex flex-col min-h-screen">
                 <NavBar />
@@ -48,8 +48,8 @@ export default function RootLayout({
                 <Footer />
               </div>
 
-        </CartProvider>
         </AuthProvider>
+        </CartProvider>
       </body>
     </html>
   );

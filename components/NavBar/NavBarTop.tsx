@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { LocalMallRounded } from "@mui/icons-material";
-import { useCart } from "@/app/Hooks/useCart";
+import { useCart } from "@/Hooks/useCart";
 import UserMenu from "./UserMenu";
 
 const NavBarTop = () => {

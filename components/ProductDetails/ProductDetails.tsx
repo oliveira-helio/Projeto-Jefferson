@@ -3,25 +3,23 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MdCheckCircle } from "react-icons/md";
 import { Product, ProductDetailsProps } from "@/utils/interfaces";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api'
 import {
   CartProductType,
   DeliveryInfoType,
   SelectedColorType,
 } from "@/utils/types";
-import ZipCodeForm from "../MicroComponents/ZipCodeForm";
 import ColorSelector from "../MicroComponents/ColorSelector";
 import QuantitySelector from "../MicroComponents/QuantitySelector";
 import Button from "../MicroComponents/Button";
 import ImageGallery from "../MicroComponents/ImageGalery";
 import StyledRattingHeart from "../MicroComponents/StyledRattingHeart";
-import { useCart } from "@/app/Hooks/useCart";
+import { useCart } from "@/Hooks/useCart";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import Delivery from "../MicroComponents/Delivery";
 
-const ProductDetails: React.FC<ProductDetailsProps> = () => {
+const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [zipCode, setZipCode] = useState<string>("");
-
   const { handleAddProductToCart, cartProducts } = useCart();
   const productId = useParams().productId as string;
   const [product, setProduct] = useState<Product | null>(null);

@@ -82,3 +82,101 @@ Tipos de Dados no Backend: Garanta que os endpoints retornem os campos de forma 
 Armazenamento no Contexto Global: Para gerenciar o carrinho e informações do produto entre telas, considere usar o Context API ou bibliotecas como Redux.
 
 Se precisar de ajuda com algum ponto específico, posso detalhar! 🚀
+
+
+
+
+
+########################################
+
+.eslintrc.json
+.gitignore
+.next/
+.vscode/
+cypress/
+public/
+  assets/
+    img/
+    numeros/
+src/
+  components/
+    Footer/
+      Footer.tsx
+      Footer.css
+    NavBar/
+      NavBar.tsx
+      MenuComponent.tsx
+    MicroComponents/
+      Button.tsx
+      Carroussel.tsx
+      Delivery.tsx
+      ImageGallery.tsx
+      WhatsappButon.tsx
+    ProductCard/
+      ProductCard.tsx
+    ProductDetails/
+      ProductDetails.tsx
+    Recomended/
+      Recommended.tsx
+    TopSellers/
+      TopSellers.tsx
+      TopSellers.css
+  contexts/
+    AuthContext.tsx
+    InactivityContext.tsx
+    TokenRenewalContext.tsx
+  hooks/
+    useCart.ts
+  pages/
+    _app.tsx
+    _document.tsx
+    index.tsx
+    carrinho/
+      index.tsx
+      CartClient.tsx
+    products/
+      index.tsx
+    usuario/
+      index.tsx
+  providers/
+    CartProvider.tsx
+  styles/
+    globals.css
+    tailwind.config.js
+  utils/
+    api.ts
+    interfaces.ts
+    utilitaryFunctions.ts
+  app/
+    layout.tsx
+    anotacoes/
+      index.tsx
+    carrinho/
+      index.tsx
+    components/
+      index.tsx
+    Hooks/
+      index.tsx
+    pages/
+      index.tsx
+    path_to_backups/
+      index.tsx
+    postgres_data/
+      index.tsx
+    providers/
+      index.tsx
+    public/
+      index.tsx
+    sql/
+      index.tsx
+    utils/
+      index.tsx
+ANOTAÇÔES.txt
+Dockerfile
+README.md
+cypress.json
+next-env.d.ts
+next.config.js
+package.json
+postcss.config.js
+tsconfig.json

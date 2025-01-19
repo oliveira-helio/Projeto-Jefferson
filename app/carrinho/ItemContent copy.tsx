@@ -2,8 +2,8 @@ import { CartProductType } from "@/utils/types";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import { Delete } from "@mui/icons-material";
 import Link from "next/link";
-import QuantitySelector from "../components/MicroComponents/QuantitySelector";
-import { useCart } from "../Hooks/useCart";
+import QuantitySelector from "../../components/MicroComponents/QuantitySelector";
+import { useCart } from "../../Hooks/useCart";
 
 interface ItemContentProps {
   item: CartProductType;

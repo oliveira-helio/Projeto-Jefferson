@@ -2,17 +2,17 @@
 import { useState, useEffect } from "react";
 import { Product } from "@/utils/interfaces";
 import ProductCard from "../ProductCard/ProductCard";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api'
 import Carrossel from "../MicroComponents/Carrossel";
 
-export default function topsellers() {
+export default function Recommended() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const response = await fetch(`${apiAdress}/topsellers`);
+        const response = await fetch(`${apiAdress}/recommended`);
         const data = await response.json();
         setProducts(data.products);
       } catch (error) {
@@ -34,14 +34,14 @@ export default function topsellers() {
       <div className="relative flex flex-col py-5 justify-center items-center ">
         <div>
           <h1 className="self-center text-gray-900 font-bold text-4xl z-10 w-fit">
-            MAIS VENDIDOS
-            <div className="w-[19rem] h-6 bg-pink-600 opacity-40 top-10 absolute left-1/2 transform -translate-x-1/2"></div>
+            PRODUTOS RECOMENDADOS
+            <div className="w-[33rem] h-6 bg-pink-600 opacity-40 top-10 absolute left-1/2 transform -translate-x-1/2"></div>
           </h1>
         </div>
       </div>
 
       <Carrossel products={products}>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center justify-between">
+        <div className="">
           {products.length > 0 ? (
             products.map((product) => (
               <ProductCard key={product.product_id} product={product} />

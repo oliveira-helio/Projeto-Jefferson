@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Container from "../Container";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api'
 
 type categoryProps = {
   category: string;

@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
-import Container from "@/app/components/Container";
-import ProductDetails from "@/app/components/ProductDetails/ProductDetails";
+import Container from "@/components/Container";
+import ProductDetails from "@/components/ProductDetails/ProductDetails";
 
 const Product = () => {
   const params = useParams();

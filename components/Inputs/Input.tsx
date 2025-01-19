@@ -9,7 +9,7 @@ interface InputProps {
 	type?: string;
 	disabled?: boolean;
 	required?: boolean;
-	register: UseFormRegister<FieldValues>;
+	register: UseFormRegister<FieldValues> ;
 	errors: FieldErrors;
 	onChange?: ChangeEventHandler<HTMLInputElement>;
 }

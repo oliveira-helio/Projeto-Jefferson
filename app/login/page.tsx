@@ -1,9 +1,9 @@
-import Container from "../components/Container";
-import FormWrap from "../components/FormWrap";
+import Container from "../../components/Container";
+import FormWrap from "../../components/FormWrap";
 import LoginForm from "./LoginForm";
 
 
-const register = () => {
+const login = () => {
     return ( 
     <Container>
         <FormWrap>
@@ -12,4 +12,4 @@ const register = () => {
     </Container> );
 }
  
-export default register;
+export default login;

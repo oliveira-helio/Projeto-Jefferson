@@ -1,10 +1,10 @@
 "use client";
 import { MdArrowBack } from "react-icons/md";
-import { useCart } from "../Hooks/useCart";
+import { useCart } from "../../Hooks/useCart";
 import Link from "next/link";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import { Delete } from "@mui/icons-material";
-import Button from "../components/MicroComponents/Button";
+import Button from "../../components/MicroComponents/Button";
 import ItemContent from "./ItemContent";
 import { useEffect, useState } from "react";
 
@@ -41,6 +41,7 @@ const CartClient = () => {
   if (!cartProducts || cartProducts.length === 0)
     return (
       <div className="flex items-center justify-center">
+        <img src="../../public/assets/img/basket-retail-shopping-cart.jpg" alt="Carrinho vazio" />
         <div
           className="
           bg-[url('/assets/img/basket-retail-shopping-cart.jpg')]  

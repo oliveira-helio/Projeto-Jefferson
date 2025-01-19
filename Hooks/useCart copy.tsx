@@ -1,10 +1,8 @@
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { CartProductType } from '@/utils/types';
 import toast from "react-hot-toast";
 import apiAdress from '@/utils/api';
-import { Quando } from 'next/font/google';
-
 
 interface CartContextType {
   cart: CartProductType[];
@@ -12,6 +10,7 @@ interface CartContextType {
   fetchCart: () => void;
   handleAddProductToCart: (product: CartProductType) => void;
   handleRemoveProductFromCart: (product: CartProductType) => void;
+  handleclearLocalCart: () => void;
   handleclearCart: () => void;
   handleProductQtyIncrease: (product: CartProductType) => void;
   handleProductQtyDecrease: (product: CartProductType) => void;
@@ -25,44 +24,67 @@ interface CartContextProviderProps {
 const API_URL = `${apiAdress}/cart`;
 const CartContext = createContext<CartContextType | null>(null);
 
-
 export const CartContextProvider: React.FC<CartContextProviderProps> = ({ children }) => {
-  const token = localStorage.getItem('authToken'); // Recuperando o token armazenado
   const [cart, setCart] = useState<CartProductType[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(null);
 
-  const axiosInstance = axios.create({
-    baseURL: API_URL,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Adicionando o token nos cabeçalhos
-    },
-  });
-
-  const fetchCart = async () => {
-    if (!localStorage.acessToken) {
-      return;
+  // Recupera o token do localStorage ao montar o componente
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('accessToken');
+      setToken(storedToken);
     }
+  }, []);
+
+  // Atualiza o axiosInstance sempre que o token mudar
+  useEffect(() => {
+    if (token) {
+      const instance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          accessToken: `Bearer ${token}`, // Adicionando o token nos cabeçalhos
+        },
+      });
+      setAxiosInstance(() => instance);
+    }
+  }, [token]);
+
+  // Busca o carrinho
+  const fetchCart = async () => {
+    if (!axiosInstance) return;
+
     try {
-      const response = await axiosInstance.get('/');
+      const response = await axiosInstance?.get('/');      
       setCart(response.data.products);
-      console.log('Carrinho:', response.data.products);
+      // console.log('fecth cart:', response.data.products);
+
     } catch (error) {
-      console.error('Erro ao buscar o carrinho:', error);
+      if (axios.isAxiosError(error) && error.response && error.response.status === 401) {
+        console.log('Unauthorized access - possibly invalid token');
+        toast.error("Unauthorized access - please log in again");
+        // Handle token expiration or invalid token scenario
+      } else {
+        console.error('Erro ao buscar o carrinho:', error);
+        toast.error("Erro ao buscar o carrinho");
+      }
       toast.error("Erro ao buscar o carrinho");
     }
   };
 
-
-
+  // Adiciona produto ao carrinho
   const handleAddProductToCart = async (product: CartProductType) => {
+    if (!axiosInstance) return;
+
     if (cart.some((item) => item.productId === product.productId)) {
       handleProductQtyIncrease(product);
-      console.log('Produto já existe no carrinho', product.productId);
+      console.log('Produto já existe no carrinho:', product.productId);
       return;
     }
 
     try {
-      const response = await axiosInstance.post(API_URL, product);
+      await axiosInstance.post('/', product);
       fetchCart();
       toast.success("Produto adicionado à sacola", { id: "cart-toast-1" });
     } catch (error) {
@@ -71,11 +93,12 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
     }
   };
 
-
+  // Remove produto do carrinho
   const handleRemoveProductFromCart = async (product: CartProductType) => {
+    if (!axiosInstance) return;
 
     try {
-      await axiosInstance.delete(`${API_URL}/${product.productId}`);
+      await axiosInstance.delete(`/${product.productId}`);
       setCart((prevCart) => prevCart.filter((item) => item.productId !== product.productId));
       toast.success("Produto removido da sacola", { id: "cart-toast-4" });
     } catch (error) {
@@ -84,50 +107,50 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
     }
   };
 
-  
+  // Aumenta a quantidade de um produto no carrinho
   const handleProductQtyIncrease = async (product: CartProductType) => {
+    if (!axiosInstance) return;
+
     try {
-      await axiosInstance.put(`${API_URL}/${product.productId}`, { operation: "increase", quantity: product.quantity});
+      await axiosInstance.put(`/${product.productId}`, { operation: "increase" });
       fetchCart();
-      console.log(cart)
     } catch (error) {
       console.error('Erro ao alterar quantidade:', error);
       toast.error("Erro ao aumentar quantidade do produto");
     }
   };
 
-
+  // Diminui a quantidade de um produto no carrinho
   const handleProductQtyDecrease = async (product: CartProductType) => {
+    if (!axiosInstance) return;
+
     if (product.quantity === 1) {
       return;
     }
 
     try {
-      await axiosInstance.put(`${API_URL}/${product.productId}`, { operation: "decrease" });
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.productId === product.productId
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-      );
+      await axiosInstance.put(`/${product.productId}`, { operation: "decrease" });
+      fetchCart();
     } catch (error) {
       console.error('Erro ao alterar quantidade:', error);
       toast.error("Erro ao diminuir quantidade do produto");
     }
   };
 
+  // Limpa o carrinho local
+  const handleclearLocalCart = () => {
+    setCart([]);
+    localStorage.removeItem('cart');
+    console.log(cart);
+  };
 
+  // Limpa o carrinho no servidor e localmente
   const handleclearCart = async () => {
-    try {
-      await axiosInstance.delete(`${API_URL}/cart`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Passando o token no cabeçalho Authorization
-        }
-      });
+    if (!axiosInstance) return;
 
-      // setCart([]);
+    try {
+      await axiosInstance.delete(`/cart`);
+      handleclearLocalCart();
       toast.success("Carrinho limpo", { id: "cart-toast-5" });
     } catch (error) {
       console.error('Erro ao limpar carrinho:', error);
@@ -135,9 +158,16 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
     }
   };
 
+  // Busca o carrinho ao montar o componente
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (axiosInstance) {
+      fetchCart();
+    }
+  }, [axiosInstance]);
+
+  useEffect(() => {
+  console.log("carrinho mudou:",cart);
+  }, [cart]);
 
   return (
     <CartContext.Provider
@@ -149,6 +179,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
         handleRemoveProductFromCart,
         handleProductQtyIncrease,
         handleProductQtyDecrease,
+        handleclearLocalCart,
         handleclearCart,
         cartProducts: cart,
       }}
