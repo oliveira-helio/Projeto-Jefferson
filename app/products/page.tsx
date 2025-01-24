@@ -11,6 +11,8 @@ import debounce from "lodash.debounce";
 export default function Products() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,12 +37,14 @@ export default function Products() {
   const [showFilters, setShowFilters] = useState(false); // Estado para o modal de filtros
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+useEffect(() => {
+  if (typeof window !== 'undefined') {
     const updateIsMobile = () => setIsMobile(window.innerWidth < 768);
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile);
     return () => window.removeEventListener("resize", updateIsMobile);
-  }, []);
+  }
+}, []);
 
   // Fecha o modal ao clicar fora
   useEffect(() => {
@@ -89,25 +93,55 @@ export default function Products() {
   }, [priceRange, brand, category, subCategory, productType, router]);
 
   // Carrega produtos com filtros
+  // const loadProductsAndFilters = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const query = new URLSearchParams();
+
+  //     if (priceRange[0] !== 0 || priceRange[1] !== 500) {
+  //       query.append("minPrice", priceRange[0].toString());
+  //       query.append("maxPrice", priceRange[1].toString());
+  //     }
+
+  //     if (brand) query.append("brand", brand);
+  //     if (category) query.append("category", category);
+  //     if (subCategory) query.append("subCategory", subCategory);
+  //     if (productType) query.append("type", productType);
+
+  //     const response = await fetch(`${apiAdress}/products?${query.toString()}`);
+  //     const data = await response.json();
+  //     setProducts(data.products);
+
+  //     const filteredResponse = await fetch(
+  //       `${apiAdress}/filters?${query.toString()}`
+  //     );
+  //     const filteredData = await filteredResponse.json();
+  //     setFilteredFilters(filteredData);
+  //   } catch (error) {
+  //     console.error("Erro ao carregar produtos:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [priceRange, brand, category, subCategory, productType]);
   const loadProductsAndFilters = useCallback(async () => {
     setLoading(true);
     try {
       const query = new URLSearchParams();
-
+  
       if (priceRange[0] !== 0 || priceRange[1] !== 500) {
         query.append("minPrice", priceRange[0].toString());
         query.append("maxPrice", priceRange[1].toString());
       }
-
+  
       if (brand) query.append("brand", brand);
       if (category) query.append("category", category);
       if (subCategory) query.append("subCategory", subCategory);
       if (productType) query.append("type", productType);
-
+  
       const response = await fetch(`${apiAdress}/products?${query.toString()}`);
       const data = await response.json();
       setProducts(data.products);
-
+  
       const filteredResponse = await fetch(
         `${apiAdress}/filters?${query.toString()}`
       );
@@ -117,8 +151,10 @@ export default function Products() {
       console.error("Erro ao carregar produtos:", error);
     } finally {
       setLoading(false);
+      setIsDataLoaded(true); // Define como carregado
     }
   }, [priceRange, brand, category, subCategory, productType]);
+  
 
   // Atualiza os filtros ao soltar a barra de preços
   const debouncedUpdate = useCallback(
@@ -152,7 +188,7 @@ export default function Products() {
     if (initialProductType) setProductType(initialProductType);
   }, [searchParams]);
 
-  if (loading) {
+  if (loading || !isDataLoaded) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-4xl font-medium text-gray-700">
@@ -345,7 +381,7 @@ export default function Products() {
                 }
                 onFinalChange={(values) => {
                   setPriceRange(values as [number, number]);
-                  debouncedUpdate();
+                  setTimeout(() => debouncedUpdate(), 0);
                 }}
                 renderTrack={({ props, children }) => (
                   <div

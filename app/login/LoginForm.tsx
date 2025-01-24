@@ -1,15 +1,15 @@
 'use client'
 
 import { useState, useContext } from "react";
-import Input from "../../components/Inputs/Input"; 
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
-import Button from "../../components/MicroComponents/Button";
+import toast from "react-hot-toast";
+import { AuthContext } from "@/Contexts/AuthContext"; // Importando o contexto
 import { AiOutlineGoogle } from "react-icons/ai";
 import Link from "next/link";
-import { AuthContext } from "@/Contexts/AuthContext"; // Importando o contexto
-import toast from "react-hot-toast";
 import { useCart } from "@/Hooks/useCart";
 import { useRouter } from "next/navigation";
+import Input from "../../components/Inputs/Input"; 
+import Button from "../../components/MicroComponents/Button";
 
 const LoginForm = () => {
     const router = useRouter()
@@ -51,6 +51,18 @@ const LoginForm = () => {
                 errors={errors}
                 required
                 type="e-mail"
+                custom="
+                    peer
+					w-full
+                    p-4
+                    pt-6
+                    outline-none
+                    bg-white
+                    font-light
+                    border-2
+                    rounded-md
+                    border-solid
+                "
             />
             <Input 
                 id="password"
@@ -60,6 +72,18 @@ const LoginForm = () => {
                 errors={errors}
                 required
                 type="password"
+                custom="
+                    peer
+					w-full
+                    p-4
+                    pt-6
+                    outline-none
+                    bg-white
+                    font-light
+                    border-2
+                    rounded-md
+                    border-solid
+                "
             />
             <Button label={isLoading ? "Carregando" : "Acessar"} onClick={handleSubmit(onSubmit)}
             custom="w-[65%] text-3xl"/>

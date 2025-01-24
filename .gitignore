@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# miscelaneous
+ANOTAÇOES.txt
+
 # testing
 /coverage
 
@@ -25,11 +28,12 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
-
-# vercel
-.vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# self
+.gitignore

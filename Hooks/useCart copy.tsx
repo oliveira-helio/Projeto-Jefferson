@@ -30,12 +30,12 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
   const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(null);
 
   // Recupera o token do localStorage ao montar o componente
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedToken = localStorage.getItem('accessToken');
-      setToken(storedToken);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const storedToken = localStorage.getItem('accessToken');
+  //     setToken(storedToken);
+  //   }
+  // }, []);
 
   // Atualiza o axiosInstance sempre que o token mudar
   useEffect(() => {

@@ -1,14 +1,17 @@
 'use client'
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useContext } from "react";
 import Avatar from "../MicroComponents/Avatar";
 import { AiFillCaretDown } from "react-icons/ai";
 import Link from "next/link";
 import UserMenuItem from "./UserMenuItens";
 import BackDrop from "../MicroComponents/BackDrop";
+import { AuthContext } from "@/Contexts/AuthContext";
+
 
 const UserMenu = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+    const { isAuthenticated, isAdmin } = useContext(AuthContext);
 
     const toggleOpen = useCallback(()=>{
         setIsUserMenuOpen((prev) => !prev);
@@ -54,30 +57,40 @@ const UserMenu = () => {
                 flex-col
                 cursor-pointer
             ">
-                <div>
-                    <Link href={"/"}>
-                        <UserMenuItem onClick={toggleOpen}>Inicio</UserMenuItem>
-                    </Link>
-                    <Link href={"/orders"}>
-                        <UserMenuItem onClick={toggleOpen}>Meus Pedidos</UserMenuItem>
-                    </Link>
-                    <Link href={"/favorites"}>
-                        <UserMenuItem onClick={toggleOpen}>Meus Favoritos</UserMenuItem>
-                    </Link>
-                    <Link href={"/myAccount"}>
-                        <UserMenuItem onClick={toggleOpen}>Minha Conta</UserMenuItem>
-                    </Link>
-                    {/* <UserMenuItem onClick={() => { toggleOpen(), signOut()}}>Sair</UserMenuItem> */}
-                    
-                </div>
-                <div>
-                    <Link href={"/login"}>
-                        <UserMenuItem onClick={toggleOpen}>Acesse sua conta</UserMenuItem>
-                    </Link>
-                    <Link href={"/register"}>
-                        <UserMenuItem onClick={toggleOpen}>Cadastre-se</UserMenuItem>
-                    </Link>
-                </div>
+                {isAuthenticated ? (
+                    <div>
+                        <Link href={"/"}>
+                            <UserMenuItem onClick={toggleOpen}>Inicio</UserMenuItem>
+                        </Link>
+                        <Link href={"/orders"}>
+                            <UserMenuItem onClick={toggleOpen}>Meus Pedidos</UserMenuItem>
+                        </Link>
+                        <Link href={"/favorites"}>
+                            <UserMenuItem onClick={toggleOpen}>Meus Favoritos</UserMenuItem>
+                        </Link>
+                        <Link href={"/myAccount"}>
+                            <UserMenuItem onClick={toggleOpen}>Minha Conta</UserMenuItem>
+                        </Link>
+                        {isAdmin ? (
+                            <Link href={"/dashboard"}>
+                                <UserMenuItem onClick={toggleOpen}>Dashboard</UserMenuItem>
+                            </Link>
+                        ):null}
+                        <Link href={"/logout"}>
+                            <UserMenuItem onClick={toggleOpen}>Sair</UserMenuItem>
+                        </Link>
+                        
+                    </div>
+                ) : (
+                    <div>
+                        <Link href={"/login"}>
+                            <UserMenuItem onClick={toggleOpen}>Acesse sua conta</UserMenuItem>
+                        </Link>
+                        <Link href={"/register"}>
+                            <UserMenuItem onClick={toggleOpen}>Cadastre-se</UserMenuItem>
+                        </Link>
+                    </div>
+                )}
             </div>
         )
         }

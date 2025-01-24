@@ -13,6 +13,7 @@ interface CartContextType {
   handleclearLocalCart: () => void;
   handleclearCart: () => void;
   handleProductQtyIncrease: (product: CartProductType) => void;
+  handleProductQtyIncreaseUnit: (product: CartProductType) => void;
   handleProductQtyDecrease: (product: CartProductType) => void;
   cartProducts: CartProductType[];
 }
@@ -119,7 +120,19 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
     if (!axiosInstance) return;
 
     try {
-      await axiosInstance.put(`/${product.productId}`, { operation: "increase" });
+      await axiosInstance.put(`/${product.productId}`, { operation: "increase", quantity: product.quantity });
+      fetchCart();
+    } catch {
+      toast.error("Erro ao aumentar quantidade do produto");
+    }
+  };
+
+    // Increase the quantity of the product in the cart by 1
+  const handleProductQtyIncreaseUnit = async (product: CartProductType) => {
+    if (!axiosInstance) return;
+
+    try {
+      await axiosInstance.put(`/${product.productId}`, { operation: "increaseOne" });
       fetchCart();
     } catch {
       toast.error("Erro ao aumentar quantidade do produto");
@@ -182,6 +195,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({ childr
         handleAddProductToCart,
         handleRemoveProductFromCart,
         handleProductQtyIncrease,
+        handleProductQtyIncreaseUnit,
         handleProductQtyDecrease,
         handleclearLocalCart,
         handleclearCart,

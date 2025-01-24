@@ -14,6 +14,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, key }) => {
   const {
     handleRemoveProductFromCart,
     handleProductQtyIncrease,
+    handleProductQtyIncreaseUnit,
     handleProductQtyDecrease,
   } = useCart();
 
@@ -61,7 +62,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, key }) => {
             cartCounter={true}
             cartProduct={item}
             handleQtyIncrease={() => {
-              handleProductQtyIncrease(item);
+              handleProductQtyIncreaseUnit(item);
             }}
             handleQtyDecrease={() => {
               handleProductQtyDecrease(item);

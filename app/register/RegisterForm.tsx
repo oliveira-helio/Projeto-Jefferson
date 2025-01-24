@@ -110,25 +110,61 @@ const RegisterForm = () => {
 				errors={errors}
 				required
 				type="text"
+				custom="
+                    peer
+					w-full
+                    p-4
+                    pt-6
+                    outline-none
+                    bg-white
+                    font-light
+                    border-2
+                    rounded-md
+                    border-solid
+                "
 			/>
-			<Input
-				id="email"
-				label="E-mail"
-				disabled={isLoading}
-				register={register}
-				errors={errors}
-				required
-				type="email"
-			/>
-			<Input
-				id="password"
-				label="Senha"
-				disabled={isLoading}
-				register={register}
-				errors={errors}
-				required
-				type="password"
-			/>
+			<Input 
+                id="email"
+                label="E-mail"
+                disabled={isLoading}
+                register={register}
+                errors={errors}
+                required
+                type="email"
+                custom="
+                    peer
+					w-full
+                    p-4
+                    pt-6
+                    outline-none
+                    bg-white
+                    font-light
+                    border-2
+                    rounded-md
+                    border-solid
+                "
+            />
+            <Input 
+                id="password"
+                label="Senha"
+                disabled={isLoading}
+                register={register}
+                errors={errors}
+                required
+                type="password"
+                custom="
+                    peer
+					w-full
+                    p-4
+                    pt-6
+                    outline-none
+                    bg-white
+                    font-light
+                    border-2
+                    rounded-md
+                    border-solid
+                "
+            />
 
 			<div className="text-left text-pink-500 flex flex-col justify-start items-start w-full text-sm">
 				<p className="font-medium">Sua senha deve:</p>

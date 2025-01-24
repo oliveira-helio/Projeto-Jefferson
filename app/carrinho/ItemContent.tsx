@@ -7,19 +7,19 @@ import { useCart } from "../../Hooks/useCart";
 
 interface ItemContentProps {
   item: CartProductType;
-  key?: number;
+  itemkey?: number;
 }
 
-const ItemContent: React.FC<ItemContentProps> = ({ item, key }) => {
+const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
   const {
     handleRemoveProductFromCart,
-    handleProductQtyIncrease,
+    handleProductQtyIncreaseUnit,
     handleProductQtyDecrease,
   } = useCart();
 
   return (
     <div
-      key={key}
+      key={itemkey}
       className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 m-4 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl"
     >
       <Link href={`/product/${item.productId}`} className=" col-span-3">
@@ -61,7 +61,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item, key }) => {
             cartCounter={true}
             cartProduct={item}
             handleQtyIncrease={() => {
-              handleProductQtyIncrease(item);
+              handleProductQtyIncreaseUnit(item);
             }}
             handleQtyDecrease={() => {
               handleProductQtyDecrease(item);

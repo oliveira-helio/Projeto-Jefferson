@@ -1,20 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
    reactStrictMode: true,
-  experimental: {
-    appDir: true, // Habilita a estrutura "app"
-  },
-  // Define o diretório base do projeto como `src`
-  basePath: '',
+   experimental: {
+     appDir: true, // Habilita a estrutura "app"
+   },
+   // Define o diretório base do projeto como `src`
+   basePath: '',
    images: {
-      
-      remotePatterns:
-         [{
-            protocol: 'https',
-            hostname: 'firebasestorage.googleapis.com',
-            pathname: '/**',
-         }]
-   }
-}
-
-module.exports = nextConfig
+     remotePatterns: [
+       {
+         protocol: 'https',
+         hostname: 'firebasestorage.googleapis.com',
+         pathname: '/**',
+       },
+       {
+         protocol: 'https',
+         hostname: 'sandbox.melhorenvio.com.br',
+         pathname: '/images/shipping-companies/**',
+       },
+     ],
+   },
+ };
+ 
+ module.exports = nextConfig;
+ 

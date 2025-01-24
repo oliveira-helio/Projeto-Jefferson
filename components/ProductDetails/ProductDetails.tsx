@@ -17,6 +17,11 @@ import StyledRattingHeart from "../MicroComponents/StyledRattingHeart";
 import { useCart } from "@/Hooks/useCart";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import Delivery from "../MicroComponents/Delivery";
+import axios from "axios";
+
+type ProductId = {
+  productId: string;
+};
 
 const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [zipCode, setZipCode] = useState<string>("");
@@ -27,7 +32,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [delivery, setDelivery] = useState<DeliveryInfoType | null>(null);
   const [cartProduct, setCartProduct] = useState<CartProductType>({
-    productId: 0,
+    productId: Number(productId),
     name: "",
     brand: "",
     color: "",
@@ -98,24 +103,66 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
 
   // console.log("cartProducts ", cartProducts);
 
+  // useEffect(() => {
+  //   const loadProduct = async () => {
+  //     try {
+  //       const response = await fetch(`${apiAdress}/product/${productId}`);
+  //       if (!response.ok) throw new Error("Erro ao carregar o produto.");
+  //       const data = await response.json();
+
+  //       if (data && data.product) {
+  //         setProduct(data.product as Product);
+  //       } else {
+  //         throw new Error("Produto não encontrado.");
+  //       }
+
+  //       const selectedProduct = data.product.images.find(
+  //         (img: { product_id: number; is_generic: boolean }) =>
+  //           img.product_id === Number(productId) && !img.is_generic
+  //       );
+
+  //       if (selectedProduct) {
+  //         setSelectedColor({
+  //           productId: selectedProduct.product_id,
+  //           color: selectedProduct.color,
+  //           colorCode: selectedProduct.color_code,
+  //           imageUrl: selectedProduct.image_url,
+  //           barCode: selectedProduct.bar_code,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao carregar produto:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   loadProduct();
+  // }, [productId]);
+
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const response = await fetch(`${apiAdress}/product/${productId}`);
-        if (!response.ok) throw new Error("Erro ao carregar o produto.");
-        const data = await response.json();
-
+        console.log('productId:', productId);
+  
+        const response = await axios.get(`${apiAdress}/product`, {
+          params: { productId }, // Usa o productId diretamente
+        });
+  
+        if (response.status !== 200) throw new Error("Erro ao carregar o produto.");
+        const data = response.data;
+  
         if (data && data.product) {
           setProduct(data.product as Product);
         } else {
           throw new Error("Produto não encontrado.");
         }
-
+  
         const selectedProduct = data.product.images.find(
           (img: { product_id: number; is_generic: boolean }) =>
             img.product_id === Number(productId) && !img.is_generic
         );
-
+  
         if (selectedProduct) {
           setSelectedColor({
             productId: selectedProduct.product_id,
@@ -131,7 +178,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
         setLoading(false);
       }
     };
-
+  
     loadProduct();
   }, [productId]);
 
@@ -301,7 +348,8 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
             </div>
 
             {/* CEP CONSULTOR */}
-            {/* <Delivery
+            <div></div>
+            <Delivery
               cep={zipCode}
               handleCepChange={(cep) => setZipCode(cep)}
               handleDeliverySelection={(
@@ -321,16 +369,10 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
               productLength={product.length}
               productHeight={product.height}
               productWidth={product.width}
-            /> */}
+              productId={product.product_id}
+              productPrice={product.price}
+            />
 
-            {/* TODO criar componente de busca de cep chamado Delivery com as
-            propriedades: cep, handleCepChangeque deverá ter um formulario
-            caso o cep não tenha sido preenchido, vai buscar os ceps pelo
-            "melhor envio", trazer as opçoes disponiveis, ex. correios pac,
-            correios sedex, etc... com seus respectivos prazos de entrega e
-            valores, e ter opção para o cliente selecionar a opção de entrega */}
-
-            {/* FRETE VALUE // TODO FRETE VALUE */}
           </div>
         </div>
       </section>

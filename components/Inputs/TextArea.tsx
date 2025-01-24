@@ -3,64 +3,44 @@
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { ChangeEventHandler } from "react";
 
-interface InputProps {
+interface TextAreaProps {
 	id: string;
 	label: string;
-	type?: string;
 	disabled?: boolean;
 	required?: boolean;
 	register: UseFormRegister<FieldValues> ;
 	errors: FieldErrors;
 	onChange?: ChangeEventHandler<HTMLInputElement>;
 	custom?: string,
-	min?: number
 }
 
-const Input: React.FC<InputProps> = ({
+const TextArea: React.FC<TextAreaProps> = ({
 	id,
 	label,
-	type,
 	disabled,
 	required,
 	register,
 	errors,
 	custom,
-	min
 }) => {
 	
 	return (
 		<div className="w-full relative">
-			<input
+			<textarea
 				autoComplete="off"
 				id={id}
 				disabled={disabled}
-				{...register(id, {
-					required,
-					...(type === "email" && {
-					  pattern: {
-						 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-						 message: "Insira um e-mail válido no formato exemplo@exemplo.com ou similar",
-					  },
-					}),
-					...(type === "password" && {
-						pattern: {
-						  value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.,-_])[A-Za-z\d@$!%*?&]{8,20}$/,
-						  message: "Senha inválida",
-						},
-					 }),
-				 })}
+				{...register(id, { required })}
 				placeholder=""
-				type={type}
-				min={min}
 				className={`
                     transition
                     disabled:opacity-70
                     disabled:cursor-not-allowed
 					${custom ? custom : ""}
-                    ${errors[id] ? "border-red-400" : "border-pink-300"}
+                    ${errors[id] ? "border-red-400" : "border-pink-200"}
                     ${errors[id]
 						? "focus:border-red-400"
-						: "focus:border-pink-200"
+						: "focus:border-pink-300"
 					}
                     `}
 			/>
@@ -93,4 +73,4 @@ const Input: React.FC<InputProps> = ({
 	);
 };
 
-export default Input;
+export default TextArea;

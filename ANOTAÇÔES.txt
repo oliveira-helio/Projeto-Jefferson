@@ -1,1 +1,45 @@
 imagens: firebase storage
+
+
+app/
+├── dashboard/
+│   ├── layout.tsx       // Layout com o menu lateral
+│   ├── page.tsx         // Página inicial (resumo do dashboard)
+│   ├── login/           // Página de login do administrador
+│   │   ├── page.tsx
+│   ├── produtos/        // CRUD de produtos
+│   │   ├── page.tsx
+│   │   ├── [id]/        // Detalhes/edição de produto
+│   │       ├── page.tsx
+│   ├── pedidos/         // Visualização de pedidos
+│       ├── page.tsx
+│       ├── [id]/        // Detalhes de pedido
+│           ├── page.tsx
+
+
+
+2. Validação diretamente no esquema de formulário
+Você pode simplificar a validação de campos (ex.: altura, peso, estoque) usando uma biblioteca como o yup ou zod, integradas ao react-hook-form. Assim, elimina a necessidade de validações manuais com onChange.
+
+Exemplo com zod:
+
+tsx
+Copiar
+Editar
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const productSchema = z.object({
+  name: z.string().nonempty("Nome é obrigatório."),
+  brand: z.string().nonempty("Marca é obrigatória."),
+  height: z.number().min(0, "A altura não pode ser negativa."),
+  weight: z.number().min(0, "O peso não pode ser negativo."),
+  // Outros campos...
+});
+
+// Na inicialização do formulário
+const { register, handleSubmit, formState: { errors } } = useForm<FieldValues>({
+  resolver: zodResolver(productSchema),
+});
+Assim, você remove os onChange individuais e concentra a validação no esquema.
+

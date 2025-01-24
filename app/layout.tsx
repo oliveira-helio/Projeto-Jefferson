@@ -1,14 +1,11 @@
+
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import NavBar from "../components/NavBar/NavBar";
-import Footer from "../components/Footer/Footer";
-import Container from "../components/Container";
-import WhatsAppButon from "../components/MicroComponents/WhatsappButon";
 import CartProvider from "@/providers/CartProvider";
-import { Toaster } from "react-hot-toast";
 import { AuthProvider } from '@/Contexts/AuthContext';
-
+import { Toaster } from "react-hot-toast";
+import ClientWrapper from "@/components/ClientWrapper";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,6 +22,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="pt-br">
       <body className={`${poppins.className} text-slate-700 bg-[#fafafa]`}>
@@ -37,18 +35,9 @@ export default function RootLayout({
           }}
         />
         <CartProvider>
-        <AuthProvider>
-
-              <div className="flex flex-col min-h-screen">
-                <NavBar />
-                <Container>
-                  <main className="flex-grow">{children}</main>
-                </Container>
-                <WhatsAppButon />
-                <Footer />
-              </div>
-
-        </AuthProvider>
+          <AuthProvider>
+            <ClientWrapper>{children}</ClientWrapper>
+          </AuthProvider>
         </CartProvider>
       </body>
     </html>

@@ -8,6 +8,7 @@ import { FieldValues } from 'react-hook-form';
 
 interface AuthContextData {
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (credentials: { email: string; password: string } | FieldValues) => Promise<void>;
   logout: () => void;
 }
@@ -16,15 +17,20 @@ export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { fetchCart, handleclearLocalCart } = useCart();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const { fetchCart, handleclearLocalCart, cart } = useCart();
   const router = useRouter();
 
   const login = async (credentials: FieldValues) => {
     try {
       const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
       localStorage.setItem('accessToken', response.data.accessToken);
+      await fetchCart(); 
       setIsAuthenticated(true);
-      fetchCart(); 
+      if (response.data.user.isAdmin) {
+        setIsAdmin(true);
+      }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
@@ -32,8 +38,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = useCallback(async () => {
     localStorage.removeItem('accessToken');
+    setIsAdmin(false);
     handleclearLocalCart();
-    setIsAuthenticated(false);
+    setIsAuthenticated(false);  
 
     try {
       await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
@@ -113,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import apiAdress from "@/utils/api";
+import Image from "next/image";
+import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 
 interface DeliveryProps {
   cep: string;
@@ -9,10 +12,13 @@ interface DeliveryProps {
     deliveryFee: number,
     deliveryTime: string
   ) => void;
+  productId: string  | number;
   productWeight: number;
   productLength: number;
   productHeight: number;
   productWidth: number;
+  productPrice: number;
+
 }
 
 const Delivery: React.FC<DeliveryProps> = ({
@@ -23,6 +29,8 @@ const Delivery: React.FC<DeliveryProps> = ({
   productLength,
   productHeight,
   productWidth,
+  productId,
+  productPrice
 }) => {
   const [freteOptions, setFreteOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,17 +41,23 @@ const Delivery: React.FC<DeliveryProps> = ({
     setLoading(true);
 
     try {
-      const response = await axios.post("API_ENDPOINT_DO_MELHOR_ENVIO", {
-        origem: "74255060", // Substitua com o CEP de origem
-        destino: cep,
-        peso: productWeight,
-        comprimento: productLength,
-        altura: productHeight,
-        largura: productWidth,
+      const response = await axios.post(`${apiAdress}/calculate-unitary-shipping`, {
+        id: productId,
+        destiny: cep,
+        weight: productWeight,
+        length: productLength,
+        height: productHeight,
+        width: productWidth,
+        price: productPrice,
       });
+
+      const data = JSON.stringify(response.data.products);
+      console.log('res cep', data);
 
       if (response.data) {
         setFreteOptions(response.data); // Processar os dados de resposta
+        console.log("res cep2",response.data);
+        
       }
     } catch (error) {
       console.error("Erro ao buscar opções de frete:", error);
@@ -74,44 +88,69 @@ const Delivery: React.FC<DeliveryProps> = ({
           fetchFreteOptions(cep);
         }}
       >
-        <label>
-          CEP:
-          <input
-            type="text"
-            value={cep}
-            onChange={(e) => handleCepChange(e.target.value)}
-            maxLength={8}
-            placeholder="Digite seu CEP"
-          />
-        </label>
-        <button type="submit">Buscar frete</button>
-        <button type="button" onClick={openCorreiosPopup}>
-          Não sei meu CEP
-        </button>
+        <div className="flex flex-col w-fit">
+          <div className="flex gap-2">
+            <span className="text-lg font-medium">Calcule o frete: </span>
+            <button type="button" onClick={openCorreiosPopup} className="text-xs">Não sei meu CEP</button>
+          </div>
+          <div className="flex flex-row">
+            <label >
+              <input
+                type="text"
+                value={cep}
+                onChange={(e) => handleCepChange(e.target.value)}
+                maxLength={8}
+                placeholder="  Digite seu CEP"
+                className="border border-solid rounded-l-md border-pink-400"
+              />
+            </label>
+            <button type="submit" className="border-solic border-px border-pink-400">
+              <SearchSharpIcon/>
+            </button>
+          </div>
+        </div>
+          
       </form>
+      <button type="button" onClick={openCorreiosPopup}/>
+
 
       {loading && <p>Carregando opções de frete...</p>}
 
       {freteOptions.length > 0 && (
         <div>
-          <h3>Opções de frete:</h3>
-          <ul>
+          <h3 className="text-lg font-medium">Opções de frete:</h3>
+          <ul className="flex flex-col gap-4">
             {freteOptions.map((option, index) => (
-              <li key={index}>
-                <label>
-                  <input
-                    type="radio"
-                    name="frete"
-                    onChange={() =>
-                      handleDeliverySelection(
-                        option.service,
-                        option.price,
-                        option.delivery_time
-                      )
-                    }
-                  />
-                  Tipo: {option.service} - Prazo: {option.delivery_time} dias -
-                  Valor: R${option.price}
+              !option.name || !option.price || !option.delivery_time ?
+                null
+              :
+
+                <li key={index}>
+                  <label>
+                    <div className="w-full relative flex flex-row gap-4 justify-around">
+                      <input
+                        type="radio"
+                        name="frete"
+                        onChange={() =>
+                          handleDeliverySelection(
+                            option.name,
+                            option.price,
+                            option.delivery_time
+                          )
+                        }
+                      />
+                      <div className=" w-full relative flex flex-row justify-start items-center gap-2 justify-items-start">
+                        <div className="w-1/4">
+                          <img
+                            src={option.company.picture}
+                            
+                            alt="Picture of the author"
+                            className="contain"
+                          />
+                        </div>
+                      <p className="text-lg font-medium"><span className="text-lg font-semibold">Tipo:</span> {option.name} - <span className="text-lg font-semibold">Prazo:</span> {option.delivery_time} dias - <span className="text-lg font-semibold">Valor:</span> R${option.price}</p>
+                    </div>
+                  </div>
                 </label>
               </li>
             ))}
