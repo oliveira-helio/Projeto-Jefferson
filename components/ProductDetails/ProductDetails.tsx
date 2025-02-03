@@ -25,7 +25,7 @@ type ProductId = {
 
 const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [zipCode, setZipCode] = useState<string>("");
-  const { handleAddProductToCart, cartProducts } = useCart();
+  const { handleAddProductToCart, cart } = useCart();
   const productId = useParams().productId as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -101,7 +101,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
     }));
   }, [cartProduct]);
 
-  // console.log("cartProducts ", cartProducts);
+  // console.log("cart ", cart);
 
   // useEffect(() => {
   //   const loadProduct = async () => {
@@ -225,8 +225,8 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   }, [cartProduct]);
 
   useEffect(() => {
-    console.log("Carrinho", cartProducts);
-  }, [cartProducts]);
+    console.log("Carrinho", cart);
+  }, [cart]);
 
   if (loading) {
     return <div>Carregando produto...</div>; // Exibe um estado de carregamento
@@ -326,7 +326,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
 
             {/* BOTÃO SACOLA */}
             <>
-              {cartProducts?.some(
+              {cart?.some(
                 (item) =>
                   item.productId === cartProduct.productId &&
                   item.colorCode === cartProduct.colorCode

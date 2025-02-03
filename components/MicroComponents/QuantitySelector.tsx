@@ -16,15 +16,22 @@ const QuantitySelector: React.FC<quantyitySelectorProps> = ({
   handleQtyIncrease,
   handleQtyDecrease,
 }) => {
+  const onIncreaseClick = () => {
+    handleQtyIncrease(cartProduct);
+  };
+
+  const onDecreaseClick = () => {
+    handleQtyDecrease(cartProduct);
+  };
   return (
     <div className="flex gap-8 items-center">
       {cartCounter ? null : <div className="font-semibold">Quantidade</div>}
       <div className="flex gap-4 items-center text-base">
-        <button className={buttonStyle} onClick={handleQtyDecrease}>
+        <button className={buttonStyle} onClick={onDecreaseClick}>
           -
         </button>
         <div>{cartProduct.quantity}</div>
-        <button className={buttonStyle} onClick={handleQtyIncrease}>
+        <button className={buttonStyle} onClick={onIncreaseClick}>
           +
         </button>
       </div>

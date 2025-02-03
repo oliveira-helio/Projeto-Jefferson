@@ -11,9 +11,10 @@ interface InputProps {
 	required?: boolean;
 	register: UseFormRegister<FieldValues> ;
 	errors: FieldErrors;
-	onChange?: ChangeEventHandler<HTMLInputElement>;
+	onChange?: ChangeEventHandler<HTMLInputElement> | ((e: React.ChangeEvent<HTMLInputElement>) => void)
 	custom?: string,
-	min?: number
+	min?: number,
+	value?: string,
 }
 
 const Input: React.FC<InputProps> = ({
@@ -25,7 +26,9 @@ const Input: React.FC<InputProps> = ({
 	register,
 	errors,
 	custom,
-	min
+	min, 
+	value,
+	onChange,
 }) => {
 	
 	return (
@@ -52,6 +55,8 @@ const Input: React.FC<InputProps> = ({
 				placeholder=""
 				type={type}
 				min={min}
+				value={value}
+				onChange={onChange}
 				className={`
                     transition
                     disabled:opacity-70

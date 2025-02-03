@@ -26,8 +26,8 @@ const Sidebar = () => {
       label: 'Produtos',
       subLinks: [
         { href: '/dashboard/produtos/cadastrar', label: 'Cadastrar' },
-        { href: '/dashboard/produtos/editar', label: 'Editar' },
-        { href: '/dashboard/produtos/deletar', label: 'Deletar' },
+        { href: '/dashboard/produtos/alterar', label: 'Alterar' },
+        { href: '/dashboard/produtos/remover', label: 'Remover' },
       ],
     },
     { href: '/dashboard/pedidos', label: 'Pedidos', subLinks: [] },
@@ -40,44 +40,53 @@ const Sidebar = () => {
         <ul>
           {links.map((link) => (
             <li key={link.href}>
-              <div
-                className={`flex flex-row justify-between hover:bg-blue-600 ${
-                  pathname === link.href ? 'bg-blue-500' : ''
-                }`}
-              >
+            <div
+              className={`flex flex-row justify-between hover:bg-blue-600  ${
+                pathname === link.href ? 'bg-blue-500' : ''
+              }`}
+            >
+              {link.subLinks.length === 0 ? (
+                // Se não houver subLinks, envolvemos o label com o Link
+                <Link
+                  href={link.href}
+                  className={`block px-4 py-2 w-full${
+                    pathname === link.href ? 'bg-blue-500' : ''
+                  } hover:bg-blue-600`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
                 <button
                   onClick={() => toggleMenu(link.label)}
-                  className="pl-4 text-lg text-black hover:text-gray-300 flex justify-between w-full items-center"
+                  className="text-lg text-black hover:text-gray-300 flex justify-between w-full items-center"
                 >
                   <div className="block px-4 py-2">{link.label}</div>
-                  {link.subLinks.length > 0 && (
-                    <>
-                      {expandedMenus.includes(link.label) ? (
-                        <KeyboardArrowUpIcon fontSize='medium'/>
-                      ) : (
-                        <KeyboardArrowDownIcon fontSize='medium'/>
-                      )}
-                    </>
+                  {expandedMenus.includes(link.label) ? (
+                    <KeyboardArrowUpIcon fontSize="medium" />
+                  ) : (
+                    <KeyboardArrowDownIcon fontSize="medium" />
                   )}
                 </button>
-              </div>
-              {expandedMenus.includes(link.label) && link.subLinks.length > 0 && (
-                <ul className="pl-8">
-                  {link.subLinks.map((subLink) => (
-                    <li key={subLink.href}>
-                      <Link
-                        href={subLink.href}
-                        className={`block px-4 py-2 ${
-                          pathname === subLink.href ? 'bg-blue-500' : ''
-                        } hover:bg-blue-600`}
-                      >
-                        {subLink.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
               )}
-            </li>
+            </div>
+            {expandedMenus.includes(link.label) && link.subLinks.length > 0 && (
+              <ul className="pl-8">
+                {link.subLinks.map((subLink) => (
+                  <li key={subLink.href}>
+                    <Link
+                      href={subLink.href}
+                      className={`block px-4 py-2 ${
+                        pathname === subLink.href ? 'bg-blue-500' : ''
+                      } hover:bg-blue-600`}
+                    >
+                      {subLink.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+          
           ))}
         </ul>
       </nav>

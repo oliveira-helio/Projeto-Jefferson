@@ -36,7 +36,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const productRegister = async (data: FieldValues) => {
     console.log("tentou registrar produto")
     try {
-      const response = await axios.post(`${apiAdress}/products/register`, data);
+      const response = await axios.post(`${apiAdress}/product/register`, data);
       toast.success("Produto cadastrado com sucesso!");
       return response.data;
     } catch (error) {
@@ -48,7 +48,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const productEdit = async (data: FieldValues) => {
     try {
-      const response = await axios.put(`${apiAdress}/products/edit`, data);
+      const response = await axios.put(`${apiAdress}/product/edit`, data);
       toast.success("Produto alterado com sucesso!");
       return response.data;
     } catch (error) {

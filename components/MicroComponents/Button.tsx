@@ -15,13 +15,13 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({
   label,
-  disabled,
   outline,
   small,
   custom,
   icon: Icon,
   onClick,
   customsize = 24,
+  disabled,
 }) => {
   return (
     <button
@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={`
       cursor-pointer
-      disabled: Opacity-70
+      disabled:Opacity-70
       hover:bg-opacity-80
       ${disabled ? "cursor-not-allowed bg-opacity-80" : "cursor-pointer"}
       rounded-full
