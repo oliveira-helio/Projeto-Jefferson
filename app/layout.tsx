@@ -1,11 +1,11 @@
-
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import CartProvider from "@/providers/CartProvider";
-import { AuthProvider } from '@/Contexts/AuthContext';
+import { AuthProvider } from "@/Contexts/AuthContext";
 import { Toaster } from "react-hot-toast";
 import ClientWrapper from "@/components/ClientWrapper";
+import AddressProvider from "@/providers/CartProvider copy";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,7 +22,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="pt-br">
       <body className={`${poppins.className} text-slate-700 bg-[#fafafa]`}>
@@ -34,11 +33,13 @@ export default function RootLayout({
             },
           }}
         />
-        <CartProvider>
-          <AuthProvider>
-            <ClientWrapper>{children}</ClientWrapper>
-          </AuthProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <AddressProvider>
+              <ClientWrapper>{children}</ClientWrapper>
+            </AddressProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

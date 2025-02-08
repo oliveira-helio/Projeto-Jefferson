@@ -6,16 +6,20 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import axios, { AxiosInstance } from "axios";
-import { CartProductType } from "@/utils/types";
+import axios from "axios";
+import { CartProductType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
+import { useAuth } from "@/Contexts/AuthContext";
 
 interface CartContextType {
   cart: CartProductType[];
   cartTotalQty: number;
-  fetchCart: () => void;
+  selectedProducts:  CartProductType[];
+  fetchCart: () => Promise<void>;
+  syncLocalCartToBackend: () => Promise<void>;
   handleAddProductToCart: (product: CartProductType) => void;
+  handleSelectProduct: (product: CartProductType) => void;
   handleRemoveProductFromCart: (product: CartProductType) => void;
   handleclearLocalCart: () => void;
   handleclearCart: () => void;
@@ -28,35 +32,29 @@ interface CartContextProviderProps {
   children: ReactNode;
 }
 
-const API_URL = `${apiAdress}/cart`;
 const CartContext = createContext<CartContextType | null>(null);
 
 export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   children,
 }) => {
   const [cart, setCart] = useState<CartProductType[]>([]);
-  const [token, setToken] = useState<string | null>(null);
-  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(
-    null
-  );
+  const [selectedProducts, setSelectedProducts] = useState<CartProductType[]>([]);
+  const { accessToken } = useAuth()
 
   // Fetch the client cart
   const fetchCart = useCallback(async () => {
-    if (!axiosInstance) return;
+    const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     try {
-      const response = await axiosInstance.get("/");
+      const response = await axios.get(`${apiAdress}/cart/get`, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        },
+      });
       const serverCart = response.data.products;
-
-      // Merge local cart with server cart
-      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const mergedCart = mergeCarts(localCart, serverCart);
-
-      setCart(mergedCart);
-      localStorage.setItem("cart", JSON.stringify(mergedCart)); // Save merged cart to localStorage
-
-      // Sync merged cart with backend
-      await syncCartWithBackend(mergedCart);
+      setCart(serverCart);
+      localStorage.setItem("cart", JSON.stringify(serverCart));
     } catch (error) {
       if (
         axios.isAxiosError(error) &&
@@ -68,49 +66,43 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         toast.error("Erro ao buscar o carrinho");
       }
     }
-  }, [axiosInstance]);
-
-  // Merge local cart with server cart
-  const mergeCarts = (
-    localCart: CartProductType[],
-    serverCart: CartProductType[]
-  ): CartProductType[] => {
-    const mergedCart = [...localCart];
-
-    serverCart.forEach((serverProduct) => {
-      const localProductIndex = mergedCart.findIndex(
-        (localProduct) => localProduct.productId === serverProduct.productId
-      );
-
-      if (localProductIndex !== -1) {
-        // If product exists in local cart, update the quantity
-        mergedCart[localProductIndex].quantity += serverProduct.quantity;
-      } else {
-        // If product does not exist in local cart, add it
-        mergedCart.push(serverProduct);
-      }
-    });
-
-    return mergedCart;
-  };
+  }, [accessToken]);
 
   // Sync cart with backend
-  const syncCartWithBackend = async (cart: CartProductType[]) => {
-    if (!axiosInstance) return;
+  const syncLocalCartToBackend = useCallback( async () => {
+    const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    
+    if (localCart.length === 0) {
+      await fetchCart();
+      return;
+    };
 
     try {
-      await axiosInstance.post("/sync", { products: cart });
+      
+      await axios.post(`${apiAdress}/cart/sync`, 
+        { 
+          products: localCart 
+        }, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        },
+      });
+
+      localStorage.removeItem("cart");
+      await fetchCart();
       toast.success("Carrinho sincronizado com sucesso!");
     } catch (error) {
-      toast.error("Erro ao sincronizar o carrinho");
+      console.error(error);
+      toast.error("Erro ao sincronizar o carrinho local com o backend");
     }
-  };
+  }, [fetchCart, accessToken]);
 
   const handleAddProductToCart = async (product: CartProductType) => {
-    // Usuário não logado: salva no estado local
+    // user not logged: saves in localstorage
     if (!localStorage.getItem("accessToken")) {
       setCart((prev) => {
-        // Verifica se o produto já está no carrinho
+        // verify if the product is already in cart
         const existingProduct = prev.find(
           (item) => item.productId === product.productId
         );
@@ -122,34 +114,47 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
               : item
           );
         } else {
-          updatedCart = [...prev, product]; // Adiciona novo produto
+          updatedCart = [...prev, product]; // adds to cart
         }
-        localStorage.setItem("cart", JSON.stringify(updatedCart)); // Save to localStorage
+        localStorage.setItem("cart", JSON.stringify(updatedCart)); // Saves in localStorage
         return updatedCart;
       });
       toast.success("Produto adicionado ao carrinho localmente!");
       return;
     }
 
-    // Usuário logado: envia ao backend
+    // Logged user: sends to backend
     try {
-      if (!axiosInstance)
-        throw new Error("Erro na configuração do cliente HTTP.");
-
-      // Verifica se o produto já está no carrinho
+      // verify if the product is already in cart
       if (cart.some((item) => item.productId === product.productId)) {
         handleProductQtyIncrease(product);
         return;
       }
 
-      // Envia a requisição ao backend
-      await axiosInstance.post("/cart", product);
-      fetchCart(); // Atualiza o carrinho com dados do servidor
+      // If doesn't, sends the req to backend
+      await axios.post(`${apiAdress}/cart/add`, product, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
+      });
+      fetchCart(); // Updates cart with backend's data
       toast.success("Produto adicionado à sacola!");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao adicionar produto ao carrinho.");
     }
+  };
+
+  // Selects/Unselects products to be paid
+  const handleSelectProduct = (product: CartProductType) => {
+    console.log('handleSelectProduct:product', product);
+    
+    setSelectedProducts((prevSelected) =>
+      prevSelected.some((p) => p.productId === product.productId  )
+        ? prevSelected.filter((p) => p.productId !== product.productId      ) // Unselect if already selected
+        : [...prevSelected, product] // Select if not selected
+    );
   };
 
   // Removes product from cart
@@ -160,10 +165,14 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
       });
       return;
     }
-    if (!axiosInstance) return;
 
     try {
-      await axiosInstance.delete(`/${product.productId}`);
+      await axios.delete(`${apiAdress}/cart/remove/${product.productId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
+      });
       fetchCart();
       toast.success("Produto removido da sacola");
     } catch {
@@ -172,27 +181,61 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   };
 
   // Increase the quantity of the product in the cart
-  const handleProductQtyIncrease = async (product: CartProductType) => {
-    if (!axiosInstance) return;
-
+  const handleProductQtyIncrease = async (product: CartProductType) => { 
+    if (!localStorage.getItem("accessToken")) {
+      setCart((prev) => {
+        const updatedCart = prev.map((item) =>
+          item.productId === product.productId
+            ? { ...item, quantity: item.quantity + product.quantity }
+            : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
+      });
+      toast.success("Quantidade aumentada localmente!");
+      return;
+    }
+ 
     try {
-      await axiosInstance.put(`/${product.productId}`, {
+      await axios.put(`${apiAdress}/cart/update/${product.productId}`, {
         operation: "increase",
         quantity: product.quantity,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
       });
       fetchCart();
-    } catch {
+    } catch (error) {
       toast.error("Erro ao aumentar quantidade do produto");
     }
   };
 
   // Increase the quantity of the product in the cart by 1
   const handleProductQtyIncreaseUnit = async (product: CartProductType) => {
-    if (!axiosInstance) return;
+    if (!localStorage.getItem("accessToken")) {
+      setCart((prev) => {
+        const updatedCart = prev.map((item) =>
+          item.productId === product.productId
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
+      });
+      toast.success("Quantidade aumentada localmente!");
+      return;
+    }
 
     try {
-      await axiosInstance.put(`/${product.productId}`, {
+      await axios.put(`${apiAdress}/cart/update/${product.productId}`, {
         operation: "increaseOne",
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
       });
       fetchCart();
     } catch {
@@ -202,15 +245,29 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Decrease the quantity of the product in the cart
   const handleProductQtyDecrease = async (product: CartProductType) => {
-    if (!axiosInstance) return;
-
-    if (product.quantity === 1) {
+    if (!localStorage.getItem("accessToken")) {
+      if (product.quantity === 1) return; // Não permite diminuir abaixo de 1
+      setCart((prev) => {
+        const updatedCart = prev.map((item) =>
+          item.productId === product.productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
+      });
+      toast.success("Quantidade diminuída localmente!");
       return;
     }
 
     try {
-      await axiosInstance.put(`/${product.productId}`, {
+      await axios.put(`${apiAdress}/cart/update/${product.productId}`, {
         operation: "decrease",
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
       });
       fetchCart();
     } catch {
@@ -228,11 +285,16 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   const handleclearCart = async () => {
     if (!localStorage.getItem("accessToken")) {
       handleclearLocalCart();
+      return;
     }
-    if (!axiosInstance) return;
 
     try {
-      await axiosInstance.delete(`/`);
+      await axios.delete(`${apiAdress}/cart/clear`, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        }
+      });
       handleclearLocalCart();
       toast.success("Carrinho limpo");
     } catch {
@@ -240,40 +302,23 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
     }
   };
 
-  // Recovers the token from localStorage when building the component
+
+  // Builds selected products in localstorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("accessToken");
-      setToken(storedToken);
+      const storedSelectedProducts = localStorage.getItem("selectedProducts");
+      if (storedSelectedProducts) {
+        setSelectedProducts(JSON.parse(storedSelectedProducts));
+      }
     }
   }, []);
 
-  // Fetch cart when building the component
+  // Saves selected products in localstorage whenever it changes
   useEffect(() => {
-    if (axiosInstance) {
-      fetchCart();
-    } else {
-      // Fetch cart from localStorage if not logged in
-      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCart(localCart);
-    }
-  }, [axiosInstance, fetchCart]);
-
-  // Updates axiosInstance every time that the token changes
-  useEffect(() => {
-    if (token) {
-      const instance = axios.create({
-        baseURL: API_URL,
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: `Bearer ${token}`,
-        },
-      });
-      setAxiosInstance(() => instance);
-    }
-  }, [token]);
-
-  // Sincronize cart between tabs
+      localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  }, [selectedProducts]);
+  
+  // Sincronize cart and between tabs
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (event.key === "cart") {
@@ -288,17 +333,49 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
     };
   }, []);
 
-  // Watch changes in cart
+  // Sincronize selected Products between tabs
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "selectedProducts") {
+        const updatedSelectedProducts = localStorage.getItem("selectedProducts");
+        setSelectedProducts(updatedSelectedProducts ? JSON.parse(updatedSelectedProducts) : []);
+      }
+    };
+  
+    window.addEventListener("storage", handleStorage);
+    return () =>  window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCart(storedCart);
+  }, []);
+
+  
+  // Debug: 
+  // ---------- Watch changes in cart
   useEffect(() => {
     console.log("carrinho mudou:", cart);
   }, [cart]);
+
+  // ---------- Watch changes in selectedProducts
+  useEffect(() => {
+    if (selectedProducts.length>0){
+      const items = selectedProducts.map((item)=>item.productId)
+      console.log("selected mudou:", items);
+    } else { console.log("selected mudou:", localStorage.getItem('selectedProducts')) }
+  }, [selectedProducts]);
+  
 
   return (
     <CartContext.Provider
       value={{
         cart,
         cartTotalQty: cart.length,
+        selectedProducts,
+        handleSelectProduct,
         fetchCart,
+        syncLocalCartToBackend,
         handleAddProductToCart,
         handleRemoveProductFromCart,
         handleProductQtyIncrease,

@@ -26,7 +26,7 @@ type ProductId = {
 const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   const [zipCode, setZipCode] = useState<string>("");
   const { handleAddProductToCart, cart } = useCart();
-  const productId = useParams().productId as string;
+  const productId = useParams()!.productId as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -44,9 +44,9 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
     image: "",
     quantity: 0,
     deliveryFee: 0,
-    deliveryCep: "",
-    deliveryType: "",
-    deliveryTime: "",
+    deliveryCep: null,
+    deliveryType: null,
+    deliveryTime: null,
   });
 
   const [isProductInCart, setIsProductInCart] = useState(false);
@@ -197,10 +197,10 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
           barCode: selectedColor.barCode,
           image: selectedColor.imageUrl,
           quantity: prev.quantity || 1,
-          deliveryFee: 10,
-          deliveryCep: "74255060",
-          deliveryType: " pac",
-          deliveryTime: "5 dias",
+          deliveryFee: 0,
+          deliveryCep: "",
+          deliveryType: "",
+          deliveryTime: "",
           // TODO : adicionar dados de frete dinamicamente
           // deliveryFee: delivery.fee || 19.9,
           // deliveryCep: delivery.cep || "74255060",

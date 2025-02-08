@@ -18,10 +18,22 @@ export type CartProductType = {
   barCode: number;
   image: string;
   quantity: number;
-  deliveryFee: number;
-  deliveryCep: string;
-  deliveryType: string;
-  deliveryTime: string;
+  deliveryFee: number | null;
+  deliveryCep: string | null | undefined;
+  deliveryType: string | null;
+  deliveryTime: string | null;
+};
+
+export type UserAddressType = {
+  addressId?: number;
+  isMainAddress?: boolean;
+  cep : string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
 };
 
 export type DeliveryInfoType = {

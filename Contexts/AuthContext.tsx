@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useEffect, useState, useContext, useCallback } from 'react';
 import axios from 'axios';
 import apiAdress from '@/utils/api';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,7 @@ interface AuthContextData {
   isAdmin: boolean;
   login: (credentials: { email: string; password: string } | FieldValues) => Promise<void>;
   logout: () => void;
+  accessToken: string | null;
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -18,19 +19,20 @@ export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const { fetchCart, handleclearLocalCart, cart } = useCart();
+  const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'))
   const router = useRouter();
 
   const login = async (credentials: FieldValues) => {
     try {
       const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
-      localStorage.setItem('accessToken', response.data.accessToken);
-      await fetchCart(); 
+      localStorage.setItem('accessToken', response.data.accessToken);    
+      setAccessToken(response.data.accessToken);
+      
       setIsAuthenticated(true);
       if (response.data.user.isAdmin) {
         setIsAdmin(true);
       }
+      return response.data.accessToken;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
@@ -39,7 +41,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = useCallback(async () => {
     localStorage.removeItem('accessToken');
     setIsAdmin(false);
-    handleclearLocalCart();
     setIsAuthenticated(false);  
 
     try {
@@ -47,12 +48,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
-  }, [handleclearLocalCart]);
+  }, []);
 
   const renewToken = async () => {
     try {
       const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
       localStorage.setItem('accessToken', response.data.accessToken);
+      setAccessToken(response.data.accessToken);    
     } catch (error) {
       console.error('Erro ao renovar token:', error);
       logout();
@@ -74,6 +76,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
+  // Sincronize `isAuthenticated` between tabs
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'accessToken') {
+        setIsAuthenticated(!!event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Sincronize token and between tabs
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "accessToken") {
+        const updatedToken = localStorage.getItem("accessToken");
+        setAccessToken(updatedToken);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   // Periodicaly renew the access token
   useEffect(() => {
     const interval = setInterval(() => {
@@ -85,12 +117,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(interval);
   }, []);
 
+  // Change accessToken when updated
+  useEffect(()=>{
+    const newToken = localStorage.getItem('accessToken')
+    setAccessToken(newToken)
+  }, [localStorage.getItem('accessToken')])
+
+
   // Logout automatically when inactive
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
     const handleTimeout = async () => {
       await logout();
+      localStorage.removeItem('cart')
       router.push('/');
     };
 
@@ -120,8 +160,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout, accessToken }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth deve ser usado dentro de AuthProvider");
+  }
+  return context;
 };
