@@ -1,14 +1,10 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MdCheckCircle } from "react-icons/md";
 import { Product, ProductDetailsProps } from "@/utils/interfaces";
-import apiAdress from '@/utils/api'
-import {
-  CartProductType,
-  DeliveryInfoType,
-  SelectedColorType,
-} from "@/utils/types";
+import apiAdress from "@/utils/api";
+import { CartProductType, SelectedColorType } from "@/utils/types";
 import ColorSelector from "../MicroComponents/ColorSelector";
 import QuantitySelector from "../MicroComponents/QuantitySelector";
 import Button from "../MicroComponents/Button";
@@ -18,19 +14,17 @@ import { useCart } from "@/Hooks/useCart";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import Delivery from "../MicroComponents/Delivery";
 import axios from "axios";
+import { useAddress } from "@/Hooks/useAddress";
+import toast from "react-hot-toast";
 
-type ProductId = {
-  productId: string;
-};
-
-const   ProductDetails: React.FC<ProductDetailsProps> = () => {
-  const [zipCode, setZipCode] = useState<string>("");
+const ProductDetails: React.FC<ProductDetailsProps> = () => {
   const { handleAddProductToCart, cart } = useCart();
   const productId = useParams()!.productId as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  const [delivery, setDelivery] = useState<DeliveryInfoType | null>(null);
+  const { selectedAddress } = useAddress();
+  const [zipCode, setZipCode] = useState<string>(selectedAddress?.cep || "");
   const [cartProduct, setCartProduct] = useState<CartProductType>({
     productId: Number(productId),
     name: "",
@@ -44,39 +38,29 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
     image: "",
     quantity: 0,
     deliveryFee: 0,
-    deliveryCep: null,
+    deliveryCep: selectedAddress?.cep,
     deliveryType: null,
     deliveryTime: null,
   });
-
-  const [isProductInCart, setIsProductInCart] = useState(false);
   const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null
   );
 
-  const handleQtyIncrease = useCallback(() => {
-    if (cartProduct.quantity === 99) return;
-    setCartProduct((prev) => ({
-      ...prev,
-      quantity: prev.quantity + 1,
-    }));
-  }, [cartProduct]);
-
   const handleColorSelect = (color: SelectedColorType) => {
     setSelectedColor(color);
-
-    // Localizar o índice da imagem correspondente à cor selecionada
     const selectedIndex = product?.images.findIndex(
+      // Find the index of the image corresponding to the selected color
       (img) => img.color_code === color.colorCode
     );
-
-    if (selectedIndex !== undefined && selectedIndex >= 0) {
-      handleItemSelect(selectedIndex); // Atualiza imagem principal e índice selecionado
+    if (selectedIndex !== undefined && selectedIndex !== -1) {
+      handleItemSelect(selectedIndex); // Updates the main image and selected index
     }
   };
 
   const handleAddToCartClick = () => {
-    handleAddProductToCart(cartProduct);
+    cartProduct.deliveryType
+      ? handleAddProductToCart(cartProduct)
+      : toast.error("Selecione uma modalidade de entrega");
   };
 
   const handleItemSelect = (index: number) => {
@@ -93,76 +77,38 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
     }
   };
 
-  const handleQtyDecrease = useCallback(() => {
-    if (cartProduct.quantity === 1) return;
+  const handleQtyIncrease = () => {
     setCartProduct((prev) => ({
       ...prev,
-      quantity: prev.quantity - 1,
+      quantity: Math.min(prev.quantity + 1, 99),
     }));
-  }, [cartProduct]);
+  };
 
-  // console.log("cart ", cart);
-
-  // useEffect(() => {
-  //   const loadProduct = async () => {
-  //     try {
-  //       const response = await fetch(`${apiAdress}/product/${productId}`);
-  //       if (!response.ok) throw new Error("Erro ao carregar o produto.");
-  //       const data = await response.json();
-
-  //       if (data && data.product) {
-  //         setProduct(data.product as Product);
-  //       } else {
-  //         throw new Error("Produto não encontrado.");
-  //       }
-
-  //       const selectedProduct = data.product.images.find(
-  //         (img: { product_id: number; is_generic: boolean }) =>
-  //           img.product_id === Number(productId) && !img.is_generic
-  //       );
-
-  //       if (selectedProduct) {
-  //         setSelectedColor({
-  //           productId: selectedProduct.product_id,
-  //           color: selectedProduct.color,
-  //           colorCode: selectedProduct.color_code,
-  //           imageUrl: selectedProduct.image_url,
-  //           barCode: selectedProduct.bar_code,
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro ao carregar produto:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   loadProduct();
-  // }, [productId]);
+  const handleQtyDecrease = () => {
+    setCartProduct((prev) => ({
+      ...prev,
+      quantity: Math.max(prev.quantity - 1, 1),
+    }));
+  };
 
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        console.log('productId:', productId);
-  
         const response = await axios.get(`${apiAdress}/product`, {
           params: { productId }, // Usa o productId diretamente
         });
-  
-        if (response.status !== 200) throw new Error("Erro ao carregar o produto.");
+        if (response.status !== 200)
+          throw new Error("Erro ao carregar o produto.");
         const data = response.data;
-  
         if (data && data.product) {
           setProduct(data.product as Product);
         } else {
           throw new Error("Produto não encontrado.");
         }
-  
         const selectedProduct = data.product.images.find(
           (img: { product_id: number; is_generic: boolean }) =>
             img.product_id === Number(productId) && !img.is_generic
         );
-  
         if (selectedProduct) {
           setSelectedColor({
             productId: selectedProduct.product_id,
@@ -178,7 +124,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
         setLoading(false);
       }
     };
-  
     loadProduct();
   }, [productId]);
 
@@ -201,13 +146,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
           deliveryCep: "",
           deliveryType: "",
           deliveryTime: "",
-          // TODO : adicionar dados de frete dinamicamente
-          // deliveryFee: delivery.fee || 19.9,
-          // deliveryCep: delivery.cep || "74255060",
-          // deliveryType: delivery.type || " pac",
-          // deliveryTime: delivery.time || "5 dias",
         };
-
         if (
           prev.productId !== selectedColor.productId ||
           prev.colorCode !== selectedColor.colorCode ||
@@ -221,12 +160,33 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
   }, [product, selectedColor]);
 
   useEffect(() => {
+    if (product && product.images.length > 0) {
+      const defaultColor =
+        product.images.find((img) => img.is_generic) || product.images[0];
+      setSelectedColor({
+        productId: defaultColor.product_id,
+        color: defaultColor.color,
+        colorCode: defaultColor.color_code,
+        imageUrl: defaultColor.image_url,
+        barCode: defaultColor.bar_code,
+      });
+      setSelectedImageIndex(product.images.indexOf(defaultColor));
+    }
+  }, [product]);
+
+  useEffect(() => {
     console.log("produto atual", cartProduct);
   }, [cartProduct]);
 
   useEffect(() => {
     console.log("Carrinho", cart);
   }, [cart]);
+
+  useEffect(() => {
+    if (selectedAddress?.cep) {
+      setZipCode(selectedAddress.cep);
+    }
+  }, [selectedAddress]);
 
   if (loading) {
     return <div>Carregando produto...</div>; // Exibe um estado de carregamento
@@ -250,11 +210,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
     bar_code: number;
   }>;
 
-  const handleZipChange = (newZipCode: string) => {
-    setZipCode(newZipCode);
-    // TODO  Buscar dados de frete
-  };
-
   return (
     <>
       <section>
@@ -272,23 +227,16 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
 
           {/* PRODUCT DATA SECTION */}
           <div className="flex flex-col gap-3 w-full">
-            {/* NAME */}
             <div className=" text-2xl text-pink-700 font-semibold ">
               {product.name} {cartProduct.color} aki só para ocupar mais espaço
             </div>
-
-            {/* DESCRIPTION */}
             <div className=" ">
               {product.description} Lorem ipsum dolor sit amet consectetur
               adipisicing elit. Animi ab molestias rem unde facere voluptates,
               porro amet veniam recusandae nulla error dolore provident ad
               dolores illo perferendis voluptatum.
             </div>
-
-            {/* RATTINGS */}
             <StyledRattingHeart product={product} />
-
-            {/* COLOR SECTION // TODO : criar cores - redondo BackgroundColor */}
             <div id="Color__Selector">
               <ColorSelector
                 colors={uniqueColors}
@@ -296,8 +244,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
                 onColorSelect={handleColorSelect}
               />
             </div>
-
-            {/* PRICE */}
             <div className=" ">
               <p>
                 R${" "}
@@ -314,8 +260,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
                 </span>
               </p>
             </div>
-
-            {/* QUANTIDADE */}
             <div>
               <QuantitySelector
                 cartProduct={cartProduct}
@@ -323,8 +267,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
                 handleQtyDecrease={handleQtyDecrease}
               />
             </div>
-
-            {/* BOTÃO SACOLA */}
             <>
               {cart?.some(
                 (item) =>
@@ -348,7 +290,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
             </div>
 
             {/* CEP CONSULTOR */}
-            <div></div>
             <Delivery
               cep={zipCode}
               handleCepChange={(cep) => setZipCode(cep)}
@@ -372,7 +313,6 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
               productId={product.product_id}
               productPrice={product.price}
             />
-
           </div>
         </div>
       </section>
@@ -386,7 +326,9 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
             DESCRIÇÃO
           </h1>
           {/* DESCRIPTION FULL */}
+
           <p className="text-sm text-slate-700 font-medium my-2">
+            {/* {product.description} */}
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia
             adipisci nihil veritatis quo eos a labore magni odio quis laboriosam
             vel expedita, explicabo cumque! Ipsam eos explicabo rerum enim unde,
@@ -411,9 +353,7 @@ const   ProductDetails: React.FC<ProductDetailsProps> = () => {
             eaque sit provident, quibusdam magnam reiciendis exercitationem
             explicabo iure consectetur repudiandae tenetur fuga est sed!
           </p>
-          {/* RATTINGS QT & RESUME(ADD LATER MAYBE) */}
-          <p>Avaliaçoes: {product.ratting_qt}</p>
-          {/* TODO  criar um novo banco de dados para armazenar os produtos vendidos, qtd vendida, data e ratings (ou um banco separado para ratings e so pode avaliar quem já comprou)*/}{" "}
+          <p>Avaliaçoes: {product.ratting_qt}</p>{/* TODO  criar um novo banco de dados para armazenar os produtos vendidos, qtd vendida, data e ratings (ou um banco separado para ratings e so pode avaliar quem já comprou)*/}{" "}
         </div>
       </section>
     </>

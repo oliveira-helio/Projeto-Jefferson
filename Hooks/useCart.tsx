@@ -11,6 +11,7 @@ import { CartProductType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
 import { useAuth } from "@/Contexts/AuthContext";
+import { log } from "console";
 
 interface CartContextType {
   cart: CartProductType[];
@@ -159,6 +160,8 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Removes product from cart
   const handleRemoveProductFromCart = async (product: CartProductType) => {
+    console.log('product', product);
+    
     if (!localStorage.getItem("accessToken")) {
       setCart((prev) => {
         return prev.filter((item) => item.productId !== product.productId);

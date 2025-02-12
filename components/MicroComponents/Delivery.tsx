@@ -134,7 +134,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                         onChange={() =>
                           handleDeliverySelection(
                             option.name,
-                            option.price,
+                            Number(option.price),
                             option.delivery_time
                           )
                         }

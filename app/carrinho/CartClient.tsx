@@ -15,26 +15,51 @@ const CartClient = () => {
   const { handleclearCart, cart, selectedProducts, handleSelectProduct } = useCart();
   const [cartSubTotal, setCartSubTotal] = useState(0);
   const [cartFrete, setCartFrete] = useState(0);
+  const [selectedFrete, setSelectedFrete] = useState(0);
   const [cartDiscount, setCartDiscount] = useState(0);
   const [cartTotal, setCartTotal] = useState(0);
+  const { selectedAddress } = useAddress()
 
-  useEffect(() => {
+  useEffect(() => { 
     if (cart && cart.length !== 0) {
       const subTotal = cart.reduce(
         (total, product) => total + product.price * product.quantity,
         0
       );
 
+      cart.map((item, index)=>{console.log(`item ${index} - frete ${item.deliveryFee}`);
+      })
       const freteTotal = cart.reduce(
         (total, product) => total + (product.deliveryFee || 0),
         0
       );
 
       setCartSubTotal(subTotal);
+      console.log('subTotal',subTotal);
+      
       setCartFrete(freteTotal);
+      console.log('freteTotal',freteTotal);
+
       setCartTotal(subTotal + freteTotal - cartDiscount);
     }
   }, [cart, cartDiscount]);
+
+  useEffect(() => { 
+    if (selectedProducts && selectedProducts.length !== 0) {
+      const subTotal = selectedProducts.reduce(
+        (total, product) => total + (product.deliveryFee || 0),
+        0
+      );
+
+      const selectedFrete = selectedProducts.reduce(
+        (total, product) => total + product.deliveryFee! * product.quantity,
+        0
+      );
+
+      setSelectedFrete(subTotal);
+      console.log('SelectedFrete',selectedFrete);
+    }
+  }, [ selectedProducts, selectedFrete]);
 
   const handleCheckout = () => {
     console.log(selectedProducts);
@@ -141,6 +166,12 @@ const CartClient = () => {
           <div className="flex justify-between border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 w-full md:w-[30%] min-h-[65vh] flex-col">
             <div className="h-40 w-full border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4">
               FRETE: {formatCurrency(Number(cartFrete))}
+              <div className="flex justify-between">
+                <p className="text-2xl font-bold text-pinkSecondary">Frete dos produtos selecionados</p>
+                <p className="text-2xl font-bold text-slate-800">
+                  {formatCurrency(selectedFrete)}
+                </p>
+              </div>
             </div>
 
             <div>
@@ -150,6 +181,7 @@ const CartClient = () => {
                   {formatCurrency(cartTotal)}
                 </p>
               </div>
+              
               <Button
                 custom="flex w-[30%] md:w-full h-10 justify-self-end"
                 label="FINALIZAR COMPRA"

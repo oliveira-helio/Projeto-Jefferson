@@ -17,10 +17,10 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
     handleProductQtyDecrease,
   } = useCart();
 
-  return (
+  return ( 
     <div
       key={itemkey}
-      className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 m-4 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl"
+      className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 m-4 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl w-full"
     >
       <Link href={`/product/${item.productId}`} className=" col-span-3">
         <div className="p-1 md:grid md:grid-cols-3 flex flex-row w-full">
