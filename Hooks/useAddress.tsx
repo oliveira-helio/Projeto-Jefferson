@@ -11,7 +11,6 @@ import {  UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
 import { useAuth } from "@/Contexts/AuthContext";
-import { Controller } from "react-hook-form";
 
 interface AddressContextType {
   userAddresses:  UserAddressType[];
@@ -48,12 +47,10 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
       setUserAddresses(userAddresses);
       console.log('userAddresses',userAddresses);
       
-      userAddresses.map((address)=>{
-        if(address.isMainAddress){
-          setSelectedAddress(address)
-        }
-      })
-      setSelectedAddress
+      const mainAddress = userAddresses.find((address) => address.isMainAddress);
+      if (mainAddress) {
+        setSelectedAddress(mainAddress);
+      }
     } catch (error) {
       axios.isAxiosError(error)
       console.error(error)
@@ -152,8 +149,19 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   }, [accessToken]);
 
   //whatch selectedAdress
-  useEffect(()=>{ console.log('selectedAddress:',selectedAddress);
+  useEffect(()=>{ 
+    if (selectedAddress) {
+      localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
+    }
+    console.log('selectedAddress:',selectedAddress);
   },[selectedAddress])
+
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("selectedAddress");
+    if (storedAddress) {
+      setSelectedAddress(JSON.parse(storedAddress));
+    }
+  }, []);
 
   return (
     <AddressContext.Provider

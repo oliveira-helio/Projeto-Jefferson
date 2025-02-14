@@ -37,5 +37,6 @@ export interface IParams {
 }
 
 export interface ProductDetailsProps {
-  product: Product;
+  product?: Product;
+  productId?: string|string[]
 }

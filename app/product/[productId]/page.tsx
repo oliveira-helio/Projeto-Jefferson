@@ -5,7 +5,7 @@ import ProductDetails from "@/components/ProductDetails/ProductDetails";
 
 const Product = () => {
   const params = useParams();
-  const productId = params.productId;
+  const productId = params!.productId;
 
   return (
     <div className="p-8">

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useCart } from "../../Hooks/useCart";
 import Link from "next/link";
@@ -8,7 +8,20 @@ import { Delete } from "@mui/icons-material";
 import Button from "../../components/MicroComponents/Button";
 import ItemContent from "./ItemContent";
 import { useRouter } from "next/navigation";
-import { useAddress } from "@/Hooks/useAddress";
+import apiAdress from "@/utils/api";
+import axios from "axios";
+import { useAuth } from "@/Contexts/AuthContext";
+import { CartProductType } from "@/utils/types";
+import toast from "react-hot-toast";
+
+interface PackType {
+  id: 1,
+  dimensions: { length: number, width: number, height: number },
+  max_weight: 5,
+  weight: number,
+  usedVolume: number,
+  products: number[]
+}
 
 const CartClient = () => {
   const router = useRouter();
@@ -18,16 +31,38 @@ const CartClient = () => {
   const [selectedFrete, setSelectedFrete] = useState(0);
   const [cartDiscount, setCartDiscount] = useState(0);
   const [cartTotal, setCartTotal] = useState(0);
-  const { selectedAddress } = useAddress()
+  const selectedAddress = JSON.parse(localStorage.getItem('selectedAddress') || '{}')
+  const { accessToken } = useAuth()
 
-  useEffect(() => { 
+  const fetchDeliveryFee = useCallback(async (productList: CartProductType[]) => {
+    const products = productList
+
+    try {
+      const response = await axios.post(`${apiAdress}/calculate-delivery`, { products: products, deliveryCep: selectedAddress?.cep }, {
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        },
+
+      });
+      
+      console.log('resposta do organize:', response.data);
+
+    } catch (error) {
+      console.error('Erro ao calcular frete:', error);
+      toast.error("Erro ao buscar o carrinho");
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
     if (cart && cart.length !== 0) {
       const subTotal = cart.reduce(
         (total, product) => total + product.price * product.quantity,
         0
       );
 
-      cart.map((item, index)=>{console.log(`item ${index} - frete ${item.deliveryFee}`);
+      cart.map((item, index) => {
+        console.log(`item ${index} - frete ${item.deliveryFee}`);
       })
       const freteTotal = cart.reduce(
         (total, product) => total + (product.deliveryFee || 0),
@@ -35,35 +70,51 @@ const CartClient = () => {
       );
 
       setCartSubTotal(subTotal);
-      console.log('subTotal',subTotal);
-      
+      console.log('subTotal', subTotal);
+
       setCartFrete(freteTotal);
-      console.log('freteTotal',freteTotal);
+      console.log('freteTotal', freteTotal);
 
       setCartTotal(subTotal + freteTotal - cartDiscount);
     }
   }, [cart, cartDiscount]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (selectedProducts && selectedProducts.length !== 0) {
-      const subTotal = selectedProducts.reduce(
-        (total, product) => total + (product.deliveryFee || 0),
-        0
-      );
 
-      const selectedFrete = selectedProducts.reduce(
-        (total, product) => total + product.deliveryFee! * product.quantity,
-        0
-      );
+      // axios.post(`${apiAdress}/calculate-delivery`)
+      fetchDeliveryFee(selectedProducts)
 
-      setSelectedFrete(subTotal);
-      console.log('SelectedFrete',selectedFrete);
+
+
+
+
+
+
+
+
+
+
+
+
+      // const subTotal = selectedProducts.reduce(
+      //   (total, product) => total + (product.deliveryFee || 0),
+      //   0
+      // );
+
+      // const selectedFrete = selectedProducts.reduce(
+      //   (total, product) => total + product.deliveryFee! * product.quantity,
+      //   0
+      // );
+
+      // setSelectedFrete(subTotal);
+      // console.log('SelectedFrete', selectedFrete);
     }
-  }, [ selectedProducts, selectedFrete]);
+  }, [selectedProducts, selectedFrete]);
 
   const handleCheckout = () => {
     console.log(selectedProducts);
-    
+
     if (selectedProducts.length === 0) {
       alert("Selecione pelo menos um produto para pagar.");
       return;
@@ -109,21 +160,21 @@ const CartClient = () => {
             </div>
 
             <div className="hidden md:block">
-              <div className="grid grid-cols-7 my-2 px-4">
-                <div className="justify-self-start col-span-3 font-semibold text-base text-slate-600 px-4">
+              <div className="grid grid-cols-6 my-2 pr-8">
+                <div className="justify-self-start col-span-3 font-semibold text-base text-slate-600 px-8">
                   PRODUTO
                 </div>
                 <div className="justify-self-center font-semibold text-base text-slate-600">
                   PREÇO
                 </div>
-                <div className="justify-self-center font-semibold text-base text-slate-600">
+                <div className="justify-self-start font-semibold text-base text-slate-600">
                   QUANTIDADE
                 </div>
-                <div className="justify-self-end lg:justify-self-center font-semibold text-base text-slate-600 pr-6 lg:pr-0 ">
+                <div className="justify-self-center lg:justify-self-center font-semibold text-base text-slate-600 pr-6 lg:pr-0 ">
                   TOTAL
                 </div>
-                <div className="justify-self-end lg:justify-self-center font-semibold text-base text-slate-600 pr-6 lg:pr-0 ">
-                  SELECIONAR
+                <div className="justify-self-center font-semibold text-base text-slate-600  ">
+                  
                 </div>
               </div>
             </div>
@@ -131,14 +182,17 @@ const CartClient = () => {
             <div>
               {cart &&
                 cart.map((item) => (
-                  <div key={item.productId} className="flex items-center">
-                    <ItemContent item={item} />
-                    <input
-                      type="checkbox"
-                      checked={selectedProducts.includes(item)}
-                      onChange={() => handleSelectProduct(item)}
-                      className="ml-4 w-5 h-5"
-                    />
+                  <div key={item.productId} className="flex flex-col">
+                    <div className="flex items-center">
+                      <ItemContent item={item} />
+                      <input
+                        type="checkbox"
+                        checked={selectedProducts.includes(item)}
+                        onChange={() => handleSelectProduct(item)}
+                        className="ml-4 w-5 h-5"
+                      />
+                    </div>
+                   
                   </div>
                 ))}
             </div>
@@ -165,8 +219,8 @@ const CartClient = () => {
 
           <div className="flex justify-between border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 w-full md:w-[30%] min-h-[65vh] flex-col">
             <div className="h-40 w-full border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4">
-              FRETE: {formatCurrency(Number(cartFrete))}
-              <div className="flex justify-between">
+
+              <div className="flex justify-between flex-col">
                 <p className="text-2xl font-bold text-pinkSecondary">Frete dos produtos selecionados</p>
                 <p className="text-2xl font-bold text-slate-800">
                   {formatCurrency(selectedFrete)}
@@ -175,13 +229,13 @@ const CartClient = () => {
             </div>
 
             <div>
-              <div className="flex justify-between">
+              <div className="flex justify-between flex-auto">
                 <p className="text-2xl font-bold text-pinkSecondary">TOTAL:</p>
                 <p className="text-2xl font-bold text-slate-800">
                   {formatCurrency(cartTotal)}
                 </p>
               </div>
-              
+
               <Button
                 custom="flex w-[30%] md:w-full h-10 justify-self-end"
                 label="FINALIZAR COMPRA"
