@@ -48,6 +48,7 @@ const AddressCard: React.FC<AddressCardProps> = ({
         checked={selected}
         onChange={onSelect}
       />
+      
       <label
         htmlFor={`address-${address.addressId}`}
         className="cursor-pointer w-full px-2"
@@ -60,7 +61,7 @@ const AddressCard: React.FC<AddressCardProps> = ({
         </div>
         <div className="text-lg font-medium">
           <p className="text-base font-medium px-1">
-            Endereço: {address.street}, {address.number} 
+            Endereço: {address.street}, {address.number}
           </p>
           <p className="text-base font-medium px-1">
             Complemento: {address.complement} - CEP: {address.cep}

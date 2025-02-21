@@ -148,9 +148,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   };
 
   // Selects/Unselects products to be paid
-  const handleSelectProduct = (product: CartProductType) => {
-    console.log('handleSelectProduct:product', product);
-    
+  const handleSelectProduct = (product: CartProductType) => {    
     setSelectedProducts((prevSelected) =>
       prevSelected.some((p) => p.productId === product.productId  )
         ? prevSelected.filter((p) => p.productId !== product.productId      ) // Unselect if already selected
@@ -160,8 +158,6 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Removes product from cart
   const handleRemoveProductFromCart = async (product: CartProductType) => {
-    console.log('product', product);
-    
     if (!localStorage.getItem("accessToken")) {
       setCart((prev) => {
         return prev.filter((item) => item.productId !== product.productId);
@@ -227,7 +223,6 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         return updatedCart;
       });
-      toast.success("Quantidade aumentada localmente!");
       return;
     }
 
@@ -259,7 +254,6 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         return updatedCart;
       });
-      toast.success("Quantidade diminuída localmente!");
       return;
     }
 
@@ -320,8 +314,24 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   useEffect(() => {
       localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
+
+  // Sincronize selected products and between tabs
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "selectedProducts") {
+        const storedSelectedProducts = localStorage.getItem("selectedProducts");
+        setSelectedProducts(storedSelectedProducts ? JSON.parse(storedSelectedProducts) : []);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
   
-  // Sincronize cart and between tabs
+  // Sincronize cart between tabs
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (event.key === "cart") {

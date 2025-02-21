@@ -27,7 +27,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
           <img
             src={item.image}
             alt="Foto do produto"
-            className="rounded-xl w-full aspect-square max-md:w-28 md:h-full md:w-full object-cover"
+            className="rounded-xl aspect-square max-md:w-[100px] md:w-[120px]  object-cover"
           />
           <div className="flex flex-col justify-start md:col-span-2 items-center w-full py-2">
             <div className="px-4 w-full text-lg font-medium">{item.name}</div>
@@ -45,6 +45,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
         <div className=" md:hidden ">
           <span className="text-lg font-medium">PREÇO</span>
         </div>
+        <hr className="md:hidden border-solid border-0 border-t-[1px] mx-2 mb-2 w-full border-pink-300 " />
         <div>
           <span className="text-base font-medium">
             {formatCurrency(item.price)}
@@ -81,7 +82,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
         </div>
       </div>
 
-      <div className="absolute right-6 max-md:top-6 sm:right-6 md:right-2 md:bottom-3 lg:right-6 xl:right-10 2xl:right-12 ">
+      <div className="absolute right-6 max-md:top-6 sm:right-6 md:right-2 md:bottom-3 lg:right-6 ">
         <button
           className="flex flex-col md:flex-row-reverse w-full items-center underline font-medium"
           onClick={() => {

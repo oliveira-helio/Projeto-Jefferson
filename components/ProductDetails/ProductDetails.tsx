@@ -106,9 +106,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           throw new Error("Produto não encontrado.");
         }
         const selectedProduct = data.product.images.find(
-          (img: { product_id: number; is_generic: boolean }) =>
-            img.product_id === Number(productId) && !img.is_generic
+          (img: { product_id: number }) => img.product_id === Number(productId)
         );
+        
         if (selectedProduct) {
           setSelectedColor({
             productId: selectedProduct.product_id,
@@ -161,18 +161,23 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
 
   useEffect(() => {
     if (product && product.images.length > 0) {
-      const defaultColor =
-        product.images.find((img) => img.is_generic) || product.images[0];
-      setSelectedColor({
-        productId: defaultColor.product_id,
-        color: defaultColor.color,
-        colorCode: defaultColor.color_code,
-        imageUrl: defaultColor.image_url,
-        barCode: defaultColor.bar_code,
-      });
-      setSelectedImageIndex(product.images.indexOf(defaultColor));
+      const currentProduct = product.images.find(
+        (img) => img.product_id === Number(productId)
+      );
+  
+      if (currentProduct) {
+        setSelectedColor({
+          productId: currentProduct.product_id,
+          color: currentProduct.color,
+          colorCode: currentProduct.color_code,
+          imageUrl: currentProduct.image_url,
+          barCode: currentProduct.bar_code,
+        });
+        setSelectedImageIndex(product.images.indexOf(currentProduct));
+      }
     }
-  }, [product]);
+  }, [product, productId]);
+  
 
   useEffect(() => {
     console.log("produto atual", cartProduct);

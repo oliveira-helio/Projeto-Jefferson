@@ -32,10 +32,10 @@ const Delivery: React.FC<DeliveryProps> = ({
   productId,
   productPrice
 }) => {
-  const [freteOptions, setFreteOptions] = useState<any[]>([]);
+  const [deliveryOptions, setDeliveryOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchFreteOptions = async (cep: string) => {
+  const fetchDeliveryOptions = async (cep: string) => {
     if (!cep || cep.length < 8) return; // Verifica se o CEP é válido
 
     setLoading(true);
@@ -55,7 +55,7 @@ const Delivery: React.FC<DeliveryProps> = ({
       console.log('res cep', data);
 
       if (response.data) {
-        setFreteOptions(response.data); // Processar os dados de resposta
+        setDeliveryOptions(response.data); // Processar os dados de resposta
         console.log("res cep2",response.data);
         
       }
@@ -68,7 +68,7 @@ const Delivery: React.FC<DeliveryProps> = ({
 
   useEffect(() => {
     if (cep) {
-      fetchFreteOptions(cep);
+      fetchDeliveryOptions(cep);
     }
   }, [cep]);
 
@@ -85,7 +85,7 @@ const Delivery: React.FC<DeliveryProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          fetchFreteOptions(cep);
+          fetchDeliveryOptions(cep);
         }}
       >
         <div className="flex flex-col w-fit">
@@ -116,11 +116,11 @@ const Delivery: React.FC<DeliveryProps> = ({
 
       {loading && <p>Carregando opções de frete...</p>}
 
-      {freteOptions.length > 0 && (
+      {deliveryOptions.length > 0 && (
         <div>
           <h3 className="text-lg font-medium">Opções de frete:</h3>
           <ul className="flex flex-col gap-4">
-            {freteOptions.map((option, index) => (
+            {deliveryOptions.map((option, index) => (
               !option.name || !option.price || !option.delivery_time ?
                 null
               :
@@ -144,7 +144,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                           <img
                             src={option.company.picture}
                             
-                            alt="Picture of the author"
+                            alt="Picture of the delivery company"
                             className="contain"
                           />
                         </div>

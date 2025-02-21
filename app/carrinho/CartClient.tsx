@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useCart } from "../../Hooks/useCart";
 import Link from "next/link";
@@ -8,113 +8,49 @@ import { Delete } from "@mui/icons-material";
 import Button from "../../components/MicroComponents/Button";
 import ItemContent from "./ItemContent";
 import { useRouter } from "next/navigation";
-import apiAdress from "@/utils/api";
-import axios from "axios";
-import { useAuth } from "@/Contexts/AuthContext";
-import { CartProductType } from "@/utils/types";
-import toast from "react-hot-toast";
-
-interface PackType {
-  id: 1,
-  dimensions: { length: number, width: number, height: number },
-  max_weight: 5,
-  weight: number,
-  usedVolume: number,
-  products: number[]
-}
+import { DeliveryInfoType } from "@/utils/types";
+import { useAddress } from "@/Hooks/useAddress";
 
 const CartClient = () => {
   const router = useRouter();
   const { handleclearCart, cart, selectedProducts, handleSelectProduct } = useCart();
-  const [cartSubTotal, setCartSubTotal] = useState(0);
-  const [cartFrete, setCartFrete] = useState(0);
-  const [selectedFrete, setSelectedFrete] = useState(0);
-  const [cartDiscount, setCartDiscount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
-  const selectedAddress = JSON.parse(localStorage.getItem('selectedAddress') || '{}')
-  const { accessToken } = useAuth()
+  const { selectedAddress, selectedDelivery, handleSelectDeliveryType, fetchDeliveryOptions } = useAddress();
+  const [selectedSubTotal, setSelectedSubTotal] = useState(0);
+  const [selectedTotal, setSelectedTotal] = useState(0);
 
-  const fetchDeliveryFee = useCallback(async (productList: CartProductType[]) => {
-    const products = productList
-
-    try {
-      const response = await axios.post(`${apiAdress}/calculate-delivery`, { products: products, deliveryCep: selectedAddress?.cep }, {
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: `Bearer ${accessToken}`,
-        },
-
-      });
-      
-      console.log('resposta do organize:', response.data);
-
-    } catch (error) {
-      console.error('Erro ao calcular frete:', error);
-      toast.error("Erro ao buscar o carrinho");
-    }
-  }, [accessToken]);
 
   useEffect(() => {
-    if (cart && cart.length !== 0) {
-      const subTotal = cart.reduce(
-        (total, product) => total + product.price * product.quantity,
-        0
-      );
+    const calculateDelivery = async () => {
+      if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) return;
 
-      cart.map((item, index) => {
-        console.log(`item ${index} - frete ${item.deliveryFee}`);
-      })
-      const freteTotal = cart.reduce(
-        (total, product) => total + (product.deliveryFee || 0),
-        0
-      );
+      try {
+        const deliveryOptions: DeliveryInfoType[] = await fetchDeliveryOptions(selectedProducts, selectedAddress.cep);
+        const preferredOptions = deliveryOptions.find(option => option.name === 'PAC' && !option.error)
+          ? [deliveryOptions.find(option => option.name === 'PAC')!]
+          : deliveryOptions.sort((a, b) => Number(a.price) - Number(b.price));
+        const selectedOption = preferredOptions.find(option => option && !option.error);
 
-      setCartSubTotal(subTotal);
-      console.log('subTotal', subTotal);
+        if (selectedOption) {
+          handleSelectDeliveryType(selectedOption);
+        } else { throw new Error('No delivery option found') }
+        const subTotal = selectedProducts.reduce(
+          (total, product) => total + product.price * product.quantity,
+          0
+        );
 
-      setCartFrete(freteTotal);
-      console.log('freteTotal', freteTotal);
+        setSelectedSubTotal(subTotal);
+        setSelectedTotal(Number(selectedOption!.price) + subTotal);
 
-      setCartTotal(subTotal + freteTotal - cartDiscount);
-    }
-  }, [cart, cartDiscount]);
+      } catch (error) {
+        console.error('Erro ao calcular o frete:', error);
+      }
+    };
 
-  useEffect(() => {
-    if (selectedProducts && selectedProducts.length !== 0) {
+    calculateDelivery();
+  }, [selectedProducts, selectedAddress]);
 
-      // axios.post(`${apiAdress}/calculate-delivery`)
-      fetchDeliveryFee(selectedProducts)
-
-
-
-
-
-
-
-
-
-
-
-
-
-      // const subTotal = selectedProducts.reduce(
-      //   (total, product) => total + (product.deliveryFee || 0),
-      //   0
-      // );
-
-      // const selectedFrete = selectedProducts.reduce(
-      //   (total, product) => total + product.deliveryFee! * product.quantity,
-      //   0
-      // );
-
-      // setSelectedFrete(subTotal);
-      // console.log('SelectedFrete', selectedFrete);
-    }
-  }, [selectedProducts, selectedFrete]);
 
   const handleCheckout = () => {
-    console.log(selectedProducts);
-
     if (selectedProducts.length === 0) {
       alert("Selecione pelo menos um produto para pagar.");
       return;
@@ -140,8 +76,8 @@ const CartClient = () => {
     );
 
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center max-md:m-8">
+    <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center max-md:m-8 max-w-[1024px]">
         <div className="border-solid border-[1px] border-pink-400 bg-pink-50 rounded-2xl m-2 mt-4 py-2 px-2 w-full">
           <Link href={"/"} className=" flex flex-row items-center">
             <MdArrowBack size={20} className="text-pink-600" />
@@ -174,7 +110,7 @@ const CartClient = () => {
                   TOTAL
                 </div>
                 <div className="justify-self-center font-semibold text-base text-slate-600  ">
-                  
+
                 </div>
               </div>
             </div>
@@ -192,21 +128,37 @@ const CartClient = () => {
                         className="ml-4 w-5 h-5"
                       />
                     </div>
-                   
+
                   </div>
                 ))}
             </div>
 
-            <div className="flex justify-between border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl m-4 py-2 px-4">
+            <div className="flex justify-between border-solid border-[1.2px] border-pink-400 bg-pink-50 rounded-xl m-4 py-2 px-4">
               <p className="text-2xl font-semibold text-pinkSecondary">
                 SUBTOTAL:
               </p>
-              <p className="text-2xl font-semibold text-pinkSecondary">
-                {formatCurrency(cartSubTotal)}
+              <p className="text-2xl font-semibold text-slate-700">
+                {formatCurrency(selectedSubTotal)}
               </p>
             </div>
 
-            <div className="flex">
+            <div className=" border-solid border-[1.2px] border-pink-400 bg-pink-50 rounded-xl m-4 py-2 px-4">
+              <div className="flex justify-between">
+                <p className="text-2xl font-bold text-pinkSecondary">Frete dos produtos selecionados</p>
+                <p className="text-2xl font-bold text-slate-700">
+                  {formatCurrency(Number(selectedDelivery?.price) || 0)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between flex-auto border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl m-4 py-2 px-4">
+              <p className="text-2xl font-bold text-pinkSecondary">TOTAL:</p>
+              <p className="text-2xl font-bold text-pinkSecondary">
+                {formatCurrency(selectedTotal)}
+              </p>
+            </div>
+
+            <div className="flex justify-between items-center">
               <button
                 className="flex flex-row items-center p-2 m-2 gap-2 underline font-medium"
                 onClick={handleclearCart}
@@ -214,36 +166,16 @@ const CartClient = () => {
                 <Delete className="text-[2rem] text-red-800" />
                 <p className="text-sm ">LIMPAR CARRINHO</p>
               </button>
-            </div>
-          </div>
-
-          <div className="flex justify-between border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4 w-full md:w-[30%] min-h-[65vh] flex-col">
-            <div className="h-40 w-full border-solid border-[1px] border-pink-400 bg-pink-50 rounded-xl p-4">
-
-              <div className="flex justify-between flex-col">
-                <p className="text-2xl font-bold text-pinkSecondary">Frete dos produtos selecionados</p>
-                <p className="text-2xl font-bold text-slate-800">
-                  {formatCurrency(selectedFrete)}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between flex-auto">
-                <p className="text-2xl font-bold text-pinkSecondary">TOTAL:</p>
-                <p className="text-2xl font-bold text-slate-800">
-                  {formatCurrency(cartTotal)}
-                </p>
-              </div>
-
               <Button
-                custom="flex w-[30%] md:w-full h-10 justify-self-end"
-                label="FINALIZAR COMPRA"
+                custom="flex w-[30%] md:w-fit h-10 justify-self-end"
+                label="SELECIONAR FORMA DE ENTREGA"
                 onClick={handleCheckout}
               />
             </div>
           </div>
         </div>
+
+
       </div>
     </div>
   );

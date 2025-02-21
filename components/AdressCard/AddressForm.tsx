@@ -83,8 +83,8 @@ const AddressForm: React.FC<AddressFormProps> = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="p-6 rounded-lg shadow-lg w-96 bg-pink-200">
+    <div className="relative inset-0 z-20 overflow-visible flex justify-center items-center bg-black bg-opacity-50">
+      <div className="fixed p-6 rounded-lg shadow-lg w-96 bg-pink-200 z-50">
         <h2 className="text-xl font-bold mb-4">Novo Endereço</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <div className="flex gap-2">
