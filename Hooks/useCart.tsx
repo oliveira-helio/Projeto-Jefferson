@@ -5,6 +5,8 @@ import {
   ReactNode,
   useEffect,
   useCallback,
+  Dispatch,
+  SetStateAction,
 } from "react";
 import axios from "axios";
 import { CartProductType, UserAddressType } from "@/utils/types";
@@ -12,11 +14,13 @@ import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
 import { useAuth } from "@/Contexts/AuthContext";
 import { log } from "console";
+import { useRouter } from "next/navigation";
 
 interface CartContextType {
   cart: CartProductType[];
   cartTotalQty: number;
   selectedProducts:  CartProductType[];
+  setSelectedProducts: Dispatch<SetStateAction<CartProductType[]>>,
   fetchCart: () => Promise<void>;
   syncLocalCartToBackend: () => Promise<void>;
   handleAddProductToCart: (product: CartProductType) => void;
@@ -38,6 +42,7 @@ const CartContext = createContext<CartContextType | null>(null);
 export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   children,
 }) => {
+  const router = useRouter();
   const [cart, setCart] = useState<CartProductType[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<CartProductType[]>([]);
   const { accessToken } = useAuth()
@@ -56,6 +61,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
       const serverCart = response.data.products;
       setCart(serverCart);
       localStorage.setItem("cart", JSON.stringify(serverCart));
+      router.refresh()
     } catch (error) {
       if (
         axios.isAxiosError(error) &&
@@ -243,8 +249,8 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Decrease the quantity of the product in the cart
   const handleProductQtyDecrease = async (product: CartProductType) => {
+    if (product.quantity <= 1) return; // Não permite diminuir abaixo de 1
     if (!localStorage.getItem("accessToken")) {
-      if (product.quantity === 1) return; // Não permite diminuir abaixo de 1
       setCart((prev) => {
         const updatedCart = prev.map((item) =>
           item.productId === product.productId
@@ -267,7 +273,10 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         }
       });
       fetchCart();
-    } catch {
+
+    } catch (error){
+      console.log('erro diminuir:', error);
+      
       toast.error("Erro ao diminuir quantidade do produto");
     }
   };
@@ -386,6 +395,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         cart,
         cartTotalQty: cart.length,
         selectedProducts,
+        setSelectedProducts,
         handleSelectProduct,
         fetchCart,
         syncLocalCartToBackend,

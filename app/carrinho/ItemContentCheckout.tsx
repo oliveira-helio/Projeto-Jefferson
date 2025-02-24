@@ -1,7 +1,5 @@
 import { CartProductType } from "@/utils/types";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
-import Link from "next/link";
-import { useCart } from "../../Hooks/useCart";
 
 interface ItemContentProps {
   item: CartProductType;
@@ -9,12 +7,6 @@ interface ItemContentProps {
 }
 
 const ItemContentCheckout: React.FC<ItemContentProps> = ({ item, itemkey }) => {
-  const {
-    handleRemoveProductFromCart,
-    handleProductQtyIncreaseUnit,
-    handleProductQtyDecrease,
-  } = useCart();
-
   return (
     <div
       key={itemkey}

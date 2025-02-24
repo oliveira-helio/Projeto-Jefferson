@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: false,
    experimental: {
      appDir: true, // Habilita a estrutura "app"
    },
@@ -22,5 +22,5 @@ const nextConfig = {
    },
  };
  
- module.exports = nextConfig;
+ module.exports = { reactStrictMode: false, nextConfig}
  

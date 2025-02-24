@@ -1,29 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
 // TODO: inserir logica de busca
 
-
-
 const SearchBar = () => {
+  const router = useRouter(); 
+  const searchParams = useSearchParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
 
   const handleSearchToggle = () => {
     setIsSearchOpen(!isSearchOpen);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!searchQuery.trim()) return;
+    router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
     // TODO: inserir logica de busca
     console.log("Buscar por:", searchQuery);
   };
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get("search") || "");
+  }, [searchParams]);
 
   return ( 
     <>
@@ -47,7 +50,7 @@ const SearchBar = () => {
                   type="text"
                   placeholder="Buscar produtos..."
                   value={searchQuery}
-                  onChange={handleSearchChange}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   required
                   className="flex-1 px-4 py-2 rounded-l-3xl focus:outline-none text-black w-max"
                 />
@@ -64,12 +67,14 @@ const SearchBar = () => {
       ) : (
         <div className="w-full block mt-2">
           <form
-            action=""
+            onSubmit={handleSearchSubmit}
             className="flex flex-row flex-nowrap w-full justify-center"
           >
             <input
               type="text"
               placeholder="Buscar produtos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               required
               className="flex-1 px-4 py-2 rounded-l-3xl focus:outline-none text-black w-max"
             />

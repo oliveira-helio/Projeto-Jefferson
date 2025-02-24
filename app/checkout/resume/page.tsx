@@ -3,16 +3,13 @@ import { useAddress } from "@/Hooks/useAddress";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/Hooks/useCart";
 import ItemContentCheckout from "@/app/carrinho/ItemContentCheckout";
+import AddressCheckoutCard from "@/components/AdressCard/AddressCheckout";
 
 
 const resume = () => {
-  const { selectedAddress, selectedDelivery } = useAddress();
+  const { selectedDelivery } = useAddress();
   const { selectedProducts } = useCart();
   const router = useRouter();
-
-  console.log('selectedProducts n resume:', selectedProducts);
-  console.log('selectedDelivery n resume:', selectedDelivery);
-
 
   return (
   <div className="p-4 flex w-full justify-center">
@@ -21,6 +18,7 @@ const resume = () => {
       {/* <hr className="border-solid border-[1px] border-pink-400 my-4" /> */}
 
       <div className=" border-solid border-1 border-pink-200 p-4 rounded-3xl bg-pink-50 flex flex-col w-full">
+        <AddressCheckoutCard/>
         <div className="flex justify-start p-2 items-center">
           <span className="text-xl font-semibold ">Itens selecionados:</span>
         </div>

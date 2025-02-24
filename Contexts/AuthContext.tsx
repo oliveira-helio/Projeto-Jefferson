@@ -39,7 +39,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = useCallback(async () => {
-    localStorage.removeItem('accessToken');
+    // localStorage.removeItem('accessToken');
+    localStorage.clear()
     setIsAdmin(false);
     setIsAuthenticated(false);  
 
@@ -130,7 +131,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const handleTimeout = async () => {
       await logout();
-      localStorage.removeItem('cart')
       router.push('/');
     };
 

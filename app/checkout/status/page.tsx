@@ -24,15 +24,12 @@ const Checkout = () => {
   };
 
   const onReady = async () => {
-    console.log('Status Brick ready');
-    console.log('initialization', initialization);
-
   };
 
   const customization = {
     backUrls: {
       // error: '<http://localhost:3000/checkout/error>',
-      // return: '<http://localhost:3000/>',
+      // return: '<http://localhost:3000/checkout/proceed>',
     },
    };
 

@@ -13,43 +13,54 @@ import { useAddress } from "@/Hooks/useAddress";
 
 const CartClient = () => {
   const router = useRouter();
-  const { handleclearCart, cart, selectedProducts, handleSelectProduct } = useCart();
+  const { handleclearCart, cart, selectedProducts, setSelectedProducts, handleSelectProduct } = useCart();
   const { selectedAddress, selectedDelivery, handleSelectDeliveryType, fetchDeliveryOptions } = useAddress();
   const [selectedSubTotal, setSelectedSubTotal] = useState(0);
   const [selectedTotal, setSelectedTotal] = useState(0);
 
 
+  const calculateDelivery = async () => {
+    if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) return;
+
+    try {
+      const deliveryOptions: DeliveryInfoType[] = await fetchDeliveryOptions(selectedProducts, selectedAddress.cep);
+      const preferredOptions = deliveryOptions.find(option => option.name === 'PAC' && !option.error)
+        ? [deliveryOptions.find(option => option.name === 'PAC')!]
+        : deliveryOptions.sort((a, b) => Number(a.price) - Number(b.price));
+      const selectedOption = preferredOptions.find(option => option && !option.error);
+
+      if (selectedOption) {
+        handleSelectDeliveryType(selectedOption);
+      } else { throw new Error('No delivery option found') }
+      const subTotal = selectedProducts.reduce(
+        (total, product) => total + product.price * product.quantity,
+        0
+      );
+
+      setSelectedSubTotal(subTotal);
+      setSelectedTotal(Number(selectedOption!.price) + subTotal);
+
+    } catch (error) {
+      console.error('Erro ao calcular o frete:', error);
+    }
+  };
+
   useEffect(() => {
-    const calculateDelivery = async () => {
-      if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) return;
-
-      try {
-        const deliveryOptions: DeliveryInfoType[] = await fetchDeliveryOptions(selectedProducts, selectedAddress.cep);
-        const preferredOptions = deliveryOptions.find(option => option.name === 'PAC' && !option.error)
-          ? [deliveryOptions.find(option => option.name === 'PAC')!]
-          : deliveryOptions.sort((a, b) => Number(a.price) - Number(b.price));
-        const selectedOption = preferredOptions.find(option => option && !option.error);
-
-        if (selectedOption) {
-          handleSelectDeliveryType(selectedOption);
-        } else { throw new Error('No delivery option found') }
-        const subTotal = selectedProducts.reduce(
-          (total, product) => total + product.price * product.quantity,
-          0
-        );
-
-        setSelectedSubTotal(subTotal);
-        setSelectedTotal(Number(selectedOption!.price) + subTotal);
-
-      } catch (error) {
-        console.error('Erro ao calcular o frete:', error);
-      }
-    };
-
     calculateDelivery();
   }, [selectedProducts, selectedAddress]);
 
+  useEffect(() => {
+    const updatedSelectedProducts = selectedProducts.map(selectedProduct => {
+      const updatedProduct = cart.find(cartProduct => cartProduct.productId === selectedProduct.productId);
+      return updatedProduct ? { ...selectedProduct, quantity: updatedProduct.quantity } : selectedProduct;
+    });
+    setSelectedProducts(updatedSelectedProducts);
+  }, [cart]);
 
+  useEffect(()=>{
+    console.log('selected Mudou:',selectedProducts);
+  }, [selectedProducts]);
+  
   const handleCheckout = () => {
     if (selectedProducts.length === 0) {
       alert("Selecione pelo menos um produto para pagar.");

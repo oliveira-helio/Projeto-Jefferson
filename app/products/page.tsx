@@ -11,9 +11,8 @@ import debounce from "lodash.debounce";
 export default function Products() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,57 +76,33 @@ useEffect(() => {
 
   // Atualiza a URL com filtros
   const updateURL = useCallback(() => {
+    console.log('rodou');
     const query = new URLSearchParams();
 
     if (priceRange[0] !== 0 || priceRange[1] !== 500) {
       query.append("minPrice", priceRange[0].toString());
       query.append("maxPrice", priceRange[1].toString());
     }
-
+    if (searchQuery) {
+      query.append("search", searchQuery);
+    }
     if (brand) query.append("brand", brand);
     if (category) query.append("category", category);
     if (subCategory) query.append("subCategory", subCategory);
     if (productType) query.append("type", productType);
 
-    router.push(`/products?${query.toString()}`, { shallow: true });
-  }, [priceRange, brand, category, subCategory, productType, router]);
+    router.push(`/products?${query.toString()}`, {  });
+  }, [priceRange, brand, category, subCategory, productType, router, searchQuery]);
+
 
   // Carrega produtos com filtros
-  // const loadProductsAndFilters = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const query = new URLSearchParams();
-
-  //     if (priceRange[0] !== 0 || priceRange[1] !== 500) {
-  //       query.append("minPrice", priceRange[0].toString());
-  //       query.append("maxPrice", priceRange[1].toString());
-  //     }
-
-  //     if (brand) query.append("brand", brand);
-  //     if (category) query.append("category", category);
-  //     if (subCategory) query.append("subCategory", subCategory);
-  //     if (productType) query.append("type", productType);
-
-  //     const response = await fetch(`${apiAdress}/products?${query.toString()}`);
-  //     const data = await response.json();
-  //     setProducts(data.products);
-
-  //     const filteredResponse = await fetch(
-  //       `${apiAdress}/filters?${query.toString()}`
-  //     );
-  //     const filteredData = await filteredResponse.json();
-  //     setFilteredFilters(filteredData);
-  //   } catch (error) {
-  //     console.error("Erro ao carregar produtos:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [priceRange, brand, category, subCategory, productType]);
   const loadProductsAndFilters = useCallback(async () => {
     setLoading(true);
     try {
       const query = new URLSearchParams();
-  
+      if (searchQuery) {
+        query.append("search", searchQuery);
+      }
       if (priceRange[0] !== 0 || priceRange[1] !== 500) {
         query.append("minPrice", priceRange[0].toString());
         query.append("maxPrice", priceRange[1].toString());
@@ -142,18 +117,27 @@ useEffect(() => {
       const data = await response.json();
       setProducts(data.products);
   
-      const filteredResponse = await fetch(
-        `${apiAdress}/filters?${query.toString()}`
-      );
-      const filteredData = await filteredResponse.json();
-      setFilteredFilters(filteredData);
+      // **Atualiza os filtros dinamicamente com base nos produtos encontrados**
+      const filteredCategories:never[] = Array.from(new Set(data.products.map((p:Product) => p.category)));
+      const filteredBrands:never[] = Array.from(new Set(data.products.map((p:Product) => p.brand)));
+      const filteredSubCategories:never[] = Array.from(new Set(data.products.map((p:Product) => p.sub_category)));
+      const filteredProductTypes:never[] = Array.from(new Set(data.products.map((p:Product) => p.product_type)));
+  
+      setFilteredFilters({
+        brands: filteredBrands,
+        categories: filteredCategories,
+        subCategories: filteredSubCategories,
+        productTypes: filteredProductTypes,
+      });
+      
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
     } finally {
       setLoading(false);
-      setIsDataLoaded(true); // Define como carregado
+      setIsDataLoaded(true);
     }
-  }, [priceRange, brand, category, subCategory, productType]);
+  }, [priceRange, brand, category, subCategory, productType, searchQuery]);
+  
   
 
   // Atualiza os filtros ao soltar a barra de preços
@@ -499,6 +483,8 @@ useEffect(() => {
                 setProductType("");
                 setTempPriceRange([0, 500]);
                 setPriceRange([0, 500]);
+                router.push(`/products`)
+                
               }}
             >
               Limpar filtros
@@ -507,6 +493,9 @@ useEffect(() => {
         </div>
       )}
 
+<     h1 className="text-3xl font-bold my-4 text-center">
+        {searchQuery ? `Resultados para "${searchQuery}"` : "Todos os produtos"}
+      </h1>
       {/* Lista de Produtos */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center justify-between">
         {products.length > 0 ? (
