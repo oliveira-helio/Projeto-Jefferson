@@ -280,9 +280,9 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   // },[selectedDelivery])
 
   // // watch changes in selectedAddress
-  // useEffect(()=>{ 
-  //   console.log('selectedAddress:',selectedAddress);
-  // },[selectedAddress])
+  useEffect(()=>{ 
+    console.log('selectedAddress:',selectedAddress);
+  },[selectedAddress])
 
   // // watch changes in deliveryOptions
   // useEffect(()=>{ 

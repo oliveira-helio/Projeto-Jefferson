@@ -37,7 +37,6 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9",
-    "cypress": "^13.17.0"
+    "@types/lodash.debounce": "^4.0.9"
   }
 }

@@ -29,7 +29,7 @@ export type UserAddressType = {
   isMainAddress?: boolean;
   cep : string;
   street: string;
-  number: string;
+  number?: string;
   complement?: string;
   neighborhood: string;
   city: string;

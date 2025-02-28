@@ -28,9 +28,16 @@ const Checkout = () => {
 
   const customization = {
     backUrls: {
-      // error: '<http://localhost:3000/checkout/error>',
+      // error: '<http://localhost:3000/checkout/payment>',
       // return: '<http://localhost:3000/checkout/proceed>',
     },
+    visual: {
+      texts: {
+          ctaGeneralErrorLabel: "Houve um erro: tentar novamente",
+          ctaCardErrorLabel: "Pagamento não aprovado: tentar outro cartão",
+          ctaReturnLabel: "Retornar",
+      },
+  },
    };
 
   if (!paymentId) return <p>Carregando pagamento...</p>;

@@ -58,6 +58,7 @@ const Checkout = () => {
       },
       body: JSON.stringify({
         totalPrice: cartTotal,
+        addressId: selectedAddress?.addressId,
         items: selectedProducts.map((product) => ({
           productId: product.productId,
           quantity: product.quantity,
@@ -106,7 +107,7 @@ const Checkout = () => {
 
   const updateOrder = async (orderData: orderData, orderId: number | null) => {
     try {
-      await fetch(`${apiAdress}/api/orders/update-order`, {
+      await fetch(`${apiAdress}/api/orders/update-order-payment`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -199,6 +200,7 @@ const Checkout = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "accessToken": `Bearer ${localStorage.getItem('accessToken')}`
         },
         body: JSON.stringify({
           formData,
@@ -215,10 +217,7 @@ const Checkout = () => {
       })
         .then((response) => response.json())
         .then(async (response) => {
-
-          resolve(response);
-
-          const orderData: orderData ={
+         const orderData: orderData ={
             externalOrderId: response.id,
             paymentType: response.payment_type_id,
             status: response.status,
@@ -227,17 +226,21 @@ const Checkout = () => {
             ...(response.transaction_details.net_received_amount && {liquidAmount: response.transaction_details.net_received_amount}),
             ...(response.transaction_details.installment_amount && {installmentAmount: response.transaction_details.installment_amount}),
             ...(response.fee_details && {fees: response.fee_details}),
+            selectedDelivery: (selectedDelivery?.company?.name+" - "+ selectedDelivery?.name),
+            estimatedDelivery: selectedDelivery?.custom_delivery_time
           }
           
           await updateOrder(orderData, orderId);
           updateOrder(response, orderId);
           localStorage.setItem('paymentId', JSON.stringify(response.id));
+          resolve(response);
           window.paymentBrickController?.unmount()
         })
         .then(() => router.push('/checkout/status'))
         .catch((error) => {
           console.error('error:', error);
-          reject();
+          
+          // reject(error);
         });
     });
   };
