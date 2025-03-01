@@ -95,12 +95,14 @@ const OrdersDashboard = () => {
                 (order.shipment.shippingStatus === "delivered" ? "Concluído" :
                   (order.status === "pending" ? "Aguardando pagamento" :
                     (order.status === "approved" ? "Pagamento aprovado" :
-                      (order.status === "inprocess" ? "Pagamento em processo" :
-                        (order.status === "inmediation" ? "Em contestação" :
+                      (order.status === "in_process" ? "Pagamento em processo" :
+                        (order.status === "charged_back" || order.status === "in_mediation" ? "Em contestação" :
                           (order.status === "rejected" ? "Pagamento rejeitado" :
                             (order.status === "cancelled" ? "Cancelado" :
-                              (order.status === "refunded" || order.status === "chargedback" ? "Estornado" :
-                                order.status
+                              (order.status === "refunded" ? "Estornado" :
+                                (order.status === "expired" ? "Expirado" :
+                                 order.status
+                                )
                               )
                             )
                           )
