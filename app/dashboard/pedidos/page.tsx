@@ -13,10 +13,10 @@ interface Order {
   shippingStatus: string;
   installments: string;
   paymentType: string;
-  shipment: Shipment;
+  shipments: Shipments[];
 }
 
-interface Shipment {
+interface Shipments {
   id: number;
   trackingCode?: string;
   carrier?: string;
@@ -49,7 +49,7 @@ const OrdersDashboard = () => {
         setLoading(false);
       }
     };
-    fetchOrders();
+    fetchOrders();    
   }, [accessToken]);
 
   const handleEdit = (orderId: number) => {
@@ -184,17 +184,28 @@ const OrdersDashboard = () => {
               )
             )}
           </div>
-          <div>{order.shipment.carrier}</div>
+          <div>{order?.shipments[0]?.carrier || "-"}</div>
           <div>
-            {editingOrderId === order.orderId ? (
-              <input
-                type="text"
-                value={editedOrders[order.orderId]?.shipment?.trackingCode || order.shipment.trackingCode || ""}
-                onChange={(e) => handleChange(order.orderId, "shipment", { ...order.shipment, trackingCode: e.target.value })}
-              />
-            ) : (
-              order.shipment.trackingCode || "-"
-            )}
+            {order.shipments.map((shipment, index) => (
+              <div key={index}>
+                {editingOrderId === order.orderId ? (
+                  <input
+                    type="text"
+                    value={editedOrders[order.orderId]?.shipments?.[index]?.trackingCode || shipment.trackingCode || ""}
+                    onChange={(e) => {
+                      const updatedShipments = [...order.shipments];
+                      updatedShipments[index] = {
+                        ...shipment,
+                        trackingCode: e.target.value,
+                      };
+                      handleChange(order.orderId, "shipments", updatedShipments);
+                    }}
+                  />
+                ) : (
+                  shipment.trackingCode || "-"
+                )}
+              </div>
+            ))}
           </div>
           <div>
             {editingOrderId === order.orderId ? (

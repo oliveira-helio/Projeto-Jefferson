@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
-// TODO: inserir logica de busca
+
 
 const SearchBar = () => {
   const router = useRouter(); 
@@ -20,8 +20,6 @@ const SearchBar = () => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-    // TODO: inserir logica de busca
-    console.log("Buscar por:", searchQuery);
   };
 
   useEffect(() => {

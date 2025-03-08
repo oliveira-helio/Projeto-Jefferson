@@ -151,7 +151,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }}
             >
               <div className="justify-center w-full bg-pinkSecondary hover:bg-black hover:text-pinkSecondary text-black rounded-3xl p-2 font-medium text-lg">
-                <button> ADICIONAR À SACOLA</button>
+                <button> VER DETALHES DO PRODUTO</button> 
+                 {/* TODO: se tiver mais de uma cor ver detalhes, senão adicionar ao carrinho -precisa criar o CartProductType- */}
               </div>
             </div>
           </div>

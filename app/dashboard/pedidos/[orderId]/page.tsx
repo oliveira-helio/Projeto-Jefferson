@@ -22,7 +22,7 @@ interface Order {
     quantity: number;
   }[],
   deliveryaddress: UserAddressType,
-  shipment: Shipment
+  shipments: Shipment[]
 };
 
 interface Shipment {
@@ -67,6 +67,12 @@ const OrdersDashboard = () => {
     fetchOrders();
   }, [accessToken, orderId]);
 
+  useEffect(() => {
+    console.log('order:', order);
+  }
+  , [order]);
+    
+
 
 
   if (loading) return <div className="flex justify-center items-center h-screen text-xl">Carregando...</div>;
@@ -92,7 +98,7 @@ const OrdersDashboard = () => {
             <p className="text-gray-600">Total: R$ {order.orderTotal}</p>
             <p className="text-gray-600">
               Status do Pedido: <span className="font-medium">{
-                (order.shipment.shippingStatus === "delivered" ? "Concluído" :
+                (order.shipments[0].shippingStatus === "delivered" ? "Concluído" :
                   (order.status === "pending" ? "Aguardando pagamento" :
                     (order.status === "approved" ? "Pagamento aprovado" :
                       (order.status === "in_process" ? "Pagamento em processo" :
@@ -101,7 +107,7 @@ const OrdersDashboard = () => {
                             (order.status === "cancelled" ? "Cancelado" :
                               (order.status === "refunded" ? "Estornado" :
                                 (order.status === "expired" ? "Expirado" :
-                                 order.status
+                                  order.status
                                 )
                               )
                             )
@@ -115,13 +121,25 @@ const OrdersDashboard = () => {
               </span>
             </p>
             <p className="text-gray-600">Status de Envio: <span className="font-medium">{
-              (order.shippingStatus === "pending" ? "Aguardando envio" :
-                (order.shippingStatus === "posted" ? "Enviado" :
-                  (order.shippingStatus === "in_transit" ? "Em trânsito" :
-                    (order.shippingStatus === "delivered" ? "Entregue" :
-                      (order.shippingStatus === "canceled" ? "Cancelado" :
-                        (order.shippingStatus === "returned" ? "Estornado" :
-                          order.shippingStatus
+              (order.shippingStatus === "created" ? "Etiqueta criada" :
+                (order.shippingStatus === "pending" ? "Aguardando envio" :
+                  (order.shippingStatus === "released" ? "Liberado para envio" :
+                    (order.shippingStatus === "generated" ? "Etiqueta gerada" :
+                      (order.shippingStatus === "received" ? "Liberado para retirada" :
+                        (order.shippingStatus === "posted" ? "Enviado" :
+                          (order.shippingStatus === "delivered" ? "Entregue" :
+                            (order.shippingStatus === "cancelled" ? "Cancelado" :
+                              (order.shippingStatus === "undelivered" ? "Falha na entrega" :
+                                (order.shippingStatus === "returned" ? "Estornado" :
+                                  (order.shippingStatus === "paused" ? "Envio pausado" :
+                                    (order.shippingStatus === "suspended" ? "Envio suspenso" :
+                                      order.shippingStatus
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
                         )
                       )
                     )
@@ -161,18 +179,23 @@ const OrdersDashboard = () => {
         </div>
 
         {/* Se houver informações de envio */}
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Informações de Envio:</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {order.shipments.map((shipment, index) => (
 
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Informações de Envio:</h3>
-          {order.shipment?.id && (
-            <div className="border-t pt-4 mb-4">
-              <p className="text-gray-600">Transportadora: {order.shipment.carrier || "-"}</p>
-              <p className="text-gray-600">Código de Rastreamento: {order.shipment.trackingCode || "-"}</p>
-              <p className="text-gray-600">Data prevista para entrega: {order.shipment.estimatedDeliveryDate ? new Date(order.shipment.estimatedDeliveryDate).toLocaleDateString() : "-"}</p>
-              <p className="text-gray-600">Data de Envio: {order.shipment.shippedAt ? new Date(order.shipment.shippedAt).toLocaleString() : "-"}</p>
-              <p className="text-gray-600">Data de Entrega: {order.shipment.deliveredAt ? new Date(order.shipment.deliveredAt).toLocaleString() : "-"}</p>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-gray-700">Volume {index + 1}:</h3>
+              {shipment.id && (
+                <div className="border-t pt-4 mb-2">
+                  <p className="text-gray-600">Transportadora: {shipment.carrier || "-"}</p>
+                  <p className="text-gray-600">Código de Rastreamento: {shipment.trackingCode || "-"}</p>
+                  <p className="text-gray-600">Data prevista para entrega: {shipment.estimatedDeliveryDate ? new Date(shipment.estimatedDeliveryDate).toLocaleDateString() : "-"}</p>
+                  <p className="text-gray-600">Data de Envio: {shipment.shippedAt ? new Date(shipment.shippedAt).toLocaleString() : "-"}</p>
+                  <p className="text-gray-600">Data de Entrega: {shipment.deliveredAt ? new Date(shipment.deliveredAt).toLocaleString() : "-"}</p>
+                </div>
+              )}
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>
