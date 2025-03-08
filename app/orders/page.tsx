@@ -2,6 +2,7 @@
 import { useAuth } from "@/Contexts/AuthContext";
 import apiAdress from "@/utils/api";
 import axios from "axios";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const UserOrders = () => {
@@ -44,17 +45,18 @@ const UserOrders = () => {
       {orders.length > 0 ? (
         <div className="space-y-6">
           {orders.map((order) => (
+            
             <div
               key={order.orderId}
               className="border border-solid  border-pink-200 rounded-lg shadow-md p-6 transition hover:shadow-xl bg-pink-50 "
             >
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-start mb-4">
                 <div>
                   <h4 className="text-xl font-semibold text-gray-700">
                     Pedido #{order.orderId}
                   </h4>
                   <p className="text-gray-500">
-                    Status:{" "}
+                    Status do pedido:{" "}
                     <span
                       className={`font-medium ${
                         order.status === "delivered"
@@ -64,7 +66,43 @@ const UserOrders = () => {
                           : "text-gray-500"
                       }`}
                     >
-                      {order.status}
+                      {order.status === "pending" ? "Aguardando pagamento" :
+                        (order.status === "approved" ? "Pagamento aprovado" :
+                          (order.status === "inprocess" ? "Pagamento em processo" :
+                            (order.status === "inmediation" ? "Em contestação" :
+                              (order.status === "rejected" ? "Pagamento rejeitado" :
+                                (order.status === "refunded" || order.status === "chargedback" ? "Estornado" : order.status) 
+                              )
+                            )
+                          )
+                        )
+                      }
+                    </span>
+                  </p>
+                  <p className="text-gray-500">
+                    Status da entrega:{" "}
+                    <span
+                      className={`font-medium ${
+                        order.status === "delivered"
+                          ? "text-green-500"
+                          : order.status === "ongoing"
+                          ? "text-yellow-500"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {(order.shipingStatus === "pending" ? "Aguardando envio" :
+                        (order.shipingStatus === "posted" ? "Enviado" :
+                          (order.shipingStatus === "in_transit" ? "Em trânsito" :
+                            (order.shipingStatus === "delivered" ? "Entregue" :
+                              (order.shipingStatus === "canceled" ? "Cancelado" :
+                                (order.shipingStatus === "returned" ? "Estornado" :
+                                  order.shipingStatus
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )}
                     </span>
                   </p>
                 </div>
@@ -72,9 +110,31 @@ const UserOrders = () => {
                   <p className="text-lg font-semibold text-gray-700">
                     Total: R$ {order.orderTotal}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    Envio: {order.shippingStatus}
-                  </p>
+                  
+                  <div className="flex flex-row gap-6">
+                  {order.shipments?.map((shipment: any, index: number) => (
+                    <div>
+                      <p className="text-sm text-gray-500">
+                      Pedido envio via: {shipment?.carrier || '-'}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Código de rastreio: {shipment.tracking_url ? <Link href={shipment.tracking_url}> {shipment?.trackingCode || 'Rastrear Pedido'}</Link>: "-"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Estimativa de entrega: {new Date(shipment?.estimatedDeliveryTime).toLocaleDateString() || ""}
+                      </p>
+                      {shipment?.deliveredAt ? 
+                        <p className="text-sm text-gray-500">
+                        Pedido entregue em: {new Date(shipment?.deliveredAt).toLocaleString()}
+                      </p> : shipment?.shipedAt ?
+                      <p className="text-sm text-gray-500">
+                        Pedido enviado em: {new Date(shipment?.shipedAt).toLocaleDateString()}
+                      </p> : "Aguardando envio"
+                      }
+                    </div>
+                  ))}
+                  </div>
+
                 </div>
               </div>
 

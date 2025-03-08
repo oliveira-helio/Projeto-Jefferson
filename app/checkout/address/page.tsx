@@ -29,7 +29,6 @@ const Checkout = () => {
   };
 
   const handleSaveAddress = (newAddress: any) => {
-    console.log("Novo endereço salvo:", newAddress);
     handleAddAddress(newAddress);
     setShowForm(false);
   };

@@ -47,6 +47,10 @@ const Checkout = () => {
     deliveryFee: product.deliveryFee
   }));
 
+  console.log('selectedDelivery:', selectedDelivery);
+  console.log('selectedAddress:', selectedAddress);
+  
+
 
   // create order
   const createOrder = async () => {
