@@ -33,10 +33,42 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
+  // const productRegister = async (data: FieldValues) => {
+  //   console.log('data no product register: ',data);
+  //   try {
+  //     const response = await axios.post(`${apiAdress}/product/register`, data);
+  //     toast.success("Produto cadastrado com sucesso!");
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Erro ao cadastrar o produto:", error);
+  //     toast.error("Erro ao cadastrar o produto. Tente novamente.");
+  //     throw error;
+  //   }
+  // };
+
   const productRegister = async (data: FieldValues) => {
-    console.log("tentou registrar produto")
+    
+    const formData = new FormData();
+
+    // Adiciona os campos normais
+    Object.keys(data).forEach((key) => {
+        formData.append(key, String(data[key])); // Converte para string para evitar problemas
+    });
+
+    // Adiciona as imagens
+    data.images.forEach((image: any) => {
+      if (image.file instanceof File) {
+        formData.append("images", image.file); // Envia as imagens sob a mesma chave
+        formData.append("is_generic", String(image.is_generic)); // Envia is_generic separadamente
+      }
+    });
+
     try {
-      const response = await axios.post(`${apiAdress}/product/register`, data);
+      const response = await axios.post(`${apiAdress}/product/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Produto cadastrado com sucesso!");
       return response.data;
     } catch (error) {

@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ProductContext } from "@/Contexts/ProductsContext";
@@ -38,11 +38,14 @@ export default function CreateProduct() {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    if (images.length === 0) {
+      toast.error("É necessário adicionar pelo menos uma imagem.");
+      return;
+    }
     setIsLoading(true);
     try {
+      // O produto inclui os dados do formulário e a lista de imagens com URLs pré-assinadas
       await productRegister({ ...data, images });
-      console.log('data',data);
-      
       toast.success("Produto cadastrado com sucesso!", {
         id: "product-toast-1",
       });
@@ -54,6 +57,10 @@ export default function CreateProduct() {
     }
   };
 
+  useEffect(() => {
+    console.log('images no page:',images);
+  }
+  ,[images]);
   return (
     <div className="p-6 w-full">
       <h1 className="text-2xl font-bold mb-4 self-center m-2">

@@ -39,8 +39,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = useCallback(async () => {
-    // localStorage.removeItem('accessToken');
     localStorage.clear()
+    // localStorage.removeItem('accessToken');
     setIsAdmin(false);
     setIsAuthenticated(false);  
 
@@ -69,9 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(!!event.newValue);
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -84,9 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(!!event.newValue);
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -100,7 +96,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setAccessToken(updatedToken);
       }
     };
-
     window.addEventListener("storage", handleStorage);
     return () => {
       window.removeEventListener("storage", handleStorage);
@@ -113,7 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (localStorage.getItem('accessToken')) {
         renewToken();
       }
-    }, 30 * 60 * 1000); 
+    }, 90 * 60 * 1000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -128,15 +123,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Logout automatically when inactive
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-
     const handleTimeout = async () => {
       await logout();
       router.push('/');
+      localStorage.clear()
     };
 
     const resetTimeout = () => {
       clearTimeout(timeout);
-      timeout = setTimeout(handleTimeout, 30 * 60 * 1000); // 30 minutos
+      timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos
     };
 
     window.addEventListener('mousemove', resetTimeout);

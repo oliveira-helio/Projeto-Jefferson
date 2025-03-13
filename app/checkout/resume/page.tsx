@@ -2,7 +2,7 @@
 import { useAddress } from "@/Hooks/useAddress";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/Hooks/useCart";
-import ItemContentCheckout from "@/app/carrinho/ItemContentCheckout";
+import ItemContentCheckout from "@/app/cart/ItemContentCheckout";
 import AddressCheckoutCard from "@/components/AdressCard/AddressCheckout";
 
 

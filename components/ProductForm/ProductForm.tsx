@@ -10,6 +10,8 @@ import Button from "@/components/MicroComponents/Button";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import ImageInput from "./ImageImput";
+import axios from 'axios'; // Para fazer requisições para o backend
+
 
 interface ProductFormProps {
   isLoading: boolean;
@@ -36,7 +38,36 @@ const ProductForm: React.FC<ProductFormProps> = ({
   setImages,
   disabledFields = [],
 }) => {
-  const [images, setLocalImages] = useState<{ image_url: string; is_generic: boolean }[]>(initialImages);
+  const [images, setLocalImages] = useState<{ file?:File; image_url: string; is_generic: boolean }[]>(initialImages);
+  const [loadingImage, setLoadingImage] = useState(false); // Para mostrar o estado de carregamento
+
+  // Função para fazer o upload das imagens para o S3
+  const uploadImageToS3 = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setLoadingImage(true);
+      const { data } = await axios.post("/api/upload-s3", formData); // Backend que lida com o upload no S3
+      return data.imageUrl; // Supondo que o backend retorna a URL da imagem
+    } catch (error) {
+      console.error("Erro ao fazer upload da imagem:", error);
+      toast.error("Erro ao fazer upload da imagem.");
+      setLoadingImage(false);
+      return null;
+    }
+  };
+
+  // Adiciona a imagem à lista
+  const handleAddImage = ( signedUrl: string, isGeneric: boolean, file: File | undefined) => {
+    const newImage = { image_url: signedUrl, is_generic: isGeneric, file };
+    setLocalImages(prevImages => [...prevImages, newImage]);
+  };
+
+  // Remove a imagem da lista
+  const handleRemoveImage = (index: number) => {
+    setLocalImages(images.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     setLocalImages(initialImages);
@@ -44,15 +75,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   useEffect(() => {
     setImages(images);
+    console.log('images no productForm',images);
+    
   }, [images, setImages]);
 
-  const handleAddImage = (image: { image_url: string; is_generic: boolean }) => {
-    setLocalImages([...images, image]);
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setLocalImages(images.filter((_, i) => i !== index));
-  };
 
   return (
     <div className="grid grid-flow-row grid-cols-4 gap-0">
@@ -399,42 +425,40 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </div>
       </div>
 
-			{/* Imagens */}
-			<span className="text-base font-medium text-zinc-700 col-span-4 m-2">Imagens</span>
-			<div className="grid grid-cols-4 col-span-4">
-				<div className="col-span-2">
-					<ImageInput
-						register={register}
-						errors={errors}
-						onAddImage={handleAddImage}
-            disabled={isLoading || !!disabledFields.find((field:string) => field === "images")}
-					/>
-				</div>
+      {/* Imagens */}
+      <span className="text-base font-medium text-zinc-700 col-span-4 m-2">Imagens</span>
+      <div className="grid grid-cols-4 col-span-4">
+        <div className="col-span-2">
+          {/* Componente ImageInput */}
+          <ImageInput onFileAdded={handleAddImage} />
+        </div>
 
-				<div className="mt-2 col-span-2 bg-pink-200 rounded ">
-					{images.map((image, index) => (
-						<div key={index} className="items-center justify-between p-2 border-b grid grid-cols-4 gap-1">
-							<span className="col-span-2 overflow-hidden">{image.image_url}</span>
-							<span>{image.is_generic ? "Genérica" : "Específica"}</span>
-							<button
+        <div className="mt-2 col-span-2 bg-pink-200 rounded">
+          {images.map((image, index) => (
+            <div key={index} className="items-center justify-between p-2 border-b grid grid-cols-4 gap-1">
+              <span className="col-span-2 overflow-hidden">{image.file?.name}</span>
+              <span>{image.is_generic ? "Genérica" : "Específica"}</span>
+              <button
                 type="button"
                 onClick={() => handleRemoveImage(index)}
-                disabled={isLoading || !!disabledFields.find((field:string) => field === "remove_button")}
-                className={`text-red-500 hover:text-red-700 ${(!!disabledFields.find((field:string) => field === "remove_button")) ? 'cursor-not-allowed': 'cursor-pointer'}`}
+                disabled={isLoading || !!disabledFields.find((field: string) => field === "remove_button")}
+                className={`text-red-500 hover:text-red-700 ${
+                  !!disabledFields.find((field: string) => field === "remove_button") ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
               >
-								Remover
-							</button>
-						</div>
-					))}
-				</div>					
-			</div>
+                Remover
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="items-center col-span-4 flex justify-center mt-8">
         <Button
           label={isLoading ? "Carregando" : buttonLabel}
           onClick={handleSubmit((data) => onSubmit({ ...data, images }))}
           custom="text-xl h-fit"
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "remove_button")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "remove_button")}
         />
       </div>
     </div>

@@ -22,7 +22,7 @@ const UserMenu = () => {
   return (
     <div className="flex flex-row h-full gap-1 items-center md:mr-2 xl:mr-0">
       <div className=" h-full relative">
-        <a href="/carrinho" className="h-full">
+        <a href="/cart" className="h-full">
           <button className="">
             <div
               id="cartItemCounter"

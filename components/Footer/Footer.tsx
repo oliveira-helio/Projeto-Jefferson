@@ -1,5 +1,9 @@
 import Container from "../Container";
 import Image from "next/image";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -12,8 +16,8 @@ const Footer = () => {
                 <li>
                   <ul>
                     <h2 className="font-semibold text-black">SOBRE NÓS</h2>
-                    <li>QUEM SOMOS</li>
-                    <li>NOSSO ENDEREÇOS</li>
+                    <li className="text-gray-800"><Link href={"/about-us"} className="text-gray-800">QUEM SOMOS</Link></li>
+                    <li className="text-gray-800"><Link href={"/our-locations"} className="text-gray-800">ONDE ESTAMOS</Link></li>
                   </ul>
                 </li>
               </div>
@@ -22,27 +26,34 @@ const Footer = () => {
                 <li>
                   <ul className="flex flex-col gap-0.5">
                     <h2 className="font-semibold text-black">MINHA CONTA</h2>
-                    <li>MEU CARRINHO</li>
-                    <li>MEUS PEDIDOS</li>
+                    <li><Link href={"/cart"} className="text-gray-800">MEU CARRINHO</Link></li>
+                    <li><Link href={"/orders"} className="text-gray-800">MEUS PEDIDOS</Link></li>
                   </ul>
                 </li>
               </div>
               <div>
                 <li className="flex flex-col gap-0.5">
-                  <h2 className="font-semibold text-black">AJUDA</h2>
+                  <h2 className="font-semibold text-black"><Link href={"/"}>AJUDA</Link></h2>
                 </li>
               </div>
             </ul>
           </div>
 
+          {/* TODO: Add the following features to the footer component: in email create a link to send a mail to us, in telefone create a link to call us, in whatsapp create a link to send a message to us, in instagram create a link to our instagram page, in facebook create a link to our facebook page */}
           <div className="flex flex-col gap-6 text-center align-top h-full mb-4">
             <div className="text-center h-full">
               <h2 className="font-semibold text-black mb-0.5">CONTATO</h2>
-              <ul className="flex flex-col gap-0.5">
-                <li>TELEFONE: (62) 98877-6655</li>
-                <li>E-MAIL: contato@empresa.com</li>
-                <li>WHATSAPP: (62) 98877-6655</li>
+              <ul className="flex flex-col gap-0.5 text-gray-800">
+                <li><Link href={"tel:+5562988776655"} className="text-gray-800">TELEFONE: (62) 98877-6655</Link></li>
+                <li><Link href={"mailto:contato@empresa.com"} className="text-gray-800">E-MAIL: contato@empresa.com</Link></li>
+                <li><Link href={"https://wa.me/5562988776655"} className="text-gray-800">WHATSAPP: (62) 98877-6655</Link></li>
               </ul>
+            </div>
+
+            <div className="flex flex-row justify-center gap-4">
+              <Link href={"https://wa.me/5562995578640"}><WhatsAppIcon fontSize="large" className="text-green-700"/></Link>
+              <Link href={"https://www.instagram.com/pincelepoesiamakes/"} className=""><InstagramIcon fontSize="large" className="text-red-500"/></Link>
+              <Link href={"https://www.facebook.com/seuPerfil"}><FacebookIcon fontSize="large" className="text-blue-600"/></Link>
             </div>
           </div>
 
@@ -61,13 +72,11 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-row justify-evenly items-center text-center">
-          <div>
-            <h2 className="text-black">redes sociais</h2>
-            <div className="text-slate-900">redes</div>
+        <div>
+          <div className="flex flex-col justify-center items-center text-center gap-2 mb-4">
+            <span className="text-slate-900">Pincel & Poesia ™ 2025 - Todos os Direitos Reservados{"   "}</span>
+            <span className="text-slate-900">{""}Idealizado e produzido por <Link href={"https://oliveira-helio.github.io/web-portifolio-1/"}>©Hélio Oliveira</Link></span>
           </div>
-
-          <div>sasa</div>
         </div>
       </Container>
     </div>

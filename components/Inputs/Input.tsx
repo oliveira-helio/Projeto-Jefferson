@@ -15,6 +15,7 @@ interface InputProps {
 	custom?: string,
 	min?: number,
 	value?: string,
+	accept?: string,
 }
 
 const Input: React.FC<InputProps> = ({
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({
 	min, 
 	value,
 	onChange,
+	accept,
 }) => {
 	
 	return (
@@ -57,6 +59,7 @@ const Input: React.FC<InputProps> = ({
 				min={min}
 				value={value}
 				onChange={onChange}
+				accept={accept}
 				className={`
                     transition
                     disabled:opacity-70

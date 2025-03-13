@@ -1,7 +1,7 @@
 import Container from "../../components/Container";
 import CartClient from "./CartClient";
 
-const Carrinho = () => {
+const Cart = () => {
   return (
     <div>
       <Container>
@@ -11,4 +11,4 @@ const Carrinho = () => {
   );
 };
 
-export default Carrinho;
+export default Cart;

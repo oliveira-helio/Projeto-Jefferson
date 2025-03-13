@@ -1,72 +1,58 @@
+import apiAdress from "@/utils/api";
 import React, { useState } from "react";
-import { FieldValues, UseFormRegister, FieldErrors } from "react-hook-form";
-import Input from "@/components/Inputs/Input";
-import Button from "@/components/MicroComponents/Button";
 
 interface ImageInputProps {
-  register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
-  onAddImage: (image: { image_url: string; is_generic: boolean }) => void;
-  disabled: boolean
+  onFileAdded: ( signedUrl: string, isGeneric: boolean, file?: File) => void;
 }
 
-const ImageInput: React.FC<ImageInputProps> = ({
-  register,
-  errors,
-  onAddImage,
-  disabled
-}) => {
-  const [imageUrl, setImageUrl] = useState("");
-  const [isGeneric, setIsGeneric] = useState(false);
+const ImageInput: React.FC<ImageInputProps> = ({ onFileAdded }) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [isGeneric, setIsGeneric] = useState<boolean>(false);
 
-  const handleAddImage = () => {
-    if (imageUrl) {
-      onAddImage({ image_url: imageUrl, is_generic: isGeneric });
-      setImageUrl("");
-      setIsGeneric(false);
+  // Função para gerar o URL pré-assinado
+  // const generateSignedUrl = async (file: File) => {
+  //   try {
+  //     const response = await fetch(`${apiAdress}/generate-presigned-url`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+  //     });
+
+  //     if (!response.ok) throw new Error("Erro ao gerar URL pré-assinado");
+
+  //     const data = await response.json();
+  //     setSignedUrl(data.url);
+  //     onFileAdded(file, "",  isGeneric); // Passa isGeneric para onFileAdded
+  //   } catch (error) {
+  //     console.error("Erro ao gerar URL:", error);
+  //   }
+  // };
+
+  // Quando o usuário seleciona um arquivo
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    
+    if (file) {
+      setSelectedFile(file);
+      onFileAdded( "",  isGeneric, file); // Passa isGeneric para onFileAdded
+      // generateSignedUrl(file); // Gera o URL e chama onFileAdded
     }
   };
 
+  // Alterna o estado do is_generic
+  const handleIsGenericChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsGeneric(event.target.checked);
+  };
+
   return (
-    <div className="m-2 w-full grid grid-cols-4 items-center">
-      <div className="col-span-2">
-        <span className="text-base font-medium text-zinc-700">
-          URL da Imagem
-        </span>
-        <Input
-          id="image_url"
-          label=""
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          register={register}
-          errors={errors}
-          disabled={disabled}
-          type="text"
-          custom="w-full p-2 border-2 border-solid rounded-md outline-none"
-        />
-      </div>
-      <div className="flex flex-col items-center h-full justify-between mt-2">
-        <label
-          htmlFor="is_generic"
-          className="text-base font-medium text-zinc-700"
-        >
-          <span> Genérica</span>
-        </label>
-        <input
-          type="checkbox"
-          id="is_generic"
-          checked={isGeneric}
-          onChange={(e) => setIsGeneric(e.target.checked)}
-          className="mr-2"
-          disabled={disabled}
-        />
-      </div>
-      <Button
-        label="Adicionar"
-        onClick={handleAddImage}
-        custom={`w-fit h-fit rounded-md pink-400`}
-        disabled={disabled}
-      />
+    <div>
+      <input type="file" accept="image/*" onChange={handleFileChange}/>
+      <label>
+        <input type="checkbox" checked={isGeneric} onChange={handleIsGenericChange} />
+        É genérica?
+      </label>
+      {selectedFile && <p>Arquivo: {selectedFile.name}</p>}
     </div>
   );
 };

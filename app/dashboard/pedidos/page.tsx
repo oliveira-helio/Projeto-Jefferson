@@ -114,7 +114,7 @@ const OrdersDashboard = () => {
               >
                 {
                   (order.status === "pending" ? <option>Aguardando pagamento</option> :
-                    (order.status === "approved" ? <option>Pagamento aprovado</option> :
+                    (order.status === "approved" || order.status ===  "aproved" ? <option>Pagamento aprovado</option> :
                       (order.status === "inprocess" ? <option>Pagamento em processo</option> :
                         (order.status === "inmediation" ? <option>Em contestação</option> :
                           (order.status === "rejected" ? <option>Pagamento rejeitado</option> :
@@ -132,7 +132,7 @@ const OrdersDashboard = () => {
             ) : (
               (order.shippingStatus === "delivered" ? "Concluído" :
                 (order.status === "pending" ? "Aguardando pagamento" :
-                  (order.status === "approved" ? "Pagamento aprovado" :
+                  ((order.status === "approved" || order.status ===  "aproved") ? "Pagamento aprovado" :
                     (order.status === "inprocess" ? "Pagamento em processo" :
                       (order.status === "inmediation" ? "Em contestação" :
                         (order.status === "rejected" ? "Pagamento rejeitado" :
@@ -169,13 +169,27 @@ const OrdersDashboard = () => {
                 ))}
               </select>
             ) : (
-              (order.shippingStatus === "pending" ? "Aguardando envio" :
-                (order.shippingStatus === "posted" ? "Enviado" :
-                  (order.shippingStatus === "in_transit" ? "Em trânsito" :
-                    (order.shippingStatus === "delivered" ? "Entregue" :
-                      (order.shippingStatus === "canceled" ? "Cancelado" :
-                        (order.shippingStatus === "returned" ? "Estornado" :
-                          order.shippingStatus
+              (order.shippingStatus === "sorting" ? "Em separação" :
+                (order.shippingStatus === "created" ? "Etiqueta criada" :
+                  (order.shippingStatus === "pending" ? "Aguardando envio" :
+                    (order.shippingStatus === "released" ? "Liberado para envio" :
+                      (order.shippingStatus === "generated" ? "Etiqueta gerada" :
+                        (order.shippingStatus === "received" ? "Liberado para retirada" :
+                          (order.shippingStatus === "posted" ? "Enviado" :
+                            (order.shippingStatus === "delivered" ? "Entregue" :
+                              (order.shippingStatus === "cancelled" ? "Cancelado" :
+                                (order.shippingStatus === "undelivered" ? "Falha na entrega" :
+                                  (order.shippingStatus === "returned" ? "Estornado" :
+                                    (order.shippingStatus === "paused" ? "Envio pausado" :
+                                      (order.shippingStatus === "suspended" ? "Envio suspenso" :
+                                        order.shippingStatus
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
                         )
                       )
                     )
