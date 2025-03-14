@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ProductContext } from "@/Contexts/ProductsContext";
@@ -11,6 +11,7 @@ export default function EditProduct() {
   const { productDelete, searchProduct } = useContext(ProductContext);
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<{ image_url: string; is_generic: boolean }[]>([]);
+  const [searchParam, setSearchParam] = useState('');
   const {
     register,
     handleSubmit,
@@ -40,9 +41,9 @@ export default function EditProduct() {
   });
 
   const handleSearchProduct = async () => {
-    const { bar_code } = getValues();
+    const bar_code = { bar_code: searchParam }
     try {
-      const data = await searchProduct({ bar_code });
+      const data = await searchProduct(bar_code);
       if (data.product) {
         console.log('product', data.product);
       }
@@ -78,6 +79,16 @@ export default function EditProduct() {
     }
   };
 
+  useEffect(() => {
+    console.log('dados alterados:', getValues('bar_code'));
+  }
+  ,[ getValues('bar_code')]);
+
+  useEffect(() => {
+    console.log('dados searchParam:', searchParam);
+  }
+  ,[searchParam]);
+
   return (
     <div className="p-6 w-full">
       <h1 className="text-2xl font-bold mb-4 self-center m-2">
@@ -91,13 +102,16 @@ export default function EditProduct() {
         <div className="grid grid-flow-col grid-cols-7 items-center">
           <div className="col-span-2">
             <Input
-              id="bar_code"
+              id="searchParam"
               label=""
               disabled={isLoading}
               register={register}
               errors={errors}
               type="input"
               custom="w-full p-2 border-2 border-solid rounded-md outline-none"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchParam(event.target.value) // Atualiza o estado com o valor completo
+              }
             />
             {errors.name?.type && (
               <span className="text-red-500 text-sm">campo obrigatório</span>
@@ -107,6 +121,7 @@ export default function EditProduct() {
             label="Buscar"
             onClick={handleSearchProduct}
             custom="p-2 bg-blue-500 text-white rounded-md "
+            disabled={searchParam === '' || searchParam === null }
           />
         </div>
       </div>

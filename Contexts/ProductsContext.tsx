@@ -24,11 +24,12 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         params: data, // Passa os dados como parâmetros de URL
       });
       
+      console.log('response:',response.data);
       
       return response.data; // Retorna os dados do produto
     } catch (error) {
       console.log("Erro ao buscar o produto:", error);
-      toast.error("Erro ao buscar o produto. Tente novamente.");
+      toast.error("Produto não encontrado");
       throw error;
     }
   };
@@ -79,8 +80,27 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const productEdit = async (data: FieldValues) => {
+    const formData = new FormData();
+
+    // Adiciona os campos normais
+    Object.keys(data).forEach((key) => {
+        formData.append(key, String(data[key])); // Converte para string para evitar problemas
+    });
+
+    // Adiciona as imagens
+    data.images.forEach((image: any) => {
+      if (image.file instanceof File) {
+        formData.append("images", image.file); // Envia as imagens sob a mesma chave
+        formData.append("is_generic", String(image.is_generic)); // Envia is_generic separadamente
+      }
+    });
+
     try {
-      const response = await axios.put(`${apiAdress}/product/edit`, data);
+      const response = await axios.put(`${apiAdress}/product/edit`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Produto alterado com sucesso!");
       return response.data;
     } catch (error) {

@@ -31,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({
       cursor-pointer
       disabled:Opacity-70
       hover:bg-opacity-80
-      ${disabled ? "cursor-not-allowed bg-opacity-80" : "cursor-pointer"}
+      ${ disabled ? "cursor-not-allowed bg-opacity-80 bg-black" : "cursor-not-allowed" }
       rounded-full
       transition
       border-pink-400

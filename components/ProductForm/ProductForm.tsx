@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import ImageInput from "./ImageImput";
 import axios from 'axios'; // Para fazer requisições para o backend
+import Link from "next/link";
 
 
 interface ProductFormProps {
@@ -38,28 +39,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
   setImages,
   disabledFields = [],
 }) => {
-  const [images, setLocalImages] = useState<{ file?:File; image_url: string; is_generic: boolean }[]>(initialImages);
+  const [images, setLocalImages] = useState<{ file?: File; image_url: string; is_generic: boolean }[]>(initialImages);
   const [loadingImage, setLoadingImage] = useState(false); // Para mostrar o estado de carregamento
 
-  // Função para fazer o upload das imagens para o S3
-  const uploadImageToS3 = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      setLoadingImage(true);
-      const { data } = await axios.post("/api/upload-s3", formData); // Backend que lida com o upload no S3
-      return data.imageUrl; // Supondo que o backend retorna a URL da imagem
-    } catch (error) {
-      console.error("Erro ao fazer upload da imagem:", error);
-      toast.error("Erro ao fazer upload da imagem.");
-      setLoadingImage(false);
-      return null;
-    }
-  };
-
   // Adiciona a imagem à lista
-  const handleAddImage = ( signedUrl: string, isGeneric: boolean, file: File | undefined) => {
+  const handleAddImage = (signedUrl: string, isGeneric: boolean, file: File | undefined) => {
     const newImage = { image_url: signedUrl, is_generic: isGeneric, file };
     setLocalImages(prevImages => [...prevImages, newImage]);
   };
@@ -67,6 +51,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   // Remove a imagem da lista
   const handleRemoveImage = (index: number) => {
     setLocalImages(images.filter((_, i) => i !== index));
+    // TODO: Remover a imagem do servidor 
   };
 
   useEffect(() => {
@@ -75,10 +60,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   useEffect(() => {
     setImages(images);
-    console.log('images no productForm',images);
-    
+    console.log('images no productForm', images);
   }, [images, setImages]);
 
+  useEffect(() => {
+    console.log('images no productForm', images);
+  }, [images]);
 
   return (
     <div className="grid grid-flow-row grid-cols-4 gap-0">
@@ -87,7 +74,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="name"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "name")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "name")}
           register={register}
           errors={errors}
           required
@@ -104,7 +91,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="brand"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "brand")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "brand")}
           register={register}
           errors={errors}
           required
@@ -121,7 +108,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="color"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "color")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "color")}
           register={register}
           errors={errors}
           required
@@ -140,7 +127,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="color_code"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "color_code")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "color_code")}
           register={register}
           errors={errors}
           required
@@ -157,7 +144,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <TextArea
           id="description"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "description")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "description")}
           register={register}
           errors={errors}
           required
@@ -173,7 +160,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <TextArea
           id="details"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "details")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "details")}
           register={register}
           errors={errors}
           required
@@ -189,7 +176,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="category"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "category")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "category")}
           register={register}
           errors={errors}
           required
@@ -208,7 +195,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="sub_category"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "sub_category")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "sub_category")}
           register={register}
           errors={errors}
           required
@@ -227,7 +214,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="product_type"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "product_type")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "product_type")}
           register={register}
           errors={errors}
           required
@@ -246,7 +233,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="bar_code"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "bar_code")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "bar_code")}
           register={register}
           errors={errors}
           required
@@ -265,7 +252,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="height"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "height")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "height")}
           register={register}
           errors={errors}
           required
@@ -291,7 +278,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="width"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "width")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "width")}
           register={register}
           errors={errors}
           required
@@ -317,7 +304,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="length"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "length")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "length")}
           register={register}
           errors={errors}
           required
@@ -341,7 +328,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="weight"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "weight")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "weight")}
           register={register}
           errors={errors}
           required
@@ -365,7 +352,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="price"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "price")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "price")}
           register={register}
           errors={errors}
           required
@@ -391,7 +378,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Input
           id="stock"
           label=""
-          disabled={isLoading || !!disabledFields.find((field:string) => field === "stock")}
+          disabled={isLoading || !!disabledFields.find((field: string) => field === "stock")}
           register={register}
           errors={errors}
           required
@@ -416,7 +403,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           <Input
             id="is_recommended"
             label=""
-            disabled={isLoading || !!disabledFields.find((field:string) => field === "is_recommended")}
+            disabled={isLoading || !!disabledFields.find((field: string) => field === "is_recommended")}
             register={register}
             errors={errors}
             type="checkbox"
@@ -435,16 +422,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
         <div className="mt-2 col-span-2 bg-pink-200 rounded">
           {images.map((image, index) => (
-            <div key={index} className="items-center justify-between p-2 border-b grid grid-cols-4 gap-1">
-              <span className="col-span-2 overflow-hidden">{image.file?.name}</span>
-              <span>{image.is_generic ? "Genérica" : "Específica"}</span>
+            <div key={index} className="items-center justify-between p-2 border-b grid grid-cols-5 gap-1">
+              <span className="flex col-span-3 overflow-hidden text-nowrap text-end">
+                {image.file?.name || (image.image_url && <Link href={image.image_url} target="_blank" rel="noopener noreferrer">
+                  {image.image_url}
+                </Link>)}
+              </span>
+              <span className="flex justify-center">{image.is_generic ? "Genérica" : "Específica"}</span>
               <button
                 type="button"
                 onClick={() => handleRemoveImage(index)}
                 disabled={isLoading || !!disabledFields.find((field: string) => field === "remove_button")}
-                className={`text-red-500 hover:text-red-700 ${
-                  !!disabledFields.find((field: string) => field === "remove_button") ? "cursor-not-allowed" : "cursor-pointer"
-                }`}
+                className={`text-red-500 hover:text-red-700 ${!!disabledFields.find((field: string) => field === "remove_button") ? "cursor-not-allowed" : "cursor-pointer"
+                  }`}
               >
                 Remover
               </button>

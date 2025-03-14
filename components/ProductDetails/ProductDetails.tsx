@@ -215,6 +215,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     bar_code: number;
   }>;
 
+  const sortedImages = [...product.images].sort((a, b) => {
+    return a.is_generic === b.is_generic ? 0 : a.is_generic ? -1 : 1;
+  });
+
   return (
     <>
       <section>
@@ -223,7 +227,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           <div className="flex flex-row w-full gap-2">
             {/* IMAGE GALERY */}
             <ImageGallery
-              images={product.images}
+              images={sortedImages}
               productName={product.name}
               selectedImageIndex={selectedImageIndex}
               onItemSelect={handleItemSelect}
@@ -233,10 +237,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           {/* PRODUCT DATA SECTION */}
           <div className="flex flex-col gap-3 w-full">
             <div className=" text-2xl text-pink-700 font-semibold ">
-              {product.name} {cartProduct.color} aki só para ocupar mais espaço
+              {product.name} {product.brand} {cartProduct.color || product.color}
             </div>
             <div className=" ">
-              {product.description} Lorem ipsum dolor sit amet consectetur
+               {product.description} {/* TODO remover o Loren ipsun */} Lorem ipsum dolor sit amet consectetur 
               adipisicing elit. Animi ab molestias rem unde facere voluptates,
               porro amet veniam recusandae nulla error dolore provident ad
               dolores illo perferendis voluptatum.
@@ -333,7 +337,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           {/* DESCRIPTION FULL */}
 
           <p className="text-sm text-slate-700 font-medium my-2">
-            {/* {product.description} */}
+            {product.details}
+            {/* TODO remover o Loren ipsun */}
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia
             adipisci nihil veritatis quo eos a labore magni odio quis laboriosam
             vel expedita, explicabo cumque! Ipsam eos explicabo rerum enim unde,

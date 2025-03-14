@@ -61,11 +61,14 @@ export default function CreateProduct() {
     console.log('images no page:',images);
   }
   ,[images]);
+
   return (
     <div className="p-6 w-full">
+
       <h1 className="text-2xl font-bold mb-4 self-center m-2">
         Cadastrar Produto
       </h1>
+
       <ProductForm
         isLoading={isLoading}
         register={register}
@@ -76,6 +79,7 @@ export default function CreateProduct() {
         initialImages={images}
         setImages={setImages}
       />
+      
     </div>
   );
 }
