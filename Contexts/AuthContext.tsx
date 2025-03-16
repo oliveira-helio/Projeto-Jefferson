@@ -27,22 +27,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const token = localStorage.getItem('accessToken');
       setAccessToken(token);
     }
-  }, []);
+  }, []);  
 
   const login = async (credentials: FieldValues) => {
-    try {
-      const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
-      localStorage.setItem('accessToken', response.data.accessToken);
-      setAccessToken(response.data.accessToken);
+    if (typeof window !== 'undefined') {
+      try {
+        const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
+        localStorage.setItem('accessToken', response.data.accessToken);
+        setAccessToken(response.data.accessToken);
 
-      setIsAuthenticated(true);
-      if (response.data.user.isAdmin) {
-        setIsAdmin(true);
-      }
-      return response.data.accessToken;
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
+        setIsAuthenticated(true);
+        if (response.data.user.isAdmin) {
+          setIsAdmin(true);
+        }
+        return response.data.accessToken;
+      } catch (error) {
+        console.error('Erro ao fazer login:', error);
+      };
+    };
   };
 
   const logout = useCallback(async () => {
@@ -61,54 +63,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const renewToken = async () => {
-    try {
-      const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
-      localStorage.setItem('accessToken', response.data.accessToken);
-      setAccessToken(response.data.accessToken);
-    } catch (error) {
-      console.error('Erro ao renovar token:', error);
-      logout();
-    }
+    if (typeof window !== 'undefined') {
+      try {
+        const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
+        localStorage.setItem('accessToken', response.data.accessToken);
+        setAccessToken(response.data.accessToken);
+      } catch (error) {
+        console.error('Erro ao renovar token:', error);
+        logout();
+      }
+    };
   };
 
   // Sincronize `isAuthenticated` between tabs
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'accessToken') {
-        setIsAuthenticated(!!event.newValue);
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    if (typeof window !== 'undefined') {
+      const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === 'accessToken') {
+          setIsAuthenticated(!!event.newValue);
+        }
+      };
+      window.addEventListener('storage', handleStorageChange);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+      };
+    }
   }, []);
-
-  // Sincronize `isAuthenticated` between tabs
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'accessToken') {
-        setIsAuthenticated(!!event.newValue);
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  
 
   // Sincronize token and between tabs
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (typeof window !== 'undefined') {
-        if (event.key === "accessToken") {
-          const updatedToken = localStorage.getItem("accessToken");
-          setAccessToken(updatedToken);
-        }
-      };
-      window.addEventListener("storage", handleStorage);
-      return () => {
-        window.removeEventListener("storage", handleStorage);
+    if (typeof window !== 'undefined') {
+      const handleStorage = (event: StorageEvent) => {
+        if (typeof window !== 'undefined') {
+          if (event.key === "accessToken") {
+            const updatedToken = localStorage.getItem("accessToken");
+            setAccessToken(updatedToken);
+          }
+        };
+        window.addEventListener("storage", handleStorage);
+        return () => {
+          window.removeEventListener("storage", handleStorage);
+        };
       };
     };
   }, []);
@@ -128,36 +124,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Change accessToken when updated
   useEffect(() => {
-    const newToken = localStorage.getItem('accessToken')
-    setAccessToken(newToken)
+    if (typeof window !== 'undefined') {
+      const newToken = localStorage.getItem('accessToken')
+      setAccessToken(newToken)
+    };
   }, [localStorage.getItem('accessToken')])
 
 
   // Logout automatically when inactive
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const handleTimeout = async () => {
-      await logout();
-      router.push('/');
-      localStorage.clear()
-    };
+    if (typeof window !== 'undefined') {
+      let timeout: NodeJS.Timeout;
+      const handleTimeout = async () => {
+        await logout();
+        router.push('/');
+        localStorage.clear()
+      };
 
-    const resetTimeout = () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos
-    };
+      const resetTimeout = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos
+      };
 
-    window.addEventListener('mousemove', resetTimeout);
-    window.addEventListener('click', resetTimeout);
-    window.addEventListener('keydown', resetTimeout);
+      window.addEventListener('mousemove', resetTimeout);
+      window.addEventListener('click', resetTimeout);
+      window.addEventListener('keydown', resetTimeout);
 
-    resetTimeout();
+      resetTimeout();
 
-    return () => {
-      window.removeEventListener('mousemove', resetTimeout);
-      window.removeEventListener('click', resetTimeout);
-      window.removeEventListener('keydown', resetTimeout);
-      clearTimeout(timeout);
+      return () => {
+        window.removeEventListener('mousemove', resetTimeout);
+        window.removeEventListener('click', resetTimeout);
+        window.removeEventListener('keydown', resetTimeout);
+        clearTimeout(timeout);
+      };
     };
   }, [logout, router]);
 

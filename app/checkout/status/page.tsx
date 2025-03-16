@@ -11,12 +11,13 @@ const Checkout = () => {
   
   
   useEffect(() => {
-  const temporaryPaymentId = localStorage.getItem('paymentId');
-  if (temporaryPaymentId) {
-    setPaymentId({paymentId: JSON.parse(temporaryPaymentId)});
-    console.log('paymentId aqui',paymentId);
-  }
-  
+  if (typeof window !== 'undefined') {
+    const temporaryPaymentId = localStorage.getItem('paymentId');
+    if (temporaryPaymentId) {
+      setPaymentId({paymentId: JSON.parse(temporaryPaymentId)});
+      console.log('paymentId aqui',paymentId);
+    }
+  };
 }, [paymentId, setPaymentId]);
 
   const onError = async (error: any) => {

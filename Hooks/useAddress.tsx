@@ -190,23 +190,27 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves delivery options in localstorage whenever it changes
   useEffect(()=>{ 
-    if (deliveryOptions) {
-      localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
-    }
+    if (typeof window !== 'undefined') {
+      if (deliveryOptions) {
+        localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
+      };
+    };
   },[deliveryOptions])
 
   // Sincronize delivery options between tabs
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "deliveryOptions") {
-        const updatedDeliveryOptions = localStorage.getItem("deliveryOptions");
-        setDeliveryOptions(updatedDeliveryOptions ? JSON.parse(updatedDeliveryOptions) : []);
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const handleStorage = (event: StorageEvent) => {
+        if (event.key === "deliveryOptions") {
+          const updatedDeliveryOptions = localStorage.getItem("deliveryOptions");
+          setDeliveryOptions(updatedDeliveryOptions ? JSON.parse(updatedDeliveryOptions) : []);
+        }
+      };
 
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+      };
     };
   }, []);
 
@@ -222,23 +226,27 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves selected address in localstorage whenever it changes
   useEffect(()=>{ 
-    if (selectedAddress) {
-      localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
-    }
+    if (typeof window !== 'undefined') {
+      if (selectedAddress) {
+        localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
+      };
+    };
   },[selectedAddress])
 
   // Sincronize selected address between tabs
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "selectedAddress") {
-        const updatedSelectedAddress = localStorage.getItem("selectedAddress");
-        setSelectedAddress(updatedSelectedAddress ? JSON.parse(updatedSelectedAddress) : []);
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const handleStorage = (event: StorageEvent) => {
+        if (event.key === "selectedAddress") {
+          const updatedSelectedAddress = localStorage.getItem("selectedAddress");
+          setSelectedAddress(updatedSelectedAddress ? JSON.parse(updatedSelectedAddress) : []);
+        };
+      };
 
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+      };
     };
   }, []);
   
@@ -254,24 +262,28 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves selected delivery type in localstorage whenever it changes
   useEffect(()=>{ 
-    if (selectedDelivery) {
-      localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
-    }
-    console.log('selectedDelivery:',selectedDelivery);
+    if (typeof window !== 'undefined') {
+      if (selectedDelivery) {
+        localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
+      };
+      // console.log('selectedDelivery:',selectedDelivery);
+    };
   },[selectedDelivery])
 
   // Sincronize selected delivery between tabs
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "selectedDelivery") {
-        const updatedSelectedDelivery = localStorage.getItem("selectedDelivery");
-        setSelectedDelivery(updatedSelectedDelivery ? JSON.parse(updatedSelectedDelivery) : []);
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const handleStorage = (event: StorageEvent) => {
+        if (event.key === "selectedDelivery") {
+          const updatedSelectedDelivery = localStorage.getItem("selectedDelivery");
+          setSelectedDelivery(updatedSelectedDelivery ? JSON.parse(updatedSelectedDelivery) : []);
+        }
+      };
 
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+      };
     };
   }, []);
 

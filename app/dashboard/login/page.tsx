@@ -18,7 +18,9 @@ export default function LoginPage() {
       const { token } = response.data;
 
       // Salva o token no localStorage ou cookie
-      localStorage.setItem('admToken', token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('admToken', token);
+      };
 
       // Redireciona para o dashboard
       router.push('/dashboard');
