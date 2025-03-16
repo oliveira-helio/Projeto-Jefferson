@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useCart } from "@/Hooks/useCart";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import apiAdress from "@/utils/api";
@@ -49,7 +49,7 @@ const Checkout = () => {
 
 
   // create order
-  const createOrder = async () => {
+  const createOrder = useCallback(async () => {
     const response = await fetch(`${apiAdress}/api/orders/create-order`, {
       method: "POST",
       headers: {
@@ -68,12 +68,12 @@ const Checkout = () => {
     });
     const order = await response.json();
     return order.id; // Retorne o ID do pedido gerado
-  };
+  }, [cartTotal, selectedAddress, selectedProducts]);
 
   //fetch orderId
   useEffect(() => {
     const fetchOrderId = async () => {
-      if(cartTotal === 0) return;
+      if (cartTotal === 0) return;
       const id = await createOrder();
       setOrderId(id);
     };

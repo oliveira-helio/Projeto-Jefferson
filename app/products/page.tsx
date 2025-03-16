@@ -147,7 +147,7 @@ const debouncedUpdateURL = debounce(updateURL, 500);
 useEffect(() => {
   debouncedLoadProductsAndFilters();
   debouncedUpdateURL();
-}, [brand, category, subCategory, productType, priceRange]);
+}, [brand, category, subCategory, productType, priceRange, debouncedLoadProductsAndFilters, debouncedUpdateURL]);
 
   useEffect(() => {
     // Obtém os valores iniciais da URL
