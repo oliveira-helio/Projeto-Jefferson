@@ -78,7 +78,7 @@ const Checkout = () => {
       setOrderId(id);
     };
     fetchOrderId();
-  }, [cartTotal, createOrder]);
+  }, [cartTotal]);
 
   // get payer
   const getPayer = async () => {
@@ -154,8 +154,8 @@ const Checkout = () => {
           }
         );
         const data = await response.json();
-        console.log('preferenceId:', data.preferenceId);
-        console.log('data do preferenceId:', data);
+        // console.log('preferenceId:', data.preferenceId);
+        // console.log('data do preferenceId:', data);
 
 
         setPreferenceId(data.preferenceId);

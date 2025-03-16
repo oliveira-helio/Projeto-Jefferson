@@ -3,15 +3,15 @@ import { useAddress } from "@/Hooks/useAddress";
 import { useCart } from "@/Hooks/useCart";
 import apiAdress from "@/utils/api";
 import { useRouter } from "next/navigation";
-import {  useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 const Success = () => {
   const { handleRemoveProductFromCart, selectedProducts } = useCart();
   const router = useRouter();
   const { selectedDelivery, selectedAddress } = useAddress();
 
-  // create delivery
-  const createShipment = async () => {
+  // Função createShipment otimizada com useCallback
+  const createShipment = useCallback(async () => {
     const response = await fetch(`${apiAdress}/api/orders/create-shipment`, {
       method: "POST",
       headers: {
@@ -31,30 +31,28 @@ const Success = () => {
           quantity: product.quantity,
           unitary_value: product.price
         })),
-        selectedCompany: {id: selectedDelivery?.id, name: selectedDelivery?.company?.name, type: selectedDelivery?.name}
+        selectedCompany: { id: selectedDelivery?.id, name: selectedDelivery?.company?.name, type: selectedDelivery?.name }
       })
     });
     const order = await response.json();
     return order; // Retorne o ID do pedido gerado
-  };
+  }, [selectedAddress, selectedDelivery, selectedProducts]); // Dependências do createShipment
 
   useEffect(() => {
-  selectedProducts.map((product)=> {
-      handleRemoveProductFromCart(product)
-      }
-  )
-  router.push('/');
-  },[selectedProducts, handleRemoveProductFromCart])
+    selectedProducts.forEach((product) => {
+      handleRemoveProductFromCart(product);
+    });
+    router.push('/');
+  }, [selectedProducts, handleRemoveProductFromCart, router]);
 
   useEffect(() => {
     const shipment = async () => {
       await createShipment();
     };
-    const data = shipment();
-  }, [selectedProducts, selectedAddress, selectedDelivery, createShipment]);
+    shipment();
+  }, [createShipment]); // Chamando o useCallback aqui com a dependência correta
 
-
-  return (null);
+  return null;
 }
 
 export default Success;

@@ -47,7 +47,7 @@ const CartClient = () => {
 
   useEffect(() => {
     calculateDelivery();
-  }, [selectedProducts, selectedAddress, calculateDelivery]);
+  }, [selectedProducts, selectedAddress]);
 
   useEffect(() => {
     const updatedSelectedProducts = selectedProducts.map(selectedProduct => {
