@@ -19,15 +19,22 @@ export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'))
+  const [accessToken, setAccessToken] = useState<string | null>(null)
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      setAccessToken(token);
+    }
+  }, []);
 
   const login = async (credentials: FieldValues) => {
     try {
       const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
-      localStorage.setItem('accessToken', response.data.accessToken);    
+      localStorage.setItem('accessToken', response.data.accessToken);
       setAccessToken(response.data.accessToken);
-      
+
       setIsAuthenticated(true);
       if (response.data.user.isAdmin) {
         setIsAdmin(true);
@@ -42,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.clear()
     // localStorage.removeItem('accessToken');
     setIsAdmin(false);
-    setIsAuthenticated(false);  
+    setIsAuthenticated(false);
 
     try {
       await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
@@ -55,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
       localStorage.setItem('accessToken', response.data.accessToken);
-      setAccessToken(response.data.accessToken);    
+      setAccessToken(response.data.accessToken);
     } catch (error) {
       console.error('Erro ao renovar token:', error);
       logout();
@@ -91,30 +98,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sincronize token and between tabs
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === "accessToken") {
-        const updatedToken = localStorage.getItem("accessToken");
-        setAccessToken(updatedToken);
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
+      if (typeof window !== 'undefined') {
+        if (event.key === "accessToken") {
+          const updatedToken = localStorage.getItem("accessToken");
+          setAccessToken(updatedToken);
+        }
+      };
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+      };
     };
   }, []);
 
   // Periodicaly renew the access token
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (localStorage.getItem('accessToken')) {
-        renewToken();
-      }
-    }, 90 * 60 * 1000); 
+    if (typeof window !== 'undefined') {
+      const interval = setInterval(() => {
+        if (localStorage.getItem('accessToken')) {
+          renewToken();
+        }
+      }, 90 * 60 * 1000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    };
   }, []);
 
   // Change accessToken when updated
-  useEffect(()=>{
+  useEffect(() => {
     const newToken = localStorage.getItem('accessToken')
     setAccessToken(newToken)
   }, [localStorage.getItem('accessToken')])
@@ -150,8 +161,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sincronize the initial state with localStorage
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    setIsAuthenticated(!!token);
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      setIsAuthenticated(!!token);
+    };
   }, []);
 
   return (

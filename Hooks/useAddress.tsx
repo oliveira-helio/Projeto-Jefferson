@@ -180,9 +180,11 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Builds delivery options in localstorage
   useEffect(() => {
-    const deliveryOptions = localStorage.getItem("deliveryOptions");
-    if (deliveryOptions) {
-      setDeliveryOptions(JSON.parse(deliveryOptions));
+    if (typeof window !== 'undefined') {
+      const deliveryOptions = localStorage.getItem("deliveryOptions");
+      if (deliveryOptions) {
+        setDeliveryOptions(JSON.parse(deliveryOptions));
+      }
     }
   }, []);
 
@@ -210,10 +212,12 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Builds selected address in localstorage
   useEffect(() => {
-    const storedAddress = localStorage.getItem("selectedAddress");
-    if (storedAddress) {
-      setSelectedAddress(JSON.parse(storedAddress));
-    }
+    if (typeof window !== 'undefined') {
+      const storedAddress = localStorage.getItem("selectedAddress");
+      if (storedAddress) {
+        setSelectedAddress(JSON.parse(storedAddress));
+      }
+    };
   }, []);
 
   // Saves selected address in localstorage whenever it changes
@@ -240,10 +244,12 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   
   // Builds selected delivery type in localstorage
   useEffect(() => {
-    const selectedDelivery = localStorage.getItem("selectedDelivery");
-    if (selectedDelivery) {
-      setSelectedDelivery(JSON.parse(selectedDelivery));
-    }
+    if (typeof window !== 'undefined') {
+      const selectedDelivery = localStorage.getItem("selectedDelivery");
+      if (selectedDelivery) {
+        setSelectedDelivery(JSON.parse(selectedDelivery));
+      }
+    };
   }, []);
 
   // Saves selected delivery type in localstorage whenever it changes
@@ -280,9 +286,9 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   // },[selectedDelivery])
 
   // // watch changes in selectedAddress
-  useEffect(()=>{ 
-    console.log('selectedAddress:',selectedAddress);
-  },[selectedAddress])
+  // useEffect(()=>{ 
+  //   console.log('selectedAddress:',selectedAddress);
+  // },[selectedAddress])
 
   // // watch changes in deliveryOptions
   // useEffect(()=>{ 
