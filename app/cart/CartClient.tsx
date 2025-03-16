@@ -50,12 +50,13 @@ const CartClient = () => {
   }, [selectedProducts, selectedAddress]);
 
   useEffect(() => {
-    const updatedSelectedProducts = selectedProducts.map(selectedProduct => {
-      const updatedProduct = cart.find(cartProduct => cartProduct.productId === selectedProduct.productId);
-      return updatedProduct ? { ...selectedProduct, quantity: updatedProduct.quantity } : selectedProduct;
-    });
-    setSelectedProducts(updatedSelectedProducts);
-  }, [cart, selectedProducts, setSelectedProducts]);
+    setSelectedProducts((prevSelectedProducts) =>
+      prevSelectedProducts.map(selectedProduct => {
+        const updatedProduct = cart.find(cartProduct => cartProduct.productId === selectedProduct.productId);
+        return updatedProduct ? { ...selectedProduct, quantity: updatedProduct.quantity } : selectedProduct;
+      })
+    );
+  }, [cart, setSelectedProducts]);  
   
   const handleCheckout = () => {
     if (selectedProducts.length === 0) {
@@ -67,7 +68,6 @@ const CartClient = () => {
 
   if (!cart || cart.length === 0)
     return (
-      // <Suspense fallback={<div>Carregando no CartClient1...</div>}>
       <div className="flex items-center justify-center">
         <div className="bg-[url('/assets/img/basket-retail-shopping-cart.jpg')] mt-0 rounded-2xl aspect-square bg-contain bg-no-repeat bg-center bg-pink-100 self-center flex flex-col items-center justify-between py-10">
           <div className="text-[3rem] text-pink-500 font-medium mx-8">
@@ -81,11 +81,9 @@ const CartClient = () => {
           </div>
         </div>
       </div>
-// </Suspense>
     );
 
   return (
-    // <Suspense fallback={<div>Carregando no CartClient2...</div>}>
     <div className="flex items-center justify-center">
       <div className="flex flex-col items-center justify-center max-md:m-8 max-w-[1024px]">
         <div className="border-solid border-[1px] border-pink-400 bg-pink-50 rounded-2xl m-2 mt-4 py-2 px-2 w-full">
@@ -188,7 +186,6 @@ const CartClient = () => {
 
       </div>
     </div>
-    // </Suspense>
   );
 };
 
