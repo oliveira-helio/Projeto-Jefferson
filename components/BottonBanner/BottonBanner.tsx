@@ -1,8 +1,10 @@
+import Image from "next/image";
+
 const BottonBanner = () => {
   return (
     <div>
       <div className="baner">
-        <img
+        <Image
           className="baner-img"
           src="/assets/img/Botton_Banner.jpg"
           alt="baner"

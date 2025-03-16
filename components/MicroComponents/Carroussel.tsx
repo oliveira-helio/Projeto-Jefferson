@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import Image from "next/image";
 
 interface Image {
   product_id: number;
@@ -59,7 +60,7 @@ const Carousel: React.FC<CarouselProps> = ({
                   : "border-none"
               }`}
             >
-              <img
+              <Image
                 src={image.image_url}
                 alt={`Imagem ${startIndex + idx + 1} de ${productName}`}
                 className="object-cover w-full h-full aspect-square"

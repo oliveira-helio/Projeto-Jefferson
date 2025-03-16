@@ -5,16 +5,10 @@ import apiAdress from "@/utils/api";
 import { useRouter } from "next/navigation";
 import {  useEffect } from "react";
 
-const success = () => {
+const Success = () => {
   const { handleRemoveProductFromCart, selectedProducts } = useCart();
   const router = useRouter();
   const { selectedDelivery, selectedAddress } = useAddress();
-
-  console.log('selectedDelivery:', selectedDelivery);
-  console.log('selectedAddress:', selectedAddress);
-  console.log('selectedProducts:', selectedProducts);
-
-
 
   // create delivery
   const createShipment = async () => {
@@ -41,30 +35,26 @@ const success = () => {
       })
     });
     const order = await response.json();
-    console.log('order:', order);
     return order; // Retorne o ID do pedido gerado
   };
 
   useEffect(() => {
   selectedProducts.map((product)=> {
       handleRemoveProductFromCart(product)
-      console.log('passou pelo remove')
       }
   )
   router.push('/');
-  },[selectedProducts])
+  },[selectedProducts, handleRemoveProductFromCart])
 
   useEffect(() => {
     const shipment = async () => {
       await createShipment();
     };
     const data = shipment();
-    console.log('data:', data);
-
-  }, [selectedProducts, selectedAddress, selectedDelivery]);
+  }, [selectedProducts, selectedAddress, selectedDelivery, createShipment]);
 
 
   return (null);
 }
 
-export default success;
+export default Success;

@@ -2,7 +2,7 @@
 const nextConfig = {
     reactStrictMode: false,
    experimental: {
-     appDir: true, // Habilita a estrutura "app"
+    //  appDir: true, // Habilita a estrutura "app"
    },
    // Define o diretório base do projeto como `src`
    basePath: '',
@@ -14,12 +14,16 @@ const nextConfig = {
          pathname: '/**',
        },
        {
-         protocol: 'https',
-         hostname: 'sandbox.melhorenvio.com.br',
-         pathname: '/images/shipping-companies/**',
-       },{
         protocol: 'https',
-        hostname: 'pincel-e-posia-teste.s3.amazonaws.com',
+        hostname: 'sandbox.melhorenvio.com.br',
+        pathname: '/images/shipping-companies/**',
+      },{
+        protocol: 'https',
+        hostname: 'melhorenvio.com.br',
+        pathname: '/images/shipping-companies/**',
+      },{
+        protocol: 'https',
+        hostname: 'pincel-e-posia.s3.amazonaws.com',
         pathname: '/**',
       },
      ],

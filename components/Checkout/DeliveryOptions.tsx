@@ -2,6 +2,7 @@ import { CartProductType, DeliveryInfoType } from "@/utils/types";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import Link from "next/link";
 import { useAddress } from "@/Hooks/useAddress";
+import Image from "next/image";
 
 interface ItemContentProps {
   delivery: DeliveryInfoType;
@@ -39,7 +40,7 @@ const DeliveryContentCheckout: React.FC<ItemContentProps> = ({
           className="max-md:flex max-md:flex-col md:grid md:grid-cols-5  w-full"
         >
           <div className="p-2 flex flex-row w-full col-span-2">
-            <img
+            <Image
               src={delivery.company?.picture}
               alt="Foto do produto"
               className="rounded-xl w-full  object-fill aspect-auto"

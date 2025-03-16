@@ -47,10 +47,6 @@ const Checkout = () => {
     deliveryFee: product.deliveryFee
   }));
 
-  console.log('selectedDelivery:', selectedDelivery);
-  console.log('selectedAddress:', selectedAddress);
-  
-
 
   // create order
   const createOrder = async () => {
@@ -71,7 +67,6 @@ const Checkout = () => {
       })
     });
     const order = await response.json();
-    console.log('order:', order);
     return order.id; // Retorne o ID do pedido gerado
   };
 
@@ -83,7 +78,7 @@ const Checkout = () => {
       setOrderId(id);
     };
     fetchOrderId();
-  }, [cartTotal]);
+  }, [cartTotal, createOrder]);
 
   // get payer
   const getPayer = async () => {
@@ -171,7 +166,7 @@ const Checkout = () => {
     };
 
     createPaymentPreference();
-  }, [cartTotal, selectedProducts]);
+  }, [cartTotal, selectedProducts, idempotencyKey, items, orderId, payer]);
 
   // desmonta janela?
   useEffect(() => {

@@ -47,7 +47,7 @@ const CartClient = () => {
 
   useEffect(() => {
     calculateDelivery();
-  }, [selectedProducts, selectedAddress]);
+  }, [selectedProducts, selectedAddress, calculateDelivery]);
 
   useEffect(() => {
     const updatedSelectedProducts = selectedProducts.map(selectedProduct => {
@@ -55,11 +55,7 @@ const CartClient = () => {
       return updatedProduct ? { ...selectedProduct, quantity: updatedProduct.quantity } : selectedProduct;
     });
     setSelectedProducts(updatedSelectedProducts);
-  }, [cart]);
-
-  useEffect(()=>{
-    console.log('selected Mudou:',selectedProducts);
-  }, [selectedProducts]);
+  }, [cart, selectedProducts, setSelectedProducts]);
   
   const handleCheckout = () => {
     if (selectedProducts.length === 0) {

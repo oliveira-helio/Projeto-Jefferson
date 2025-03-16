@@ -45,7 +45,7 @@ const UserOrders = () => {
       {orders.length > 0 ? (
         <div className="space-y-6">
           {orders.map((order) => (
-            
+        
             <div
               key={order.orderId}
               className="border border-solid  border-pink-200 rounded-lg shadow-md p-6 transition hover:shadow-xl bg-pink-50 "
@@ -113,7 +113,7 @@ const UserOrders = () => {
                   
                   <div className="flex flex-row gap-6">
                   {order.shipments?.map((shipment: any, index: number) => (
-                    <div>
+                    <div key={index}>
                       <p className="text-sm text-gray-500">
                       Pedido envio via: {shipment?.carrier || '-'}
                       </p>

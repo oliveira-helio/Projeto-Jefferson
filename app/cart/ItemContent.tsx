@@ -4,6 +4,7 @@ import { Delete } from "@mui/icons-material";
 import Link from "next/link";
 import QuantitySelector from "../../components/MicroComponents/QuantitySelector";
 import { useCart } from "../../Hooks/useCart";
+import Image from "next/image";
 
 interface ItemContentProps {
   item: CartProductType;
@@ -24,7 +25,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
     >
       <Link href={`/product/${item.productId}`} className=" col-span-3">
         <div className="p-1 md:grid md:grid-cols-3 flex flex-row w-full">
-          <img
+          <Image
             src={item.image}
             alt="Foto do produto"
             className="rounded-xl aspect-square max-md:w-[100px] md:w-[120px]  object-cover"

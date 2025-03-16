@@ -141,7 +141,7 @@ const Delivery: React.FC<DeliveryProps> = ({
                       />
                       <div className=" w-full relative flex flex-row justify-start items-center gap-2 justify-items-start">
                         <div className="w-1/4">
-                          <img
+                          <Image
                             src={option.company.picture}
                             
                             alt="Picture of the delivery company"

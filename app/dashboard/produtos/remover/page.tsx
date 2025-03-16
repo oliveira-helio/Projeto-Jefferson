@@ -79,15 +79,15 @@ export default function EditProduct() {
     }
   };
 
-  useEffect(() => {
-    console.log('dados alterados:', getValues('bar_code'));
-  }
-  ,[ getValues('bar_code')]);
+  // useEffect(() => {
+  //   console.log('dados alterados:', getValues('bar_code'));
+  // }
+  // ,[ getValues('bar_code')]);
 
-  useEffect(() => {
-    console.log('dados searchParam:', searchParam);
-  }
-  ,[searchParam]);
+  // useEffect(() => {
+  //   console.log('dados searchParam:', searchParam);
+  // }
+  // ,[searchParam]);
 
   return (
     <div className="p-6 w-full">

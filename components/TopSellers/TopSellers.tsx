@@ -5,7 +5,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import apiAdress from '@/utils/api'
 import Carrossel from "../MicroComponents/Carrossel";
 
-export default function topsellers() {
+export default function TopSellers() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +23,7 @@ export default function topsellers() {
     };
 
     loadProducts(); // Chama a função ao carregar o componente
-  }, []);
+  }, [setProducts, setLoading]);
 
   if (loading) {
     return <div>Carregando produtos...</div>; // Exibe um estado de carregamento

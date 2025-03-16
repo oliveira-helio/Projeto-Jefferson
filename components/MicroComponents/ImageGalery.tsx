@@ -1,5 +1,6 @@
 import React from "react";
 import Carousel from "./Carroussel";
+import Image from "next/image";
 
 interface Image {
   product_id: number;
@@ -43,7 +44,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             id="Main__Image"
             className="relative w-full h-full md:aspect-square"
           >
-            <img
+            <Image
               src={
                 images[selectedImageIndex]?.image_url ||
                 "/assets/placeholder.jpg"

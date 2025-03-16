@@ -1,5 +1,6 @@
 import { CartProductType } from "@/utils/types";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
+import Image from "next/image";
 
 interface ItemContentProps {
   item: CartProductType;
@@ -14,7 +15,7 @@ const ItemContentCheckout: React.FC<ItemContentProps> = ({ item, itemkey }) => {
     >
       <div  className="col-span-3">
         <div className="p-1 md:grid md:grid-cols-3 flex flex-row w-full">
-          <img
+          <Image
             src={item.image}
             alt="Foto do produto"
             className="rounded-xl aspect-square max-md:w-[100px] md:w-[120px]  object-cover"

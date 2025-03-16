@@ -6,7 +6,7 @@ import ItemContentCheckout from "@/app/cart/ItemContentCheckout";
 import AddressCheckoutCard from "@/components/AdressCard/AddressCheckout";
 
 
-const resume = () => {
+const Resume = () => {
   const { selectedDelivery } = useAddress();
   const { selectedProducts } = useCart();
   const router = useRouter();
@@ -49,4 +49,4 @@ const resume = () => {
   )
 };
 
-export default resume;
+export default Resume;

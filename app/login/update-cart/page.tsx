@@ -14,7 +14,7 @@ const UpdatedCart = () => {
       hasSynced.current = true; // <- Marca que já foi sincronizado
       router.push('/');
     }
-  }, []);
+  }, [router, syncLocalCartToBackend]);
 
   return null;
 };

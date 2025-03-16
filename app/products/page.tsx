@@ -72,13 +72,12 @@ useEffect(() => {
     };
 
     loadInitialFilters();
-  }, []);
+  }, [setFilteredFilters]);
 
   // Atualiza a URL com filtros
   const updateURL = useCallback(() => {
-    console.log('rodou');
     const query = new URLSearchParams();
-
+    
     if (priceRange[0] !== 0 || priceRange[1] !== 500) {
       query.append("minPrice", priceRange[0].toString());
       query.append("maxPrice", priceRange[1].toString());
