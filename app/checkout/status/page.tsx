@@ -11,7 +11,7 @@ const Checkout = () => {
   
   
   useEffect(() => {
-  if (typeof window !== 'undefined') {
+  if (global?.window !== undefined) {
     const temporaryPaymentId = localStorage.getItem('paymentId');
     if (temporaryPaymentId) {
       setPaymentId({paymentId: JSON.parse(temporaryPaymentId)});

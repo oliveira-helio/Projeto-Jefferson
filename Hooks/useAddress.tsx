@@ -180,7 +180,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Builds delivery options in localstorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const deliveryOptions = localStorage.getItem("deliveryOptions");
       if (deliveryOptions) {
         setDeliveryOptions(JSON.parse(deliveryOptions));
@@ -190,7 +190,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves delivery options in localstorage whenever it changes
   useEffect(()=>{ 
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       if (deliveryOptions) {
         localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
       };
@@ -199,7 +199,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Sincronize delivery options between tabs
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "deliveryOptions") {
           const updatedDeliveryOptions = localStorage.getItem("deliveryOptions");
@@ -216,7 +216,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Builds selected address in localstorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const storedAddress = localStorage.getItem("selectedAddress");
       if (storedAddress) {
         setSelectedAddress(JSON.parse(storedAddress));
@@ -226,7 +226,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves selected address in localstorage whenever it changes
   useEffect(()=>{ 
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       if (selectedAddress) {
         localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
       };
@@ -235,7 +235,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Sincronize selected address between tabs
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "selectedAddress") {
           const updatedSelectedAddress = localStorage.getItem("selectedAddress");
@@ -252,7 +252,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   
   // Builds selected delivery type in localstorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const selectedDelivery = localStorage.getItem("selectedDelivery");
       if (selectedDelivery) {
         setSelectedDelivery(JSON.parse(selectedDelivery));
@@ -262,7 +262,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves selected delivery type in localstorage whenever it changes
   useEffect(()=>{ 
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       if (selectedDelivery) {
         localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
       };
@@ -272,7 +272,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Sincronize selected delivery between tabs
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "selectedDelivery") {
           const updatedSelectedDelivery = localStorage.getItem("selectedDelivery");

@@ -231,7 +231,7 @@ const Checkout = () => {
           
           await updateOrder(orderData, orderId);
           updateOrder(response, orderId);
-          if (typeof window !== "undefined") {
+          if ( global?.window !== undefined) {
             localStorage.setItem('paymentId', JSON.stringify(response.id));
           }
           resolve(response);

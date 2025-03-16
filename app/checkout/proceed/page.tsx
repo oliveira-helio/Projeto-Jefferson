@@ -12,7 +12,7 @@ const Success = () => {
 
   // Função createShipment otimizada com useCallback
   const createShipment = useCallback(async () => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const response = await fetch(`${apiAdress}/api/orders/create-shipment`, {
         method: "POST",
         headers: {

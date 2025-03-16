@@ -23,14 +23,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const token = localStorage.getItem('accessToken');
       setAccessToken(token);
     }
   }, []);  
 
   const login = async (credentials: FieldValues) => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       try {
         const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
         localStorage.setItem('accessToken', response.data.accessToken);
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = useCallback(async () => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       localStorage.clear()
       // localStorage.removeItem('accessToken');
       setIsAdmin(false);
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const renewToken = async () => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       try {
         const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
         localStorage.setItem('accessToken', response.data.accessToken);
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sincronize `isAuthenticated` between tabs
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const handleStorageChange = (event: StorageEvent) => {
         if (event.key === 'accessToken') {
           setIsAuthenticated(!!event.newValue);
@@ -93,9 +93,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sincronize token and between tabs
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const handleStorage = (event: StorageEvent) => {
-        if (typeof window !== 'undefined') {
+        if (global?.window !== undefined) {
           if (event.key === "accessToken") {
             const updatedToken = localStorage.getItem("accessToken");
             setAccessToken(updatedToken);
@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Periodicaly renew the access token
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const interval = setInterval(() => {
         if (localStorage.getItem('accessToken')) {
           renewToken();
@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Change accessToken when updated
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const newToken = localStorage.getItem('accessToken')
       setAccessToken(newToken)
     };
@@ -133,7 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Logout automatically when inactive
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       let timeout: NodeJS.Timeout;
       const handleTimeout = async () => {
         await logout();
@@ -163,7 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sincronize the initial state with localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (global?.window !== undefined) {
       const token = localStorage.getItem('accessToken');
       setIsAuthenticated(!!token);
     };

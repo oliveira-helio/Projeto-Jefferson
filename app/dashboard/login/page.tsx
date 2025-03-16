@@ -18,7 +18,7 @@ export default function LoginPage() {
       const { token } = response.data;
 
       // Salva o token no localStorage ou cookie
-      if (typeof window !== 'undefined') {
+      if (global?.window !== undefined) {
         localStorage.setItem('admToken', token);
       };
 

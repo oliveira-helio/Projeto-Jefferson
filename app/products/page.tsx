@@ -38,7 +38,7 @@ export default function Products() {
   
 
 useEffect(() => {
-  if (typeof window !== 'undefined') {
+  if (global?.window !== undefined) {
     const updateIsMobile = () => setIsMobile(window.innerWidth < 768);
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile);
