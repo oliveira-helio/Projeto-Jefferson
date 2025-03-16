@@ -57,10 +57,10 @@ export type DeliveryInfoType = {
     weight?: string
   }[],
   additional_services?: { receipt?: boolean, own_hand?: boolean, collect?: boolean },
-  company?: {
+  company: {
     id?: number,
     name?: string,
-    picture?: string
+    picture: string
   }
 };
 
