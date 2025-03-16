@@ -35,6 +35,7 @@ export default function Products() {
   const [isMobile, setIsMobile] = useState(false); // Verifica se é mobile
   const [showFilters, setShowFilters] = useState(false); // Estado para o modal de filtros
   const modalRef = useRef<HTMLDivElement>(null);
+  
 
 useEffect(() => {
   if (typeof window !== 'undefined') {
@@ -139,18 +140,14 @@ useEffect(() => {
   
   
 
-  // Atualiza os filtros ao soltar a barra de preços
-  const debouncedUpdate = useCallback(
-    debounce(() => {
-      loadProductsAndFilters();
-      updateURL();
-    }, 500),
-    [loadProductsAndFilters, updateURL]
-  );
+// Atualiza os filtros ao soltar a barra de preços
+const debouncedLoadProductsAndFilters = debounce(loadProductsAndFilters, 500);
+const debouncedUpdateURL = debounce(updateURL, 500);
 
-  useEffect(() => {
-    debouncedUpdate();
-  }, [brand, category, subCategory, productType, debouncedUpdate]);
+useEffect(() => {
+  debouncedLoadProductsAndFilters();
+  debouncedUpdateURL();
+}, [brand, category, subCategory, productType, priceRange]);
 
   useEffect(() => {
     // Obtém os valores iniciais da URL
@@ -214,7 +211,8 @@ useEffect(() => {
               }
               onFinalChange={(values) => {
                 setPriceRange(values as [number, number]);
-                debouncedUpdate();
+                debouncedUpdateURL();
+                debouncedLoadProductsAndFilters()
               }}
               renderTrack={({ props, children }) => (
                 <div
@@ -364,7 +362,8 @@ useEffect(() => {
                 }
                 onFinalChange={(values) => {
                   setPriceRange(values as [number, number]);
-                  setTimeout(() => debouncedUpdate(), 0);
+                  setTimeout(() => {debouncedUpdateURL();
+                  debouncedLoadProductsAndFilters()}, 0);
                 }}
                 renderTrack={({ props, children }) => (
                   <div

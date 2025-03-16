@@ -78,7 +78,7 @@ const Checkout = () => {
       setOrderId(id);
     };
     fetchOrderId();
-  }, [cartTotal]);
+  }, [cartTotal, createOrder]);
 
   // get payer
   const getPayer = async () => {
