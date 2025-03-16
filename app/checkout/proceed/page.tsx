@@ -3,7 +3,7 @@ import { useAddress } from "@/Hooks/useAddress";
 import { useCart } from "@/Hooks/useCart";
 import apiAdress from "@/utils/api";
 import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
+import {  useEffect } from "react";
 
 const success = () => {
   const { handleRemoveProductFromCart, selectedProducts } = useCart();

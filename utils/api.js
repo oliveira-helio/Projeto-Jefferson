@@ -1,3 +1,3 @@
-const apiAdress = 'https://api.backend.pincelepoesia.com';
+const apiAdress=process.env.PUBLIC_API_URL
 
 export default apiAdress;
