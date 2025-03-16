@@ -93,7 +93,9 @@ const Sidebar = () => {
       <div className="p-4">
         <button
           onClick={() => {
-            localStorage.removeItem('admToken');
+            if (typeof window !== "undefined") {
+              localStorage.removeItem('admToken');
+            };
             window.location.href = '/dashboard/login';
           }}
           className="w-full bg-red-500 py-2 rounded hover:bg-red-600 transition"

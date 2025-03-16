@@ -17,7 +17,7 @@ const Success = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "accessToken": `Bearer ${localStorage.getItem('accessToken')}`
+          "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
         },
         body: JSON.stringify({
           volumes: selectedDelivery?.packages.map((pack) => ({
