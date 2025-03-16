@@ -60,10 +60,12 @@ const Carousel: React.FC<CarouselProps> = ({
                   : "border-none"
               }`}
             >
-              <Image
+              <Image 
                 src={image.image_url}
                 alt={`Imagem ${startIndex + idx + 1} de ${productName}`}
                 className="object-cover w-full h-full aspect-square"
+                width={500}
+                height={500}
               />
             </div>
           ))}

@@ -10,7 +10,7 @@ const TopBanner = () => {
             Descontos
           </h1>
           <p className="text-lg md:text-xl text-white mb-2">
-            Aproveite desconto em itens selecionados
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           </p>
           <p className="text-2xl md:text-5xl text-yellow-300 font-bold">
             DE ATÉ 50%

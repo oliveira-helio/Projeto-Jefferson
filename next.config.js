@@ -25,6 +25,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pincel-e-posia.s3.amazonaws.com',
         pathname: '/**',
+      },{
+        protocol: 'https',
+        hostname: 'pincel-e-posia-teste.s3.amazonaws.com',
+        pathname: '/**',
       },
      ],
    },

@@ -44,6 +44,8 @@ const DeliveryContentCheckout: React.FC<ItemContentProps> = ({
               src={delivery.company.picture}
               alt="Foto do produto"
               className="rounded-xl w-full object-fill aspect-auto"
+              width={50}
+              height={50} 
             />
           </div>
 

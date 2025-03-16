@@ -40,7 +40,7 @@ const UserOrders = () => {
   }
 
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
+    // <Suspense fallback={<div>Carregando no Orders Page...</div>}>
       <div className="container mx-auto p-4">
         <h3 className="text-2xl text-gray-800 font-bold mb-6">Acompanhamento de Pedidos</h3>
         {orders.length > 0 ? (
@@ -202,7 +202,7 @@ const UserOrders = () => {
           </div>
         )}
       </div>
-    </Suspense>
+    // </Suspense>
   );
 };
 

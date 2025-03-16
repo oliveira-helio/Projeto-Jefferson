@@ -38,9 +38,7 @@ export default function RootLayout({
           <CartProvider>
             <AddressProvider>
               <ClientWrapper>
-                <Suspense fallback={<div>Carregando...</div>}>
                   {children}
-                </Suspense>
               </ClientWrapper>
             </AddressProvider>
           </CartProvider>

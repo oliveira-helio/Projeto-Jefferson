@@ -1,3 +1,3 @@
-const apiAdress=process.env.PUBLIC_API_URL
+const apiAdress='http://localhost:5000'
 
 export default apiAdress;

@@ -41,7 +41,7 @@ function Products() {
   const [isMobile, setIsMobile] = useState(false); // Verifica se é mobile
   const [showFilters, setShowFilters] = useState(false); // Estado para o modal de filtros
   const modalRef = useRef<HTMLDivElement>(null);
-
+  
 
 useEffect(() => {
   if (typeof window !== 'undefined') {
@@ -79,12 +79,13 @@ useEffect(() => {
     };
 
     loadInitialFilters();
-  }, [setFilteredFilters]);
+  }, []);
 
   // Atualiza a URL com filtros
   const updateURL = useCallback(() => {
+    setLoading(true);
     const query = new URLSearchParams();
-
+    
     if (priceRange[0] !== 0 || priceRange[1] !== 500) {
       query.append("minPrice", priceRange[0].toString());
       query.append("maxPrice", priceRange[1].toString());
@@ -98,6 +99,7 @@ useEffect(() => {
     if (productType) query.append("type", productType);
 
     router.push(`/products?${query.toString()}`, {  });
+    setLoading(false);
   }, [priceRange, brand, category, subCategory, productType, router, searchQuery]);
 
 
@@ -113,29 +115,29 @@ useEffect(() => {
         query.append("minPrice", priceRange[0].toString());
         query.append("maxPrice", priceRange[1].toString());
       }
-
+  
       if (brand) query.append("brand", brand);
       if (category) query.append("category", category);
       if (subCategory) query.append("subCategory", subCategory);
       if (productType) query.append("type", productType);
-
+  
       const response = await fetch(`${apiAdress}/products?${query.toString()}`);
       const data = await response.json();
       setProducts(data.products);
-
+  
       // **Atualiza os filtros dinamicamente com base nos produtos encontrados**
       const filteredCategories:never[] = Array.from(new Set(data.products.map((p:Product) => p.category)));
       const filteredBrands:never[] = Array.from(new Set(data.products.map((p:Product) => p.brand)));
       const filteredSubCategories:never[] = Array.from(new Set(data.products.map((p:Product) => p.sub_category)));
       const filteredProductTypes:never[] = Array.from(new Set(data.products.map((p:Product) => p.product_type)));
-
+  
       setFilteredFilters({
         brands: filteredBrands,
         categories: filteredCategories,
         subCategories: filteredSubCategories,
         productTypes: filteredProductTypes,
       });
-
+      
     } catch (error) {
       console.error("Erro ao carregar produtos:", error);
     } finally {
@@ -143,22 +145,17 @@ useEffect(() => {
       setIsDataLoaded(true);
     }
   }, [priceRange, brand, category, subCategory, productType, searchQuery]);
+  
+  
 
+// Atualiza os filtros ao soltar a barra de preços
+const debouncedLoadProductsAndFilters = debounce(loadProductsAndFilters, 500);
+const debouncedUpdateURL = debounce(updateURL, 500);
 
-
-  // Atualiza os filtros ao soltar a barra de preços
-  const debouncedUpdate = useCallback(
-    debounce(() => {
-      loadProductsAndFilters();
-      updateURL();
-    }, 500),
-    [loadProductsAndFilters, updateURL]
-  );
-
-  useEffect(() => {
-    debouncedUpdate();
-  }, [brand, category, subCategory, productType, debouncedUpdate]);
-
+useEffect(() => {
+  debouncedLoadProductsAndFilters();
+  debouncedUpdateURL();
+}, [brand, category, subCategory, productType, priceRange, debouncedLoadProductsAndFilters, debouncedUpdateURL]);
 
   useEffect(() => {
     // Obtém os valores iniciais da URL
@@ -190,6 +187,7 @@ useEffect(() => {
   }
 
   return (
+
     <div>
       {/* Botão para abrir filtros em mobile */}
       {isMobile && (
@@ -222,8 +220,8 @@ useEffect(() => {
               }
               onFinalChange={(values) => {
                 setPriceRange(values as [number, number]);
-                debouncedUpdate();
-
+                debouncedUpdateURL();
+                debouncedLoadProductsAndFilters()
               }}
               renderTrack={({ props, children }) => (
                 <div
@@ -373,8 +371,8 @@ useEffect(() => {
                 }
                 onFinalChange={(values) => {
                   setPriceRange(values as [number, number]);
-                  setTimeout(() => debouncedUpdate(), 0);
-
+                  setTimeout(() => {debouncedUpdateURL();
+                  debouncedLoadProductsAndFilters()}, 0);
                 }}
                 renderTrack={({ props, children }) => (
                   <div
@@ -493,7 +491,7 @@ useEffect(() => {
                 setTempPriceRange([0, 500]);
                 setPriceRange([0, 500]);
                 router.push(`/products`)
-
+                
               }}
             >
               Limpar filtros
@@ -516,6 +514,7 @@ useEffect(() => {
         )}
       </div>
     </div>
+
   );
 }
 

@@ -143,7 +143,8 @@ const Delivery: React.FC<DeliveryProps> = ({
                         <div className="w-1/4">
                           <Image
                             src={option.company.picture}
-                            
+                            width={500}
+                            height={500}
                             alt="Picture of the delivery company"
                             className="contain"
                           />

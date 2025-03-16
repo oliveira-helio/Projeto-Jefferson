@@ -9,7 +9,7 @@ const NewNavBar = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
+    <Suspense fallback={<div>Carregando no NewNavBar...</div>}>
       <>
         {isMobile ? (
           <div className="grid grid-cols-6 items-center">
@@ -64,7 +64,7 @@ const NewNavBar = () => {
           </div>
         )}
       </>
-    </Suspense>
+     </Suspense>
   )
 };
 

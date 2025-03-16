@@ -26,7 +26,7 @@ export default function Recommended() {
   }, []);
 
   if (loading) {
-    return <div>Carregando produtos...</div>; // Exibe um estado de carregamento
+    return <div>Carregando produtos...  fora do Suspended no Recommended</div>; // Exibe um estado de carregamento
   }
 
   return (

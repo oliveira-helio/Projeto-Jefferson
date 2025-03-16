@@ -6,9 +6,9 @@ const Cart = () => {
   return (
     <div>
       <Container>
-        <Suspense fallback={<div>Carregando...</div>}>
+        {/* <Suspense fallback={<div>Carregando no Cart Page...</div>}> */}
         <CartClient />
-        </Suspense>
+        {/* </Suspense> */}
       </Container>
     </div>
   );

@@ -26,7 +26,7 @@ export default function TopSellers() {
   }, [setProducts, setLoading]);
 
   if (loading) {
-    return <div>Carregando produtos...</div>; // Exibe um estado de carregamento
+    return <div>Carregando produtos... fora do Suspended no Topsellers...</div>; // Exibe um estado de carregamento
   }
 
   return (

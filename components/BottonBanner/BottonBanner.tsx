@@ -8,6 +8,7 @@ const BottonBanner = () => {
           className="baner-img"
           src="/assets/img/Botton_Banner.jpg"
           alt="baner"
+          fill
         />
       </div>
     </div>

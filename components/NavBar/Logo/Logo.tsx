@@ -9,6 +9,8 @@ const Logo = () => {
               className="w-11/12 aspect-video"
               src="/assets/img/Logo1.png"
               alt="Logo da loja"
+              width={500}
+              height={500}
             />
           </Link>
         </div>

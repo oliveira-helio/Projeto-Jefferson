@@ -20,7 +20,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
   } = useCart();
 
   return ( 
-    <Suspense fallback={<div>Carregando...</div>}>
+    // <Suspense fallback={<div>Carregando no ItemContent...</div>}>
     <div
       key={itemkey}
       className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 mx-4 my-2 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl w-full"
@@ -31,6 +31,8 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
             src={item.image}
             alt="Foto do produto"
             className="rounded-xl aspect-square max-md:w-[100px] md:w-[120px]  object-cover"
+            width={120}
+            height={120}
           />
           <div className="flex flex-col justify-start md:col-span-2 items-center w-full py-2">
             <div className="px-4 w-full text-lg font-medium">{item.name}</div>
@@ -97,7 +99,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
         </button>
       </div>
     </div>
-    </Suspense>
+    // </Suspense>
   );
 };
 
