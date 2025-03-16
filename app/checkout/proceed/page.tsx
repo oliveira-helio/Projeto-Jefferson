@@ -45,14 +45,15 @@ const success = () => {
     return order; // Retorne o ID do pedido gerado
   };
 
-  // useEffect(() => {
-  // selectedProducts.map((product)=> {
-  //     handleRemoveProductFromCart(product)
-  //     console.log('passou pelo remove')
-  //     }
-  // )
-  // router.push('/');
-  // },[selectedProducts])
+  useEffect(() => {
+  selectedProducts.map((product)=> {
+      handleRemoveProductFromCart(product)
+      console.log('passou pelo remove')
+      }
+  )
+  router.push('/');
+  },[selectedProducts])
+
   useEffect(() => {
     const shipment = async () => {
       await createShipment();

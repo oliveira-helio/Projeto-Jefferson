@@ -40,11 +40,11 @@ const RegisterForm = () => {
 	};
 
 	const googleAuth = () => {
-		window.location.href = `http://localhost:5000/auth/google`;
+		window.location.href = `http://${apiAdress}/auth/google`;
 	 };
 	 
 	const facebookAuth = () => {
-		window.location.href = "/auth/facebook"
+		window.location.href = `http://${apiAdress}/auth/facebook`;
 	};
 
 	// Watch the password field

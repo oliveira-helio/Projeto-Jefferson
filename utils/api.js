@@ -1,3 +1,3 @@
-const apiAdress = 'http://localhost:5000';
+const apiAdress = 'https://api.backend.pincelepoesia.com';
 
 export default apiAdress;

@@ -28,8 +28,8 @@ const Checkout = () => {
 
   const customization = {
     backUrls: {
-      // error: '<http://localhost:3000/checkout/payment>',
-      // return: '<http://localhost:3000/checkout/proceed>',
+      error: '<http://pincelepoesia.com/checkout/payment>',
+      return: '<http://pincelepoesia.com/checkout/proceed>',
     },
     visual: {
       texts: {
