@@ -70,7 +70,7 @@ const Delivery: React.FC<DeliveryProps> = ({
     if (cep) {
       fetchDeliveryOptions(cep);
     }
-  }, [cep]);
+  }, [cep, fetchDeliveryOptions]);
 
   const openCorreiosPopup = () => {
     window.open(

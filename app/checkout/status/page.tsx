@@ -17,7 +17,7 @@ const Checkout = () => {
     console.log('paymentId aqui',paymentId);
   }
   
-}, []);
+}, [paymentId, setPaymentId]);
 
   const onError = async (error: any) => {
     console.error('Payment Brick error', error);

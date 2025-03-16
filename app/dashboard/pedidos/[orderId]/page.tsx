@@ -183,7 +183,7 @@ const OrdersDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {order.shipments.map((shipment, index) => (
 
-            <div className="mt-4">
+            <div key={index} className="mt-4">
               <h3 className="text-lg font-semibold text-gray-700">Volume {index + 1}:</h3>
               {shipment.id && (
                 <div className="border-t pt-4 mb-2">
