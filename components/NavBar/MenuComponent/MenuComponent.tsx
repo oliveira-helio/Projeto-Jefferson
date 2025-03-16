@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Container from "../../Container";
 import apiAdress from '@/utils/api'
 import { useMediaQuery } from 'react-responsive';
@@ -52,9 +52,11 @@ const MenuContainer = () => {
   };
 
   return (
+        <Suspense fallback={<div>Carregando...</div>}>
     <>
       {isMobile? (
           <SearchBar/>
+        
         ) : (
           <div className="w-full pl-2 flex justify-center">
             <nav>
@@ -98,6 +100,7 @@ const MenuContainer = () => {
         )
       }
     </>
+    </Suspense>
   );
 };
 

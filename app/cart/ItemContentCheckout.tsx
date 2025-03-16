@@ -1,6 +1,7 @@
 import { CartProductType } from "@/utils/types";
 import { formatCurrency } from "@/utils/utilitaryFunctions";
 import Image from "next/image";
+import { Suspense } from "react";
 
 interface ItemContentProps {
   item: CartProductType;
@@ -9,6 +10,7 @@ interface ItemContentProps {
 
 const ItemContentCheckout: React.FC<ItemContentProps> = ({ item, itemkey }) => {
   return (
+    <Suspense fallback={<div>Carregando...</div>}>
     <div
       key={itemkey}
       className="max-md:flex max-md:flex-col md:grid md:grid-cols-6 my-2 p-2 border-solid border-[1.2px] border-pink-300 bg-pink-100 rounded-xl w-full"
@@ -53,6 +55,7 @@ const ItemContentCheckout: React.FC<ItemContentProps> = ({ item, itemkey }) => {
           </span>
       </div>
     </div>
+    </Suspense>
   );
 };
 

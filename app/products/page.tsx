@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { Suspense, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Product } from "@/utils/interfaces";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { Range } from "react-range";
 import apiAdress from "@/utils/api";
 import debounce from "lodash.debounce";
+
+const Loading = () => (
+  <div className="flex justify-center items-center h-screen">
+    <p className="text-4xl font-medium text-gray-700">Carregando produtos...</p>
+  </div>
+);
 
 export default function Products() {
   const router = useRouter();
@@ -38,7 +44,7 @@ export default function Products() {
   
 
 useEffect(() => {
-  if (global?.window !== undefined) {
+  if (typeof window !== 'undefined') {
     const updateIsMobile = () => setIsMobile(window.innerWidth < 768);
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile);
@@ -179,6 +185,7 @@ useEffect(() => {
   }
 
   return (
+    <Suspense fallback={<Loading />}>
     <div>
       {/* Botão para abrir filtros em mobile */}
       {isMobile && (
@@ -505,5 +512,6 @@ useEffect(() => {
         )}
       </div>
     </div>
+    </Suspense>
   );
 }

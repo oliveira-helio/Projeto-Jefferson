@@ -18,13 +18,13 @@ export default function LoginPage() {
       const { token } = response.data;
 
       // Salva o token no localStorage ou cookie
-      if (global?.window !== undefined) {
+      if (typeof window !== "undefined" && token) {
         localStorage.setItem('admToken', token);
       };
 
       // Redireciona para o dashboard
-      router.push('/dashboard');
       toast.success('Login realizado com sucesso!');
+      router.push('/dashboard');
     } catch (error) {
       console.error(error);
       toast.error('Erro ao realizar login. Verifique suas credenciais.');

@@ -13,7 +13,6 @@ import { CartProductType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
 import { useAuth } from "@/Contexts/AuthContext";
-import { log } from "console";
 import { useRouter } from "next/navigation";
 
 interface CartContextType {
@@ -49,9 +48,9 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Fetch the client cart
   const fetchCart = useCallback(async () => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    
+
       try {
         const response = await axios.get(`${apiAdress}/cart/get`, {
           headers: {
@@ -62,24 +61,20 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
         const serverCart = response.data.products;
         setCart(serverCart);
         localStorage.setItem("cart", JSON.stringify(serverCart));
-        router.refresh()
+        router.refresh();
       } catch (error) {
-        if (
-          axios.isAxiosError(error) &&
-          error.response &&
-          error.response.status === 401
-        ) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           toast.error("Acesso não autorizado - faça login novamente");
         } else {
           toast.error("Erro ao buscar o carrinho");
-        };
-      };
-    };
+        }
+      }
+    }
   }, [accessToken]);
 
   // Sync cart with backend
   const syncLocalCartToBackend = useCallback( async () => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
       
       if (localCart.length === 0) {
@@ -110,7 +105,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   }, [fetchCart, accessToken]);
 
   const handleAddProductToCart = async (product: CartProductType) => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       // user not logged: saves in localstorage
       if (!localStorage.getItem("accessToken")) {
         setCart((prev) => {
@@ -163,14 +158,14 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   const handleSelectProduct = (product: CartProductType) => {    
     setSelectedProducts((prevSelected) =>
       prevSelected.some((p) => p.productId === product.productId  )
-        ? prevSelected.filter((p) => p.productId !== product.productId      ) // Unselect if already selected
+        ? prevSelected.filter((p) => p.productId !== product.productId ) // Unselect if already selected
         : [...prevSelected, product] // Select if not selected
     );
   };
 
   // Removes product from cart
   const handleRemoveProductFromCart = async (product: CartProductType) => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       if (!localStorage.getItem("accessToken")) {
         setCart((prev) => {
           return prev.filter((item) => item.productId !== product.productId);
@@ -195,7 +190,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Increase the quantity of the product in the cart
   const handleProductQtyIncrease = async (product: CartProductType) => { 
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       if (!localStorage.getItem("accessToken")) {
         setCart((prev) => {
           const updatedCart = prev.map((item) =>
@@ -229,7 +224,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Increase the quantity of the product in the cart by 1
   const handleProductQtyIncreaseUnit = async (product: CartProductType) => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       if (!localStorage.getItem("accessToken")) {
         setCart((prev) => {
           const updatedCart = prev.map((item) =>
@@ -261,7 +256,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Decrease the quantity of the product in the cart
   const handleProductQtyDecrease = async (product: CartProductType) => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       if (product.quantity <= 1) return; // Não permite diminuir abaixo de 1
       if (!localStorage.getItem("accessToken")) {
         setCart((prev) => {
@@ -297,7 +292,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Clear the cart in localstorage
   const handleclearLocalCart = () => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       setCart([]);
       localStorage.removeItem("cart");
     };
@@ -305,7 +300,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Clear the cart in server and localstorage
   const handleclearCart = async () => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       if (!localStorage.getItem("accessToken")) {
         handleclearLocalCart();
         return;
@@ -329,7 +324,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Builds selected products in localstorage
   useEffect(() => {
-    if ( global?.window !== undefined) {
+    if ( typeof window !== "undefined") {
       const storedSelectedProducts = localStorage.getItem("selectedProducts");
       if (storedSelectedProducts) {
         setSelectedProducts(JSON.parse(storedSelectedProducts));
@@ -339,14 +334,14 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Saves selected products in localstorage whenever it changes
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
     };
   }, [selectedProducts]);
 
   // Sincronize selected products and between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "selectedProducts") {
           const storedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -364,7 +359,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   
   // Sincronize cart between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "cart") {
           const updatedCart = localStorage.getItem("cart");
@@ -381,7 +376,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
 
   // Sincronize selected Products between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const handleStorage = (event: StorageEvent) => {
         if (event.key === "selectedProducts") {
           const updatedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -395,7 +390,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   }, []);
 
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== "undefined") {
       const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
       setCart(storedCart);
     };

@@ -23,14 +23,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       const token = localStorage.getItem('accessToken');
       setAccessToken(token);
+      setIsAuthenticated(!!token);
     }
-  }, []);  
+  }, []);
 
   const login = async (credentials: FieldValues) => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       try {
         const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
         localStorage.setItem('accessToken', response.data.accessToken);
@@ -40,17 +41,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (response.data.user.isAdmin) {
           setIsAdmin(true);
         }
-        return response.data.accessToken;
       } catch (error) {
         console.error('Erro ao fazer login:', error);
-      };
-    };
+      }
+    }
   };
 
   const logout = useCallback(async () => {
-    if (global?.window !== undefined) {
-      localStorage.clear()
-      // localStorage.removeItem('accessToken');
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
       setIsAdmin(false);
       setIsAuthenticated(false);
 
@@ -58,12 +57,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
       } catch (error) {
         console.error('Erro ao fazer logout:', error);
-      };
-    };
+      }
+    }
   }, []);
 
   const renewToken = async () => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       try {
         const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
         localStorage.setItem('accessToken', response.data.accessToken);
@@ -72,12 +71,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Erro ao renovar token:', error);
         logout();
       }
-    };
+    }
   };
 
   // Sincronize `isAuthenticated` between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       const handleStorageChange = (event: StorageEvent) => {
         if (event.key === 'accessToken') {
           setIsAuthenticated(!!event.newValue);
@@ -89,61 +88,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
   }, []);
-  
+
 
   // Sincronize token and between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       const handleStorage = (event: StorageEvent) => {
-        if (global?.window !== undefined) {
-          if (event.key === "accessToken") {
-            const updatedToken = localStorage.getItem("accessToken");
-            setAccessToken(updatedToken);
-          }
-        };
-        window.addEventListener("storage", handleStorage);
-        return () => {
-          window.removeEventListener("storage", handleStorage);
-        };
+        if (event.key === "accessToken") {
+          const updatedToken = localStorage.getItem("accessToken");
+          setAccessToken(updatedToken);
+        }
+      };
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
       };
     };
   }, []);
 
   // Periodicaly renew the access token
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       const interval = setInterval(() => {
         if (localStorage.getItem('accessToken')) {
           renewToken();
         }
-      }, 90 * 60 * 1000);
+      }, 90 * 60 * 1000); // Renovar a cada 90 minutos
 
       return () => clearInterval(interval);
-    };
+    }
   }, []);
 
   // Change accessToken when updated
-  useEffect(() => {
-    if (global?.window !== undefined) {
-      const newToken = localStorage.getItem('accessToken')
-      setAccessToken(newToken)
-    };
-  }, [localStorage.getItem('accessToken')])
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const newToken = localStorage.getItem('accessToken')
+  //     setAccessToken(newToken)
+  //   };
+  // }, [localStorage.getItem('accessToken')])
 
 
   // Logout automatically when inactive
   useEffect(() => {
-    if (global?.window !== undefined) {
+    if (typeof window !== 'undefined') {
       let timeout: NodeJS.Timeout;
       const handleTimeout = async () => {
         await logout();
         router.push('/');
-        localStorage.clear()
+        localStorage.clear();
       };
 
       const resetTimeout = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos
+        timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos de inatividade
       };
 
       window.addEventListener('mousemove', resetTimeout);
@@ -158,16 +155,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         window.removeEventListener('keydown', resetTimeout);
         clearTimeout(timeout);
       };
-    };
+    }
   }, [logout, router]);
 
   // Sincronize the initial state with localStorage
-  useEffect(() => {
-    if (global?.window !== undefined) {
-      const token = localStorage.getItem('accessToken');
-      setIsAuthenticated(!!token);
-    };
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const token = localStorage.getItem('accessToken');
+  //     setIsAuthenticated(!!token);
+  //   };
+  // }, []);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout, accessToken }}>

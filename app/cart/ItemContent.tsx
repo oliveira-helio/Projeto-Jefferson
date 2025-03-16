@@ -5,6 +5,7 @@ import Link from "next/link";
 import QuantitySelector from "../../components/MicroComponents/QuantitySelector";
 import { useCart } from "../../Hooks/useCart";
 import Image from "next/image";
+import { Suspense } from "react";
 
 interface ItemContentProps {
   item: CartProductType;
@@ -19,6 +20,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
   } = useCart();
 
   return ( 
+    <Suspense fallback={<div>Carregando...</div>}>
     <div
       key={itemkey}
       className="relative max-md:flex max-md:flex-col md:grid md:grid-cols-6 mx-4 my-2 p-2 border-solid border-[1.2px] border-pink-400 bg-pink-100 rounded-xl w-full"
@@ -95,6 +97,7 @@ const ItemContent: React.FC<ItemContentProps> = ({ item,itemkey }) => {
         </button>
       </div>
     </div>
+    </Suspense>
   );
 };
 

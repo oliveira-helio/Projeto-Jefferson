@@ -6,6 +6,7 @@ import { AuthProvider } from "@/Contexts/AuthContext";
 import { Toaster } from "react-hot-toast";
 import ClientWrapper from "@/components/ClientWrapper";
 import AddressProvider from "@/providers/CartProvider copy";
+import { Suspense } from "react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -36,7 +37,11 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <AddressProvider>
-              <ClientWrapper>{children}</ClientWrapper>
+              <ClientWrapper>
+                <Suspense fallback={<div>Carregando...</div>}>
+                  {children}
+                </Suspense>
+              </ClientWrapper>
             </AddressProvider>
           </CartProvider>
         </AuthProvider>

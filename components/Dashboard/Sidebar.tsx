@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -9,6 +9,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 const Sidebar = () => {
   const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  const router = useRouter();
 
   // Toggle the expanded state of a specific menu
   const toggleMenu = (label: string) => {
@@ -93,10 +94,10 @@ const Sidebar = () => {
       <div className="p-4">
         <button
           onClick={() => {
-            if ( global?.window !== undefined) {
+            if ( typeof window !== "undefined") {
               localStorage.removeItem('admToken');
             }
-            window.location.href = '/dashboard/login';
+            router.push('/dashboard/login');
           }}
           className="w-full bg-red-500 py-2 rounded hover:bg-red-600 transition"
         >

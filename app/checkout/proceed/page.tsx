@@ -12,12 +12,12 @@ const Success = () => {
 
   // Função createShipment otimizada com useCallback
   const createShipment = useCallback(async () => {
-    if (global?.window !== undefined) {
+    if ( typeof window !== "undefined" ) {
       const response = await fetch(`${apiAdress}/api/orders/create-shipment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
+          "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
         },
         body: JSON.stringify({
           volumes: selectedDelivery?.packages.map((pack) => ({

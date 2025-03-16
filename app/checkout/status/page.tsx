@@ -11,14 +11,14 @@ const Checkout = () => {
   
   
   useEffect(() => {
-  if (global?.window !== undefined) {
-    const temporaryPaymentId = localStorage.getItem('paymentId');
-    if (temporaryPaymentId) {
-      setPaymentId({paymentId: JSON.parse(temporaryPaymentId)});
-      console.log('paymentId aqui',paymentId);
+    if (typeof window !== "undefined") {
+      const temporaryPaymentId = localStorage.getItem('paymentId');
+      if (temporaryPaymentId) {
+        const parsedPaymentId = JSON.parse(temporaryPaymentId);
+        setPaymentId({ paymentId: parsedPaymentId });
+      }
     }
-  };
-}, [paymentId, setPaymentId]);
+  }, []);
 
   const onError = async (error: any) => {
     console.error('Payment Brick error', error);

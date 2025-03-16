@@ -50,11 +50,13 @@ const Checkout = () => {
 
   // create order
   const createOrder = useCallback(async () => {
+    if (typeof window === "undefined") return;
+
     const response = await fetch(`${apiAdress}/api/orders/create-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
+        "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
       },
       body: JSON.stringify({
         totalPrice: cartTotal,
@@ -82,11 +84,13 @@ const Checkout = () => {
 
   // get payer
   const getPayer = async () => {
+    if (typeof window === "undefined") return { payer: {} };
+
     const response = await fetch(`${apiAdress}/api/payments/get-payer`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
+        "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
       }
     });
     const payer = await response.json();
@@ -110,7 +114,7 @@ const Checkout = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
+          "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
         },
         body: JSON.stringify({ orderData, orderId })
       });
@@ -147,7 +151,7 @@ const Checkout = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`,
+              "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`,
               "X-Idempotency-Key": idempotencyKey,
             },
             body: JSON.stringify({ items, orderId, payer }),
@@ -199,7 +203,7 @@ const Checkout = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "accessToken": `Bearer ${typeof window !== "undefined" ? localStorage.getItem('accessToken') : ""}`
+          "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
         },
         body: JSON.stringify({
           formData,
@@ -231,7 +235,7 @@ const Checkout = () => {
           
           await updateOrder(orderData, orderId);
           updateOrder(response, orderId);
-          if ( global?.window !== undefined) {
+          if ( typeof window !== "undefined") {
             localStorage.setItem('paymentId', JSON.stringify(response.id));
           }
           resolve(response);

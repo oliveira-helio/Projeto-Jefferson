@@ -7,15 +7,15 @@ import {
   useCallback,
 } from "react";
 import axios, { AxiosInstance } from "axios";
-import {  CartProductType, DeliveryInfoType, UserAddressType } from "@/utils/types";
+import { CartProductType, DeliveryInfoType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
 import apiAdress from "@/utils/api";
 import { useAuth } from "@/Contexts/AuthContext";
 import { useCart } from "./useCart";
 
 interface AddressContextType {
-  userAddresses:  UserAddressType[];
-  selectedAddress:  UserAddressType | null;
+  userAddresses: UserAddressType[];
+  selectedAddress: UserAddressType | null;
   selectedDelivery: DeliveryInfoType | null;
   deliveryOptions: DeliveryInfoType[] | null;
   fetchDeliveryOptions: (productList: CartProductType[], deliveryCep: string) => Promise<DeliveryInfoType[]>;
@@ -42,7 +42,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryInfoType[] | null>(null);
   const [userAddresses, setUserAddresses] = useState<UserAddressType[]>([]);
   const { accessToken } = useAuth()
-  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(null);  
+  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(null);
   const { selectedProducts } = useCart();
 
   // Fetch the user addresses
@@ -50,11 +50,11 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
     if (!axiosInstance) return;
 
     try {
-      const response = await axiosInstance.get("/");      
+      const response = await axiosInstance.get("/");
       const userAddresses: UserAddressType[] = response.data.userAddresses
       setUserAddresses(userAddresses);
-      console.log('userAddresses',userAddresses);
-      
+      console.log('userAddresses', userAddresses);
+
       const mainAddress = userAddresses.find((address) => address.isMainAddress);
       if (mainAddress) {
         setSelectedAddress(mainAddress);
@@ -79,7 +79,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
       }
 
       await axiosInstance.post("/register", address);
-      fetchUserAddresses(); 
+      fetchUserAddresses();
       toast.success("Endereço cadastrado com sucesso!");
     } catch (error) {
       console.error(error);
@@ -94,7 +94,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
         throw new Error("Erro na configuração do cliente HTTP.");
 
       await axiosInstance.put(`/update/${address.addressId}`, address);
-      fetchUserAddresses(); 
+      fetchUserAddresses();
       toast.success("Endereço alterado com sucesso!");
     } catch (error) {
       console.error(error);
@@ -109,7 +109,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
         throw new Error("Erro na configuração do cliente HTTP.");
 
       await axiosInstance.put(`/delete/${address.addressId}`, address);
-      fetchUserAddresses(); 
+      fetchUserAddresses();
       toast.success("Endereço removido com sucesso!");
     } catch (error) {
       console.error(error);
@@ -125,12 +125,12 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   // Select delivery Type
   const handleSelectDeliveryType = (deliveryData: DeliveryInfoType) => {
     setSelectedDelivery(deliveryData);
-    console.log('deliveryData:',deliveryData);
-    
+    console.log('deliveryData:', deliveryData);
+
   };
 
   // Select delivery Options
-  const fetchDeliveryOptions = useCallback(async (products: CartProductType[], deliveryCep:string) => {
+  const fetchDeliveryOptions = useCallback(async (products: CartProductType[], deliveryCep: string) => {
     if (products.length === 0) return;
     try {
       const response = await axios.post(`${apiAdress}/calculate-delivery`, { products, deliveryCep }, {
@@ -142,7 +142,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
       });
       setDeliveryOptions(response.data);
       return response.data;
-      
+
     } catch (error) {
       console.error('Erro ao calcular frete:', error);
       toast.error("Erro ao buscar o carrinho");
@@ -153,14 +153,14 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   useEffect(() => {
     const deliveryCep = selectedAddress?.cep;
     if (deliveryCep) {
-    fetchDeliveryOptions(selectedProducts, deliveryCep);
+      fetchDeliveryOptions(selectedProducts, deliveryCep);
     }
   }, [selectedAddress, selectedProducts]);
 
   // Fetch addresses when building the component
   useEffect(() => {
     if (axiosInstance) {
-      fetchUserAddresses();    
+      fetchUserAddresses();
     }
   }, [axiosInstance, fetchUserAddresses]);
 
@@ -178,117 +178,70 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
     }
   }, [accessToken]);
 
-  // Builds delivery options in localstorage
+  // Builds delivery options, selected delivery , and selected address in localstorage
   useEffect(() => {
-    if (global?.window !== undefined) {
-      const deliveryOptions = localStorage.getItem("deliveryOptions");
-      if (deliveryOptions) {
-        setDeliveryOptions(JSON.parse(deliveryOptions));
+    if (typeof window !== "undefined") {
+      // Recuperando valores de localStorage para endereço e delivery
+      const storedAddress = localStorage.getItem("selectedAddress");
+      const storedDelivery = localStorage.getItem("selectedDelivery");
+      const storedDeliveryOptions = localStorage.getItem("deliveryOptions");
+
+      if (storedAddress) {
+        setSelectedAddress(JSON.parse(storedAddress));
+      }
+      if (storedDelivery) {
+        setSelectedDelivery(JSON.parse(storedDelivery));
+      }
+      if (storedDeliveryOptions) {
+        setDeliveryOptions(JSON.parse(storedDeliveryOptions));
       }
     }
   }, []);
 
   // Saves delivery options in localstorage whenever it changes
-  useEffect(()=>{ 
-    if (global?.window !== undefined) {
-      if (deliveryOptions) {
-        localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
-      };
-    };
-  },[deliveryOptions])
-
-  // Sincronize delivery options between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
-      const handleStorage = (event: StorageEvent) => {
-        if (event.key === "deliveryOptions") {
-          const updatedDeliveryOptions = localStorage.getItem("deliveryOptions");
-          setDeliveryOptions(updatedDeliveryOptions ? JSON.parse(updatedDeliveryOptions) : []);
-        }
-      };
-
-      window.addEventListener("storage", handleStorage);
-      return () => {
-        window.removeEventListener("storage", handleStorage);
-      };
+    if (typeof window !== "undefined" && deliveryOptions) {
+      localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
     };
-  }, []);
-
-  // Builds selected address in localstorage
-  useEffect(() => {
-    if (global?.window !== undefined) {
-      const storedAddress = localStorage.getItem("selectedAddress");
-      if (storedAddress) {
-        setSelectedAddress(JSON.parse(storedAddress));
-      }
-    };
-  }, []);
+  }, [deliveryOptions])
 
   // Saves selected address in localstorage whenever it changes
-  useEffect(()=>{ 
-    if (global?.window !== undefined) {
-      if (selectedAddress) {
-        localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
-      };
-    };
-  },[selectedAddress])
-
-  // Sincronize selected address between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
-      const handleStorage = (event: StorageEvent) => {
-        if (event.key === "selectedAddress") {
-          const updatedSelectedAddress = localStorage.getItem("selectedAddress");
-          setSelectedAddress(updatedSelectedAddress ? JSON.parse(updatedSelectedAddress) : []);
-        };
-      };
-
-      window.addEventListener("storage", handleStorage);
-      return () => {
-        window.removeEventListener("storage", handleStorage);
-      };
+    if (typeof window !== "undefined" && selectedAddress) {
+      localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
     };
-  }, []);
-  
-  // Builds selected delivery type in localstorage
-  useEffect(() => {
-    if (global?.window !== undefined) {
-      const selectedDelivery = localStorage.getItem("selectedDelivery");
-      if (selectedDelivery) {
-        setSelectedDelivery(JSON.parse(selectedDelivery));
-      }
-    };
-  }, []);
+  }, [selectedAddress])
 
   // Saves selected delivery type in localstorage whenever it changes
-  useEffect(()=>{ 
-    if (global?.window !== undefined) {
-      if (selectedDelivery) {
-        localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
-      };
-      // console.log('selectedDelivery:',selectedDelivery);
-    };
-  },[selectedDelivery])
-
-  // Sincronize selected delivery between tabs
   useEffect(() => {
-    if (global?.window !== undefined) {
-      const handleStorage = (event: StorageEvent) => {
-        if (event.key === "selectedDelivery") {
-          const updatedSelectedDelivery = localStorage.getItem("selectedDelivery");
-          setSelectedDelivery(updatedSelectedDelivery ? JSON.parse(updatedSelectedDelivery) : []);
-        }
-      };
+    if (typeof window !== "undefined" && selectedDelivery) {
+      localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
+    };
+  }, [selectedDelivery])
 
+
+
+  // Sincronize delivery options, selected address and selected delivery between tabs
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "selectedAddress") {
+        setSelectedAddress(event.newValue ? JSON.parse(event.newValue) : null);
+      }
+      if (event.key === "selectedDelivery") {
+        setSelectedDelivery(event.newValue ? JSON.parse(event.newValue) : null);
+      }
+      if (event.key === "deliveryOptions") {
+        setDeliveryOptions(event.newValue ? JSON.parse(event.newValue) : []);
+      }
+    };
+  
+    if (typeof window !== "undefined") {
       window.addEventListener("storage", handleStorage);
       return () => {
         window.removeEventListener("storage", handleStorage);
       };
-    };
+    }
   }, []);
-
-  
-
 
   //   DEBBUGING      ###################################
 
@@ -334,6 +287,6 @@ export const useAddress = () => {
   const context = useContext(AddressContext);
   if (!context) {
     throw new Error("useAddress deve ser usado dentro de AddressProvider");
-  }''
+  } ''
   return context;
 };

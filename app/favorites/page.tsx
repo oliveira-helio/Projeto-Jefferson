@@ -1,5 +1,5 @@
 const favorites = () => {
-    return ( null );
+    return ( <div>Carregando...</div> );
 }
  
 export default favorites;

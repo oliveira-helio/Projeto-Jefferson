@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default function QuemSomos() {
   return (
+    <Suspense fallback={<div>Carregando...</div>}>
     <div className="flex flex-col items-center py-10 px-4">
       <h1 className="text-[36px] font-bold text-pink-600 mb-6">Sobre Nós</h1>
 
@@ -46,5 +48,6 @@ export default function QuemSomos() {
       </div>
 
     </div>
+    </Suspense>
   );
 }
