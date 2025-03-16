@@ -46,16 +46,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = useCallback(async () => {
-    localStorage.clear()
-    // localStorage.removeItem('accessToken');
-    setIsAdmin(false);
-    setIsAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.clear()
+      // localStorage.removeItem('accessToken');
+      setIsAdmin(false);
+      setIsAuthenticated(false);
 
-    try {
-      await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
+      try {
+        await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
+      } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+      };
+    };
   }, []);
 
   const renewToken = async () => {
