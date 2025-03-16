@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import apiAdress from "@/utils/api";
 import Image from "next/image";
@@ -35,7 +35,7 @@ const Delivery: React.FC<DeliveryProps> = ({
   const [deliveryOptions, setDeliveryOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchDeliveryOptions = async (cep: string) => {
+  const fetchDeliveryOptions = useCallback(async (cep: string) => {
     if (!cep || cep.length < 8) return; // Verifica se o CEP é válido
 
     setLoading(true);
@@ -56,15 +56,15 @@ const Delivery: React.FC<DeliveryProps> = ({
 
       if (response.data) {
         setDeliveryOptions(response.data); // Processar os dados de resposta
-        console.log("res cep2",response.data);
-        
+        console.log("res cep2", response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar opções de frete:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, productWeight, productLength, productHeight, productWidth, productPrice]); // Dependências
+
 
   useEffect(() => {
     if (cep) {

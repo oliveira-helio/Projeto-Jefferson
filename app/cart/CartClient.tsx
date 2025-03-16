@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useCart } from "../../Hooks/useCart";
 import Link from "next/link";
@@ -19,7 +19,7 @@ const CartClient = () => {
   const [selectedTotal, setSelectedTotal] = useState(0);
 
 
-  const calculateDelivery = async () => {
+  const calculateDelivery = useCallback(async () => {
     if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) return;
 
     try {
@@ -43,11 +43,11 @@ const CartClient = () => {
     } catch (error) {
       console.error('Erro ao calcular o frete:', error);
     }
-  };
+  }, [selectedProducts, selectedAddress, fetchDeliveryOptions, handleSelectDeliveryType]);
 
   useEffect(() => {
     calculateDelivery();
-  }, [selectedProducts, selectedAddress]);
+  }, [calculateDelivery]);
 
   useEffect(() => {
     const updatedSelectedProducts = selectedProducts.map(selectedProduct => {
