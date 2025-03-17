@@ -3,7 +3,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import Container from "../../Container";
 import apiAdress from '@/utils/api'
 import { useMediaQuery } from 'react-responsive';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 import SearchBar from "../SearchBar/SearchBar";
 
 type categoryProps = {
@@ -17,6 +17,8 @@ type categoryProps = {
 const MenuContainer = () => {
   const [categories, setCategories] = useState<categoryProps>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>({});
+  const [openSubcategories, setOpenSubcategories] = useState<{ [key: string]: boolean }>({});
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
@@ -51,13 +53,108 @@ const MenuContainer = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleCategory = (category: string) => {
+    setOpenCategories((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const toggleSubCategory = (subCategory: string) => {
+    setOpenSubcategories((prev) => ({ ...prev, [subCategory]: !prev[subCategory] }));
+  };
+
+  const handleSearch = () => {
+    setIsMenuOpen(false); // Fecha o menu após a busca
+  };
+
   return (
     <Suspense fallback={<div>Carregando no menuComponent...</div>}>
       <>
-        {isMobile? (
-            <SearchBar/>
+      {isMobile ? (
+        <>
+          <div className="flex items-center justify-between px-4 py-2">
+            <button onClick={toggleMenu} className="text-2xl text-[#a3115f]">
+              {isMenuOpen ? <FaTimes /> : <FaBars size={20} />}
+            </button>
+          </div>
+
+          {/* Menu Mobile */}
+          <div
+            className={`fixed top-0 left-0 h-[100vh] overflow- w-[70%] bg-pink-100 shadow-lg transform  ${
+              isMenuOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-transform duration-300 ease-in-out z-50`}
+          >
+            <button
+              onClick={toggleMenu}
+              className="absolute top-4 right-4 text-2xl text-[#a3115f]"
+            >
+              <FaTimes />
+            </button>
+            <div className="my-10 px-4">
+              <p>Encontre seus produtos favoritos</p>
+              <SearchBar onSearch={() => setIsMenuOpen(false)} />
           
-          ) : (
+              <hr className="w-full mx-2 my-8 border border-solid border-pink-300" />
+
+              <nav className="">
+                <ul className="list-none flex flex-col gap-4 p-6">
+                  {categories.map((category) => (
+                    <li key={category.category} className="border-b pb-2">
+                      <button
+                        className="flex justify-between items-center w-full text-[#a3115f] text-lg font-semibold"
+                        onClick={() => toggleCategory(category.category)}
+                      >
+                        {category.category}
+                        {openCategories[category.category] ? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+
+                      {openCategories[category.category] && (
+                        <ul className="pl-4 mt-2">
+                          {category.subcategories.map((subCategory) => (
+                            <li key={subCategory.subCategory} className="mb-2">
+                              <button
+                                className="flex justify-between items-center w-full text-[#e65ba5] text-md font-medium"
+                                onClick={() => toggleSubCategory(subCategory.subCategory)}
+                              >
+                                {subCategory.subCategory}
+                                {/* {openSubcategories[subCategory.subCategory] ? (
+                                  <FaChevronUp />
+                                ) : (
+                                  <FaChevronDown />
+                                )} */}
+                              </button>
+
+                                <ul className="pl-4 mt-1">
+                                  {subCategory.productTypes.map((productType) => (
+                                    <li key={productType}>
+                                      <a
+                                        className="block text-sm text-gray-600 hover:text-black"
+                                        href={`/products?type=${productType}`}
+                                      >
+                                        {productType}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+          {/* Overlay para fechar o menu ao clicar fora */}
+          {isMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={toggleMenu}
+            ></div>
+          )}
+        </>
+      ) : (
             <div className="w-full pl-2 flex justify-center">
               <nav>
                 <ul className="list-none flex flex-row">

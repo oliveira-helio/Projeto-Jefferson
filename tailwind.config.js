@@ -13,7 +13,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       screens: {
-        'max-md': { max: '1023px' }, // Para max-width 1023px
+        'max-lg': { max: '1023px' }, // Para max-width 1023px
         'max-md': { max: '767px' }, // Para max-width 767px
         'max-sm': { max: '639px' }, // Para max-width 639px
         'xl': { min: '1260px' }, // Para min-width 1260px

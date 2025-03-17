@@ -26,16 +26,16 @@ export default function TopSellers() {
   }, [setProducts, setLoading]);
 
   if (loading) {
-    return <div>Carregando produtos... fora do Suspended no Topsellers...</div>; // Exibe um estado de carregamento
+    return <div>Carregando produtos...</div>; // Exibe um estado de carregamento
   }
 
   return (
     <div>
       <div className="relative flex flex-col py-5 justify-center items-center ">
         <div>
-          <h1 className="self-center text-gray-900 font-bold text-4xl z-10 w-fit">
+          <h1 className="self-center text-gray-900 font-bold text-3xl md:text-4xl z-10 w-fit">
             MAIS VENDIDOS
-            <div className="w-[19rem] h-6 bg-pink-600 opacity-40 top-10 absolute left-1/2 transform -translate-x-1/2"></div>
+            <div className="max-md:w-[16rem] w-[19rem] h-4 bg-pink-600 opacity-40 top-10 absolute left-1/2 transform -translate-x-1/2"></div>
           </h1>
         </div>
       </div>

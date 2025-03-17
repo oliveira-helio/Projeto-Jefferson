@@ -6,7 +6,6 @@ import { AuthProvider } from "@/Contexts/AuthContext";
 import { Toaster } from "react-hot-toast";
 import ClientWrapper from "@/components/ClientWrapper";
 import AddressProvider from "@/providers/CartProvider copy";
-import { Suspense } from "react";
 
 const poppins = Poppins({
   subsets: ["latin"],
