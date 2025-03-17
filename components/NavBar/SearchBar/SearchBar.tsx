@@ -35,12 +35,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return ( 
     <>
       {isMobile? (
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           {/* <button onClick={handleSearchToggle} className="text-4xl flex items-center">
             {isSearchOpen ? <FaTimes /> : <FaSearch size={20} className="text-pink-700"/>}
           </button> */}
           {/* {isSearchOpen && (  */}
-            <div className="mt-6 rounded-md top-6 w-full z-50 p-2">
+            <div className="mt-6 mx-2 rounded-md top-6 w-full z-50 p-2">
               <form onSubmit={handleSearchSubmit} className="flex flex-row flex-nowrap w-full justify-center">
                 <input
                   type="text"
@@ -51,10 +51,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                   className="flex-1 px-4 py-2 rounded-l-3xl focus:outline-none text-black w-max"
                 />
                 <button
-                  className="flex-grow-[0.08] pl-2 bg-pinkSecondary text-black cursor-pointer rounded-r-3xl"
+                  className="flex flex-grow-[0.1] px-2 bg-pinkSecondary text-black cursor-pointer rounded-r-3xl items-center justify-center"
                   type="submit"
                 >
-                  <FaSearch size={24}/>
+                  <FaSearch size={16} className="text-center"/>
                 </button>
               </form>
             </div>

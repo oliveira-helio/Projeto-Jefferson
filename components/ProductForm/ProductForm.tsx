@@ -10,7 +10,6 @@ import Button from "@/components/MicroComponents/Button";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import ImageInput from "./ImageImput";
-import axios from 'axios'; // Para fazer requisições para o backend
 import Link from "next/link";
 
 
@@ -111,13 +110,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
           disabled={isLoading || !!disabledFields.find((field: string) => field === "color")}
           register={register}
           errors={errors}
-          required
           type="text"
           custom="w-full p-2 border-2 border-solid rounded-md outline-none"
         />
-        {errors.name?.type && (
+        {/* {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col m-2">
@@ -130,13 +128,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
           disabled={isLoading || !!disabledFields.find((field: string) => field === "color_code")}
           register={register}
           errors={errors}
-          required
+         
           type="text"
           custom="w-full p-2 border-2 border-solid rounded-md outline-none"
         />
-        {errors.name?.type && (
+        {/* {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col mx-2 col-span-2 my-1">
@@ -153,7 +151,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
         )}
-      </div>
+      </div> 
 
       <div className="flex flex-col mx-2 col-span-2 my-1">
         <span className="text-base font-medium text-zinc-700">Detalhes</span>
@@ -179,13 +177,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
           disabled={isLoading || !!disabledFields.find((field: string) => field === "category")}
           register={register}
           errors={errors}
-          required
           type="text"
           custom="w-full p-2 border-2 border-solid rounded-md outline-none"
         />
-        {errors.name?.type && (
+        {/* {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col m-2">
@@ -198,13 +195,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
           disabled={isLoading || !!disabledFields.find((field: string) => field === "sub_category")}
           register={register}
           errors={errors}
-          required
           type="text"
           custom="w-full p-2 border-2 border-solid rounded-md outline-none"
         />
-        {errors.name?.type && (
+        {/* {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col m-2">
@@ -217,13 +213,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
           disabled={isLoading || !!disabledFields.find((field: string) => field === "product_type")}
           register={register}
           errors={errors}
-          required
           type="Text"
           custom="w-full p-2 border-2 border-solid rounded-md outline-none"
         />
-        {errors.name?.type && (
+        {/* {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col m-2">
