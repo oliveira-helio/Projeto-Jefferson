@@ -40,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             {isSearchOpen ? <FaTimes /> : <FaSearch size={20} className="text-pink-700"/>}
           </button> */}
           {/* {isSearchOpen && (  */}
-            <div className="mt-6 mx-2 rounded-md top-6 w-full z-50 p-2">
+            <div className="mt-6 mx-4 rounded-md top-6 w-full z-50 p-2">
               <form onSubmit={handleSearchSubmit} className="flex flex-row flex-nowrap w-full justify-center">
                 <input
                   type="text"

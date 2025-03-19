@@ -90,7 +90,9 @@ const MenuContainer = () => {
             </button>
             <div className="my-10 px-4">
               <p>Encontre seus produtos favoritos</p>
-              <SearchBar onSearch={() => setIsMenuOpen(false)} />
+              <div className="px-2">
+                <SearchBar onSearch={() => setIsMenuOpen(false)} />
+              </div>
           
               <hr className="w-full mx-2 my-8 border border-solid border-pink-300" />
 
