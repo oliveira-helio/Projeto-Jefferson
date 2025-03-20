@@ -103,7 +103,7 @@ const MenuContainer = () => {
                       <button
                         className="flex justify-between items-center w-full text-[#a3115f] text-lg font-semibold"
                         onClick={() => toggleCategory(category.category)}
-                      >ccc
+                      >
                         {category.category}
                         {openCategories[category.category] ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
