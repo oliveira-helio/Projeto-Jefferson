@@ -78,7 +78,7 @@ const MenuContainer = () => {
 
           {/* Menu Mobile */}
           <div
-            className={`fixed top-0 left-0 h-[100vh] overflow- w-[70%] bg-pink-100 shadow-lg transform  ${
+            className={`fixed top-0 left-0 h-[100vh] overflow-hidden w-[70%] bg-pink-100 shadow-lg transform  ${
               isMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out z-50`}
           >
@@ -90,7 +90,7 @@ const MenuContainer = () => {
             </button>
             <div className="my-10 px-4">
               <p>Encontre seus produtos favoritos</p>
-              <div className="px-2">
+              <div className=""> 
                 <SearchBar onSearch={() => setIsMenuOpen(false)} />
               </div>
           
@@ -103,7 +103,7 @@ const MenuContainer = () => {
                       <button
                         className="flex justify-between items-center w-full text-[#a3115f] text-lg font-semibold"
                         onClick={() => toggleCategory(category.category)}
-                      >
+                      >ccc
                         {category.category}
                         {openCategories[category.category] ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
@@ -169,7 +169,7 @@ const MenuContainer = () => {
                         {category.category}
                       </a>
 
-                      <div className="hidden absolute bg-[#f8def2] shadow-[0 4px 8px rgba(0, 0, 0, 0.1)] z-50 min-w-[150px] group-hover:block">
+                      <div className="hidden absolute bg-[#f8def2] shadow-[0 4px 8px rgba(0, 0, 0, 0.1)] z-50 md:min-w-[150px] group-hover:block">
                         {category.subcategories.map((subCategory) => (
                           <div key={subCategory.subCategory}>
                             <a
