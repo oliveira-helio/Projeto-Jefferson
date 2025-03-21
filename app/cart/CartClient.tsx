@@ -71,7 +71,15 @@ const CartClient = () => {
     router.push(`/checkout/address`);
   };
 
-  if (!cart || cart.length === 0)
+  useEffect(() => {
+    if (typeof window !== "undefined"){
+      if (selectedProducts.length === 0) {
+        localStorage.removeItem("selectedProducts");
+      }
+    }
+  }, [selectedProducts]);
+  
+  if (!cart || cart.length === 0){
     return (
       <div className="flex items-center justify-center">
         <div className="bg-[url('/assets/img/basket-retail-shopping-cart.jpg')] mt-0 rounded-2xl aspect-square bg-contain bg-no-repeat bg-center bg-pink-100 self-center flex flex-col items-center justify-between py-10">
@@ -87,14 +95,7 @@ const CartClient = () => {
         </div>
       </div>
     );
-
-    useEffect(() => {
-      if (typeof window !== "undefined"){
-        if (selectedProducts.length === 0) {
-          localStorage.removeItem("selectedProducts");
-        }
-      }
-    }, [selectedProducts]);
+  }
 
   return (
     <div className="flex items-center justify-center">

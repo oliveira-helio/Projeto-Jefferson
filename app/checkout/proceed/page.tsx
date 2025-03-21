@@ -40,12 +40,12 @@ const Success = () => {
     };
   }, [selectedAddress, selectedDelivery, selectedProducts]); // Dependências do createShipment
 
-  useEffect(() => {
-    selectedProducts.forEach((product) => {
-      handleRemoveProductFromCart(product);
-    });
-    router.push('/');
-  }, [selectedProducts, handleRemoveProductFromCart, router]);
+  // useEffect(() => {
+  //   selectedProducts.forEach((product) => {
+  //     handleRemoveProductFromCart(product);
+  //   });
+  //   router.push('/');
+  // }, [selectedProducts, handleRemoveProductFromCart, router]);
 
   useEffect(() => {
     const shipment = async () => {

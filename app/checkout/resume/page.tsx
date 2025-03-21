@@ -12,12 +12,11 @@ const Resume = () => {
   const { selectedProducts } = useCart();
   const router = useRouter();
 
-  useEffect(() => {
-   console.log("selectedDelivery", selectedDelivery);
-   console.log("selectedProducts", selectedProducts);
-   
-  }
-  , [selectedDelivery, selectedProducts]);
+  // useEffect(() => {
+  //  console.log("selectedDelivery", selectedDelivery);
+  //  console.log("selectedProducts", selectedProducts);
+  // }
+  // , [selectedDelivery, selectedProducts]);
 
   return (
   <div className="p-4 flex w-full justify-center">
