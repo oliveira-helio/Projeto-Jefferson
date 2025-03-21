@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Product } from "@/utils/interfaces";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { Range } from "react-range";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import debounce from "lodash.debounce";
 
 const Loading = () => (

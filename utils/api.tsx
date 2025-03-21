@@ -2,9 +2,9 @@
 let apiAdress: string | undefined;
 
 if (process.env.NODE_ENV === 'development') {
-    apiAdress = process.env.LOCAL_API_URL
+    apiAdress = process.env.NEXT_PUBLIC_LOCAL_API_URL
 } else {
-    apiAdress = process.env.API_URL
+    apiAdress = process.env.NEXT_PUBLIC_API_URL
 }
 
 export default apiAdress; 

@@ -9,7 +9,7 @@ import {
 import axios, { AxiosInstance } from "axios";
 import { CartProductType, DeliveryInfoType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { useAuth } from "@/Contexts/AuthContext";
 import { useCart } from "./useCart";
 

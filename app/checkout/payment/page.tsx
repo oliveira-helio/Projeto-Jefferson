@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useCart } from "@/Hooks/useCart";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { v4 as uuidv4 } from 'uuid';
 import { useAddress } from "@/Hooks/useAddress";
 import { useRouter } from "next/navigation";
@@ -138,7 +138,7 @@ const Checkout = () => {
     if (selectedProducts.length === 0 || cartTotal === 0 || hasRequestedPayment.current) return;
 
     hasRequestedPayment.current = true;
-    initMercadoPago(process.env.MP_PUBLIC_KEY!, { locale: "pt-BR" });
+    initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!, { locale: "pt-BR" });
 
     const createPaymentPreference = async () => {
       if (selectedProducts.length === 0) return;

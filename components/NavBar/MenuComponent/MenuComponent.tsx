@@ -1,7 +1,7 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
 import Container from "../../Container";
-import apiAdress from '@/utils/api'
+import apiAdress from '@/utils/api';
 import { useMediaQuery } from 'react-responsive';
 import { FaBars, FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 import SearchBar from "../SearchBar/SearchBar";

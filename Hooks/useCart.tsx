@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { CartProductType, UserAddressType } from "@/utils/types";
 import toast from "react-hot-toast";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { useAuth } from "@/Contexts/AuthContext";
 import { useRouter } from "next/navigation";
 

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@/Contexts/AuthContext";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { UserAddressType } from "@/utils/types";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 

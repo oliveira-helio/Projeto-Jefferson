@@ -8,7 +8,7 @@ import Input from "../../components/Inputs/Input";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { FaFacebookF } from "react-icons/fa";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 
 const RegisterForm = () => {
 	const [isLoading, setIsLoading] = useState(false);

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MdCheckCircle } from "react-icons/md";
 import { Product, ProductDetailsProps } from "@/utils/interfaces";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { CartProductType, SelectedColorType } from "@/utils/types";
 import ColorSelector from "../MicroComponents/ColorSelector";
 import QuantitySelector from "../MicroComponents/QuantitySelector";

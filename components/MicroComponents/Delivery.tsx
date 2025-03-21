@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import Image from "next/image";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 

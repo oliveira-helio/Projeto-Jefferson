@@ -1,4 +1,4 @@
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import React, { useState } from "react";
 
 interface ImageInputProps {

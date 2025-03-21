@@ -1,7 +1,7 @@
 'use client'
 import { useAddress } from "@/Hooks/useAddress";
 import { useCart } from "@/Hooks/useCart";
-import apiAdress from "@/utils/api";
+import apiAdress from '@/utils/api';
 import { useRouter } from "next/navigation";
 import { useEffect, useCallback } from "react";
 
