@@ -120,13 +120,13 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   // Select delivery Address
   const handleSelectAddress = (address: UserAddressType) => {
     setSelectedAddress(address);
+    setSelectedDelivery(null)
   };
 
   // Select delivery Type
   const handleSelectDeliveryType = (deliveryData: DeliveryInfoType) => {
     setSelectedDelivery(deliveryData);
     console.log('deliveryData:', deliveryData);
-
   };
 
   // Select delivery Options
@@ -200,21 +200,21 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
 
   // Saves delivery options in localstorage whenever it changes
   useEffect(() => {
-    if (typeof window !== "undefined" && deliveryOptions) {
+    if (typeof window !== "undefined") {
       localStorage.setItem("deliveryOptions", JSON.stringify(deliveryOptions));
     };
   }, [deliveryOptions])
 
   // Saves selected address in localstorage whenever it changes
   useEffect(() => {
-    if (typeof window !== "undefined" && selectedAddress) {
+    if (typeof window !== "undefined") {
       localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
     };
   }, [selectedAddress])
 
   // Saves selected delivery type in localstorage whenever it changes
   useEffect(() => {
-    if (typeof window !== "undefined" && selectedDelivery) {
+    if (typeof window !== "undefined" ) {
       localStorage.setItem("selectedDelivery", JSON.stringify(selectedDelivery));
     };
   }, [selectedDelivery])
@@ -246,9 +246,9 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
   //   DEBBUGING      ###################################
 
   // // watch changes in selectedDelivery
-  // useEffect(()=>{ 
-  //   console.log('selectedDelivery:',selectedDelivery);
-  // },[selectedDelivery])
+  useEffect(()=>{ 
+    console.log('selectedDelivery:',selectedDelivery);
+  },[selectedDelivery])
 
   // // watch changes in selectedAddress
   // useEffect(()=>{ 

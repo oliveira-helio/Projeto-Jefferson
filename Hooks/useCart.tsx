@@ -49,8 +49,8 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   // Fetch the client cart
   const fetchCart = useCallback(async () => {
     if (typeof window !== "undefined") {
-      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
+      console.log('veio no fetchCart:');
+      
       try {
         const response = await axios.get(`${apiAdress}/cart/get`, {
           headers: {
@@ -404,12 +404,12 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   // }, [cart]);
 
   // // ---------- Watch changes in selectedProducts
-  // useEffect(() => {
-  //   if (selectedProducts.length>0){
-  //     const items = selectedProducts.map((item)=>item.productId)
-  //     console.log("selected mudou:", items);
-  //   } else { console.log("selected mudou:", localStorage.getItem('selectedProducts')) }
-  // }, [selectedProducts]);
+  useEffect(() => {
+    if (selectedProducts.length>0){
+      const items = selectedProducts.map((item)=>item.productId)
+      console.log("selected mudou:", items);
+    } else { console.log("selected mudou:", localStorage.getItem('selectedProducts')) }
+  }, [selectedProducts]);
   
 
   return (

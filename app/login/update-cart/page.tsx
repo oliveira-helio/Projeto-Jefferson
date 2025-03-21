@@ -9,6 +9,7 @@ const UpdatedCart = () => {
   const hasSynced = useRef(false); // <- Ref para rastrear se já sincronizou
 
   useEffect(() => {
+    
     if (!hasSynced.current) {
       syncLocalCartToBackend();
       hasSynced.current = true; // <- Marca que já foi sincronizado

@@ -11,6 +11,30 @@ import { useRouter } from "next/navigation";
 import Input from "../../components/Inputs/Input";
 import Button from "../../components/MicroComponents/Button";
 
+type logInResponse = {
+  status: number;
+  data: data | string;
+};
+
+type data = {
+  accessToken: string,
+  message: string,
+  user:{
+    birthDate?: string,
+    cpf?: string,
+    email: string,
+    gender?: string,
+    id: number,
+    isAdmin?: boolean,
+    name: string,
+    phone?: string,
+    profilePicture?: string,
+    provider?: string,
+    surname: string
+  }
+}
+
+
 const LoginForm = () => {
   const router = useRouter();
   const { login } = useContext(AuthContext); // Obtendo o método login do AuthContext
@@ -27,11 +51,12 @@ const LoginForm = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
     try {
-      await login(data); // Aguarda o token
-      
-      toast.success("Login bem-sucedido", { id: "login-toast-1" });
-
-      router.push("/login/update-cart");
+      const logInResponse = await login(data); // Aguarda o token
+      if ((logInResponse as logInResponse).status >= 200 && (logInResponse as logInResponse).status < 300) {
+        router.push("/login/update-cart"); // Redireciona para a página de sincronização
+      } else if ((logInResponse as logInResponse).status < 200 || (logInResponse as logInResponse).status >= 300) {
+        toast.error("Falha ao realizar o login", { id: "login-error-toast-1" });
+      } 
     } catch (error) {
       toast.error("Erro ao fazer login");
       console.error("Erro ao realizar o login:", error);

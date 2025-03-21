@@ -20,7 +20,12 @@ const CartClient = () => {
 
 
   const calculateDelivery = useCallback(async () => {
-    if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) return;
+
+    if (!selectedProducts || !selectedAddress || selectedProducts.length === 0) {
+      setSelectedSubTotal(0);
+      setSelectedTotal(0);
+      return;
+    };
 
     try {
       const deliveryOptions: DeliveryInfoType[] = await fetchDeliveryOptions(selectedProducts, selectedAddress.cep);
@@ -83,6 +88,14 @@ const CartClient = () => {
       </div>
     );
 
+    useEffect(() => {
+      if (typeof window !== "undefined"){
+        if (selectedProducts.length === 0) {
+          localStorage.removeItem("selectedProducts");
+        }
+      }
+    }, [selectedProducts]);
+
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col items-center justify-center max-md:m-8 max-w-[1024px]">
@@ -131,7 +144,7 @@ const CartClient = () => {
                       <ItemContent item={item} />
                       <input
                         type="checkbox"
-                        checked={selectedProducts.includes(item)}
+                        checked={selectedProducts.some((product) => product.productId === item.productId)}
                         onChange={() => handleSelectProduct(item)}
                         className="ml-4 w-5 h-5"
                       />
@@ -154,7 +167,7 @@ const CartClient = () => {
               <div className="flex justify-between">
                 <p className="text-2xl font-bold text-pinkSecondary">Frete dos produtos selecionados</p>
                 <p className="text-2xl font-bold text-slate-700">
-                  {formatCurrency(Number(selectedDelivery?.price) || 0)}
+                  {formatCurrency(  selectedProducts.length === 0 ? 0 : Number(selectedDelivery?.price) || 0)}
                 </p>
               </div>
             </div>

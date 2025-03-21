@@ -1,6 +1,6 @@
 'use client'
 import React, { createContext, useEffect, useState, useContext, useCallback } from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import apiAdress from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import { FieldValues } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { FieldValues } from 'react-hook-form';
 interface AuthContextData {
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (credentials: { email: string; password: string } | FieldValues) => Promise<void>;
+  login: (credentials: { email: string; password: string } | FieldValues) => Promise<unknown>;
   user: User | null;
   logout: () => void;
   accessToken: string | null;
@@ -17,9 +17,9 @@ interface AuthContextData {
 interface User {
   id: number | null,
   name: string | null,
-  surname?: string| null,
-  gender?: string| null,
-  profilePicture?: string| null,
+  surname?: string | null,
+  gender?: string | null,
+  profilePicture?: string | null,
   email: string | null,
   birthDate?: Date | null,
   phone?: string | null,
@@ -50,28 +50,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (typeof window !== 'undefined') {
       try {
         const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
-        const user = response.data.user;
-        localStorage.setItem('accessToken', response.data.accessToken);
-        setAccessToken(response.data.accessToken);
-        setIsAuthenticated(true);
-        setUser({
-          id: user.id,
-          name: user.name,
-          surname: user.surname || null,
-          gender: user.gender || null,
-          profilePicture: user.profilePicture || null,
-          email: user.email,
-          birthDate: user.birthDate || null,
-          phone: user.phone || null,
-          cpf: user.cpf || null,
-          provider: user.provider || null,
-        });
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        if (response.data.user.isAdmin) {
-          setIsAdmin(true);
+
+        if (response.data.accessToken) {
+          const user = response.data.user;
+          localStorage.setItem('accessToken', response.data.accessToken);
+          setAccessToken(response.data.accessToken);
+          setIsAuthenticated(true);
+          setUser({
+            id: user.id,
+            name: user.name,
+            surname: user.surname || null,
+            gender: user.gender || null,
+            profilePicture: user.profilePicture || null,
+            email: user.email,
+            birthDate: user.birthDate || null,
+            phone: user.phone || null,
+            cpf: user.cpf || null,
+            provider: user.provider || null,
+          });
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          if (response.data.user.isAdmin) {
+            setIsAdmin(true);
+          }
         }
-      } catch (error) {
-        console.error('Erro ao fazer login:', error);
+        return { status: response.status, data: response.data };
+      } catch (error: any) {
+        // return error
+        return { status: error.status, data: error.response.data.error }
       }
     }
   };

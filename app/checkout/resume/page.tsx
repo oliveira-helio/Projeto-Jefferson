@@ -4,12 +4,20 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/Hooks/useCart";
 import ItemContentCheckout from "@/app/cart/ItemContentCheckout";
 import AddressCheckoutCard from "@/components/AdressCard/AddressCheckout";
+import { useEffect } from "react";
 
 
 const Resume = () => {
   const { selectedDelivery } = useAddress();
   const { selectedProducts } = useCart();
   const router = useRouter();
+
+  useEffect(() => {
+   console.log("selectedDelivery", selectedDelivery);
+   console.log("selectedProducts", selectedProducts);
+   
+  }
+  , [selectedDelivery, selectedProducts]);
 
   return (
   <div className="p-4 flex w-full justify-center">

@@ -21,7 +21,8 @@ const ItemContentCheckout: React.FC<ItemContentProps> = ({ item, itemkey }) => {
             src={item.image}
             alt="Foto do produto"
             className="rounded-xl aspect-square max-md:w-[100px] md:w-[120px]  object-cover"
-            fill
+            width={120}
+            height={120}
           />
           <div className="flex flex-col justify-start md:col-span-2 items-center w-full py-2">
             <div className="px-4 w-full text-lg font-medium">{item.name}</div>

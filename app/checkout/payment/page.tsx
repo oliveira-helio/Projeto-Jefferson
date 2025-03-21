@@ -6,7 +6,6 @@ import apiAdress from "@/utils/api";
 import { v4 as uuidv4 } from 'uuid';
 import { useAddress } from "@/Hooks/useAddress";
 import { useRouter } from "next/navigation";
-import { stat } from "fs";
 
 declare global {
   interface Window {
