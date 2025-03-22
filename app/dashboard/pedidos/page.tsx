@@ -115,9 +115,9 @@ const OrdersDashboard = () => {
                 {
                   (order.status === "pending" ? <option>Aguardando pagamento</option> :
                     (order.status === "approved" || order.status ===  "aproved" ? <option>Pagamento aprovado</option> :
-                      (order.status === "inprocess" ? <option>Pagamento em processo</option> :
+                      ((order.status === "inprocess" || order.status === 'in_process') ? <option>Pagamento em processo</option> :
                         (order.status === "inmediation" ? <option>Em contestação</option> :
-                          (order.status === "rejected" ? <option>Pagamento rejeitado</option> :
+                          (order.status === "rejected" ? <option>Pagamento recusado</option> :
                             (order.status === "refunded" || order.status === "chargedback" && <option>Estornado</option>)
                           )
                         )

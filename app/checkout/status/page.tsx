@@ -9,7 +9,6 @@ const Checkout = () => {
   });
   const initialization = paymentId
   
-  
   useEffect(() => {
     if (typeof window !== "undefined") {
       const temporaryPaymentId = localStorage.getItem('paymentId');
@@ -29,14 +28,19 @@ const Checkout = () => {
 
   const customization = {
     backUrls: {
-      error: '<http://localhost:3000/checkout/payment>',
-      return: '<http://localhost:3000/checkout/proceed>',
+      error: 'http://localhost:3000/checkout/payment',
+      pending: 'http://localhost:3000/checkout/payment',
+      success: 'http://localhost:3000/success',
+      return: 'http://localhost:3000/',
     },
     visual: {
       texts: {
-          ctaGeneralErrorLabel: "Houve um erro: tentar novamente",
-          ctaCardErrorLabel: "Pagamento não aprovado: tentar outro cartão",
-          ctaReturnLabel: "Retornar",
+          ctaGeneralErrorLabel: "Escolher outro meio de pagamento",
+          ctaCardErrorLabel: "Escolher outro meio de pagamento",
+          ctaReturnLabel: "Voltar à loja",
+          ctaSuccessLabel: "Prosseguir",
+          ctaWaitLabel: "Aguarde...",
+
       },
   },
    };

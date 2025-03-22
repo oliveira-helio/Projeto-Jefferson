@@ -1,11 +1,11 @@
 'use client'
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import apiAdress from '@/utils/api';
+import { useAddress } from "@/Hooks/useAddress";
 import { useCart } from "@/Hooks/useCart";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
-import apiAdress from '@/utils/api';
 import { v4 as uuidv4 } from 'uuid';
-import { useAddress } from "@/Hooks/useAddress";
-import { useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -21,13 +21,13 @@ interface orderData {
   installments?: number;
   liquidAmount?: number;
   installment_amount?: number;
-  fees?: {type?: string, amount?: number, fee_payer?: string}[];
+  fees?: { type?: string, amount?: number, fee_payer?: string }[];
 }
 
 
 const Checkout = () => {
   const router = useRouter();
-  const { selectedProducts } = useCart();
+  const { handleRemoveProductFromCart,selectedProducts } = useCart();
   const { selectedDelivery, selectedAddress } = useAddress();
   const [cartTotal, setCartTotal] = useState(0);
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
@@ -106,7 +106,7 @@ const Checkout = () => {
     fetchPayer();
   }, []);
 
-
+  // update order
   const updateOrder = async (orderData: orderData, orderId: number | null) => {
     try {
       await fetch(`${apiAdress}/api/orders/update-order-payment`, {
@@ -122,6 +122,37 @@ const Checkout = () => {
     }
   };
 
+  // create shipment
+  const createShipment = useCallback(async () => {
+    if ( typeof window !== "undefined" ) {
+      const response = await fetch(`${apiAdress}/api/orders/create-shipment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
+        },
+        body: JSON.stringify({
+          orderId,
+          volumes: selectedDelivery?.packages.map((pack) => ({
+            weight: pack.weight,
+            width: pack.dimensions?.width,
+            height: pack.dimensions?.height,
+            length: pack.dimensions?.length
+          })),
+          address: selectedAddress,
+          items: selectedProducts.map((product) => ({
+            name: product.productId,
+            quantity: product.quantity,
+            unitary_value: product.price
+          })),
+          selectedCompany: { id: selectedDelivery?.id, name: selectedDelivery?.company?.name, type: selectedDelivery?.name }
+        })
+      });
+      const order = await response.json();
+      return order; // Retorne o ID do pedido gerado
+    };
+  }, [selectedAddress, selectedDelivery, selectedProducts, orderId]); // Dependências do createShipment
+  
   // cart total
   useEffect(() => {
     if (selectedProducts.length === 0) return;
@@ -162,7 +193,7 @@ const Checkout = () => {
 
 
         setPreferenceId(data.preferenceId);
-        
+
       } catch (error) {
         console.error("Erro ao criar pagamento:", error);
       }
@@ -196,7 +227,7 @@ const Checkout = () => {
   };
 
   const onSubmit = async (formData: any) => {
-  
+
     return new Promise((resolve, reject) => {
       fetch(`${apiAdress}/api/payments/process-payment`, {
         method: "POST",
@@ -219,31 +250,44 @@ const Checkout = () => {
       })
         .then((response) => response.json())
         .then(async (response) => {
-         const orderData: orderData ={
+          const orderData: orderData = {
             externalOrderId: response.id,
             paymentType: response.payment_type_id,
             status: response.status,
             total: response.transaction_amount,
             ...(response.installments && { installments: response.installments }),
-            ...(response.transaction_details.net_received_amount && {liquidAmount: response.transaction_details.net_received_amount}),
-            ...(response.transaction_details.installment_amount && {installmentAmount: response.transaction_details.installment_amount}),
-            ...(response.fee_details && {fees: response.fee_details}),
-            selectedDelivery: (selectedDelivery?.company?.name+" - "+ selectedDelivery?.name),
+            ...(response.transaction_details.net_received_amount && { liquidAmount: response.transaction_details.net_received_amount }),
+            ...(response.transaction_details.installment_amount && { installmentAmount: response.transaction_details.installment_amount }),
+            ...(response.fee_details && { fees: response.fee_details }),
+            selectedDelivery: (selectedDelivery?.company?.name + " - " + selectedDelivery?.name),
             estimatedDelivery: selectedDelivery?.custom_delivery_time
           }
-          
+
           await updateOrder(orderData, orderId);
           // updateOrder(response, orderId);
-          if ( typeof window !== "undefined") {
+          if (typeof window !== "undefined") {
             localStorage.setItem('paymentId', JSON.stringify(response.id));
           }
           resolve(response);
           window.paymentBrickController?.unmount()
+          return orderData;
         })
-        .then(() => router.push('/checkout/status'))
+        .then(async (orderData) => {
+          console.log('orderData:', orderData);
+
+          orderData.status === 'rejected' ? 
+            router.push('/checkout/status') 
+          : 
+            await createShipment(),
+            selectedProducts.forEach((product) => {
+              handleRemoveProductFromCart(product);
+            }),
+            router.push('/checkout/status')
+          ;
+        })
         .catch((error) => {
           console.error('error:', error);
-          
+
           // reject(error);
         });
     });

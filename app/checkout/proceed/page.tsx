@@ -39,20 +39,20 @@ const Success = () => {
       return order; // Retorne o ID do pedido gerado
     };
   }, [selectedAddress, selectedDelivery, selectedProducts]); // Dependências do createShipment
-
-  // useEffect(() => {
-  //   selectedProducts.forEach((product) => {
-  //     handleRemoveProductFromCart(product);
-  //   });
-  //   router.push('/');
-  // }, [selectedProducts, handleRemoveProductFromCart, router]);
-
+  
   useEffect(() => {
     const shipment = async () => {
       await createShipment();
     };
     shipment();
   }, [createShipment]); // Chamando o useCallback aqui com a dependência correta
+  
+    useEffect(() => {
+      selectedProducts.forEach((product) => {
+        handleRemoveProductFromCart(product);
+      });
+      router.push('/checkout/status');
+    }, [selectedProducts, handleRemoveProductFromCart, router]);
 
   return null;
 }

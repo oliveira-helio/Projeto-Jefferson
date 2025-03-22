@@ -37,10 +37,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     barCode: 0,
     image: "",
     quantity: 0,
-    deliveryFee: 0,
-    deliveryCep: selectedAddress?.cep,
-    deliveryType: null,
-    deliveryTime: null,
+    // deliveryFee: 0,
+    // deliveryCep: selectedAddress?.cep,
+    // deliveryType: null,
+    // deliveryTime: null,
   });
   const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null
@@ -58,9 +58,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   };
 
   const handleAddToCartClick = () => {
-    cartProduct.deliveryType
-      ? handleAddProductToCart(cartProduct)
-      : toast.error("Selecione uma modalidade de entrega");
+    // cartProduct.deliveryType
+    //   ? handleAddProductToCart(cartProduct)
+    //   : toast.error("Selecione uma modalidade de entrega");
+      handleAddProductToCart(cartProduct)
   };
 
   const handleItemSelect = (index: number) => {
@@ -102,12 +103,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
         const data = response.data;
         if (data && data.product) {
           setProduct(data.product as Product);
+          console.log("Produto carregado:", data.product);
+          
         } else {
           throw new Error("Produto não encontrado.");
         }
         const selectedProduct = data.product.images.find(
-          (img: { product_id: number }) => img.product_id === Number(productId)
+          (img: { product_id: number }) => Number(img.product_id) === Number(productId)
         );
+        console.log("Produto selecionado:", selectedProduct);
+        
         
         if (selectedProduct) {
           setSelectedColor({
@@ -142,10 +147,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           barCode: selectedColor.barCode,
           image: selectedColor.imageUrl,
           quantity: prev.quantity || 1,
-          deliveryFee: 0,
-          deliveryCep: "",
-          deliveryType: "",
-          deliveryTime: "",
+          // deliveryFee: 0,
+          // deliveryCep: "",
+          // deliveryType: "",
+          // deliveryTime: "",
         };
         if (
           prev.productId !== selectedColor.productId ||
@@ -186,6 +191,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   useEffect(() => {
     console.log("Carrinho", cart);
   }, [cart]);
+
 
   useEffect(() => {
     if (selectedAddress?.cep) {
