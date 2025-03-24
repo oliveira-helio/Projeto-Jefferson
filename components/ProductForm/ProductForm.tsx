@@ -11,7 +11,10 @@ import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import ImageInput from "./ImageImput";
 import Link from "next/link";
+import dynamic from "next/dynamic"; // Importação dinâmica para evitar problemas no SSR
+import "react-quill-new/dist/quill.snow.css";
 
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 interface ProductFormProps {
   isLoading: boolean;
@@ -35,12 +38,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
   onSubmit,
   buttonLabel,
   initialImages = [],
-  setImages,
+  setImages, 
   disabledFields = [],
 }) => {
   const [images, setLocalImages] = useState<{ file?: File; image_url: string; is_generic: boolean }[]>(initialImages);
   const [loadingImage, setLoadingImage] = useState(false); // Para mostrar o estado de carregamento
-
+  const [details, setDetails] = useState(""); // Estado local para os detalhes
   // Adiciona a imagem à lista
   const handleAddImage = (signedUrl: string, isGeneric: boolean, file: File | undefined) => {
     const newImage = { image_url: signedUrl, is_generic: isGeneric, file };
@@ -137,7 +140,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         )} */}
       </div>
 
-      <div className="flex flex-col mx-2 col-span-2 my-1">
+      <div className="flex flex-col mx-2 col-span-2 ">
         <span className="text-base font-medium text-zinc-700">Descrição</span>
         <TextArea
           id="description"
@@ -146,28 +149,38 @@ const ProductForm: React.FC<ProductFormProps> = ({
           register={register}
           errors={errors}
           required
-          custom="w-full p-2 border-2 border-solid rounded-md outline-none min-h-[100px] resize-none"
+          custom="w-full p-2 outline-none h-[200px] resize-none"
         />
         {errors.name?.type && (
           <span className="text-red-500 text-sm">campo obrigatório</span>
         )}
       </div> 
 
-      <div className="flex flex-col mx-2 col-span-2 my-1">
+      <div className="flex flex-col mx-2 col-span-2 ">
         <span className="text-base font-medium text-zinc-700">Detalhes</span>
-        <TextArea
-          id="details"
-          label=""
-          disabled={isLoading || !!disabledFields.find((field: string) => field === "details")}
-          register={register}
-          errors={errors}
-          required
-          custom="w-full p-2 border-2 border-solid rounded-md outline-none min-h-[100px] resize-none"
+        <div className="bg-white w-full  outline-none h-[200px]">
+        <ReactQuill
+          value={details}
+          onChange={setDetails} // Atualiza o estado local
+          modules={{
+            toolbar: [
+              [{ header: [1, 2, 3, false] }], // Títulos
+              ["bold", "italic"], // Negrito e Itálico
+              [{ list: "ordered" }, { list: "bullet" }], // Listas numeradas e com bolinhas
+            ],
+          }}
+          className="h-[159px] ql-editor.overflow-y-auto rounded-md" // Ajuste de estilos
         />
-        {errors.name?.type && (
-          <span className="text-red-500 text-sm">campo obrigatório</span>
-        )}
-      </div>
+        </div>
+      </div> 
+
+      {/* <div className="flex flex-col mx-2 col-span-2 my-1">
+        <span className="text-base font-medium text-zinc-700">Detalhes</span>
+        <div className="border-2 border-solid rounded-md p-2 min-h-[100px]">
+          <EditorContent editor={editor} />
+        </div>
+        {errors.details?.type && <span className="text-red-500 text-sm">campo obrigatório</span>}
+      </div> */}
 
       <div className="flex flex-col m-2">
         <span className="text-base font-medium text-zinc-700">Categoria</span>
@@ -441,7 +454,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
       <div className="items-center col-span-4 flex justify-center mt-8">
         <Button
           label={isLoading ? "Carregando" : buttonLabel}
-          onClick={handleSubmit((data) => onSubmit({ ...data, images }))}
+          onClick={handleSubmit((data) => {
+            onSubmit({ ...data, details, images })
+          })}
           custom="text-xl h-fit"
           disabled={isLoading || !!disabledFields.find((field: string) => field === "remove_button")}
         />

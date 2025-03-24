@@ -64,8 +64,14 @@ export default function EditProduct() {
     }
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data, details) => {
     setIsLoading(true);
+    // console.log('images no submit:',images);
+    console.log('data no submit:',data);
+    // console.log('details no submit:',details);
+    
+    
+    
     try {
       await productEdit({ ...data, images });
       toast.success("Produto alterado com sucesso!", {
