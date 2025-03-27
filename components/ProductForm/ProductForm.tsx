@@ -158,8 +158,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
       <div className="flex flex-col mx-2 col-span-2 ">
         <span className="text-base font-medium text-zinc-700">Detalhes</span>
-        <div className="bg-white w-full  outline-none h-[200px]">
+        <div className={`bg-white w-full outline-none h-[200px] ${(isLoading || disabledFields.includes("details")) ? "cursor-not-allowed opacity-25" : "cursor-auto"}`}>
         <ReactQuill
+          readOnly={isLoading || !!disabledFields.find((field: string) => field === "details")}
           value={details}
           onChange={setDetails} // Atualiza o estado local
           modules={{
@@ -169,7 +170,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               [{ list: "ordered" }, { list: "bullet" }], // Listas numeradas e com bolinhas
             ],
           }}
-          className="h-[159px] ql-editor.overflow-y-auto rounded-md" // Ajuste de estilos
+          className={`h-[159px] ql-editor.overflow-y-auto rounded-md`} // Ajuste de estilos
         />
         </div>
       </div> 
@@ -424,8 +425,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
       <span className="text-base font-medium text-zinc-700 col-span-4 m-2">Imagens</span>
       <div className="grid grid-cols-4 col-span-4">
         <div className="col-span-2">
-          {/* Componente ImageInput */}
-          <ImageInput onFileAdded={handleAddImage} />
+          <ImageInput 
+            onFileAdded={handleAddImage}
+            disabled={isLoading || !!disabledFields.find((field: string) => field === "images")}
+          />
         </div>
 
         <div className="mt-2 col-span-2 bg-pink-200 rounded">

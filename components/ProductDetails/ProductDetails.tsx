@@ -251,7 +251,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
               porro amet veniam recusandae nulla error dolore provident ad
               dolores illo perferendis voluptatum.
             </div>
-            <StyledRattingHeart product={product} />
+            <div className="flex items-center gap-2">
+              <StyledRattingHeart product={product} />
+              <p className="text-xs">({product.ratting_qt}) avaliaçôes</p>
+            </div>
             <div id="Color__Selector">
               <ColorSelector
                 colors={uniqueColors}
@@ -342,33 +345,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           </h1>
           {/* DESCRIPTION FULL */}
 
-          <p className="text-sm text-slate-700 font-medium my-2">
-            {product.details}
-            {/* TODO remover o Loren ipsun */}
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia
-            adipisci nihil veritatis quo eos a labore magni odio quis laboriosam
-            vel expedita, explicabo cumque! Ipsam eos explicabo rerum enim unde,
-            sunt blanditiis eius placeat reprehenderit ad fugit repellendus
-            labore culpa inventore corrupti vero tenetur excepturi suscipit
-            accusantium praesentium quod voluptas. Similique ab ipsa,
-            dignissimos non delectus quia, vitae magni dicta, quasi maxime quis.
-            Minima quos minus sit cum eligendi quae iste accusantium, et
-            deserunt vitae aliquam rerum eaque laboriosam fuga dolorum maiores
-            eveniet atque ratione quidem architecto. Dignissimos vel deserunt,
-            dolores officiis molestiae temporibus cumque voluptatibus est
-            necessitatibus recusandae eveniet, delectus sapiente veniam.
-            Possimus accusamus eveniet nobis laborum qui natus porro aperiam,
-            aspernatur optio quasi, voluptatibus rem blanditiis voluptate
-            adipisci, cumque quaerat dolorem magnam quas ipsam esse debitis
-            provident vero officiis. Dolores vitae harum vero eligendi? Et
-            ratione itaque eaque saepe voluptas ex incidunt laudantium magni,
-            nisi labore amet architecto quibusdam quisquam. Incidunt magni cum
-            animi beatae nihil ullam. Similique nostrum vitae aut. Quod
-            accusantium, reprehenderit eius impedit provident aut pariatur
-            maxime facere odit quis placeat magnam dolorem ad hic. Nemo aut,
-            eaque sit provident, quibusdam magnam reiciendis exercitationem
-            explicabo iure consectetur repudiandae tenetur fuga est sed!
-          </p>
+          
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.details }} />
           <p>Avaliaçoes: {product.ratting_qt}</p>{/* TODO  criar um novo banco de dados para armazenar os produtos vendidos, qtd vendida, data e ratings (ou um banco separado para ratings e so pode avaliar quem já comprou)*/}{" "}
         </div>
       </section>

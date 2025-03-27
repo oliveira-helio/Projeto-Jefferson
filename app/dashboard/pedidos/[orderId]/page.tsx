@@ -90,13 +90,13 @@ const OrdersDashboard = () => {
           Voltar
         </button>
       </div>
-      <div className="border border-gray-200 rounded-lg shadow-md p-6 mb-6 bg-pink-200">
+      <div className="border border-gray-200 rounded-lg shadow-md p-6 mb-6 bg-pink-100 text-slate-800">
         {/* Cabeçalho do Pedido */}
         <div className="flex justify-between items-center mb-4">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">Pedido #{order.orderId}</h2>
-            <p className="text-gray-600">Total: R$ {order.orderTotal}</p>
-            <p className="text-gray-600">
+            <p className="text-slate-800">Total: R$ {order.orderTotal}</p>
+            <p className="text-slate-800">
               Status do Pedido: <span className="font-medium">{
                 (order.shipments[0].shippingStatus === "delivered" ? "Concluído" :
                   (order.status === "pending" ? "Aguardando pagamento" :
@@ -120,7 +120,7 @@ const OrdersDashboard = () => {
               }
               </span>
             </p>
-            <p className="text-gray-600">Status de Envio: <span className="font-medium">{
+            <p className="text-slate-800">Status de Envio: <span className="font-medium">{
               (order.shippingStatus === "created" ? "Etiqueta criada" :
                 (order.shippingStatus === "pending" ? "Aguardando envio" :
                   (order.shippingStatus === "released" ? "Liberado para envio" :
@@ -147,51 +147,51 @@ const OrdersDashboard = () => {
                 )
               )}</span>
             </p>
-            <p className="text-gray-600">Data do Pedido: <span className="font-medium">{new Date(order.createdAt).toLocaleString()}</span>
+            <p className="text-slate-800">Data do Pedido: <span className="font-medium">{new Date(order.createdAt).toLocaleString()}</span>
             </p>
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-800">Endereço de Entrega</h2>
-            <p className="text-gray-600"> {order.deliveryaddress.street}, {order.deliveryaddress.number} </p>
-            <p className="text-gray-600"> Cep: {order.deliveryaddress.cep} - {order.deliveryaddress.neighborhood}</p>
+            <p className="text-slate-800"> {order.deliveryaddress.street}, {order.deliveryaddress.number} </p>
+            <p className="text-slate-800"> Cep: {order.deliveryaddress.cep} - {order.deliveryaddress.neighborhood}</p>
             {order.deliveryaddress.complement !== "" ?
-              <p className="text-gray-600"> Complemento: {order.deliveryaddress.complement}</p>
+              <p className="text-slate-800"> Complemento: {order.deliveryaddress.complement}</p>
               : null
             }
-            <p className="text-gray-600"> Cep: {order.deliveryaddress.city} - {order.deliveryaddress.state}</p>
+            <p className="text-slate-800"> Cep: {order.deliveryaddress.city} - {order.deliveryaddress.state}</p>
           </div>
         </div>
 
         {/* Itens do Pedido */}
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Itens do Pedido:</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-2">Itens do Pedido:</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {order.orderitems.map((item, index) => (
               <div key={index} className="p-3 border border-gray-100 rounded-md shadow-sm">
                 <p className="font-medium text-gray-800">{item.name}</p>
-                <p className="text-gray-600 text-sm">Marca: {item.brand}</p>
-                <p className="text-gray-600 text-sm">Cor: {item.color}</p>
-                <p className="text-gray-600 text-sm">Quantidade: {item.quantity}</p>
-                <p className="text-gray-600 text-sm">Preço: R$ {item.price}</p>
+                <p className="text-slate-800 text-sm">Marca: {item.brand}</p>
+                <p className="text-slate-800 text-sm">Cor: {item.color}</p>
+                <p className="text-slate-800 text-sm">Quantidade: {item.quantity}</p>
+                <p className="text-slate-800 text-sm">Preço: R$ {item.price}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Se houver informações de envio */}
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">Informações de Envio:</h3>
+        <h3 className="text-lg font-semibold text-slate-800 mb-2">Informações de Envio:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {order.shipments.map((shipment, index) => (
 
             <div key={index} className="mt-4">
-              <h3 className="text-lg font-semibold text-gray-700">Volume {index + 1}:</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Volume {index + 1}:</h3>
               {shipment.id && (
                 <div className="border-t pt-4 mb-2">
-                  <p className="text-gray-600">Transportadora: {shipment.carrier || "-"}</p>
-                  <p className="text-gray-600">Código de Rastreamento: {shipment.trackingCode || "-"}</p>
-                  <p className="text-gray-600">Data prevista para entrega: {shipment.estimatedDeliveryDate ? new Date(shipment.estimatedDeliveryDate).toLocaleDateString() : "-"}</p>
-                  <p className="text-gray-600">Data de Envio: {shipment.shippedAt ? new Date(shipment.shippedAt).toLocaleString() : "-"}</p>
-                  <p className="text-gray-600">Data de Entrega: {shipment.deliveredAt ? new Date(shipment.deliveredAt).toLocaleString() : "-"}</p>
+                  <p className="text-slate-800">Transportadora: {shipment.carrier || "-"}</p>
+                  <p className="text-slate-800">Código de Rastreamento: {shipment.trackingCode || "-"}</p>
+                  <p className="text-slate-800">Data prevista para entrega: {shipment.estimatedDeliveryDate ? new Date(shipment.estimatedDeliveryDate).toLocaleDateString() : "-"}</p>
+                  <p className="text-slate-800">Data de Envio: {shipment.shippedAt ? new Date(shipment.shippedAt).toLocaleString() : "-"}</p>
+                  <p className="text-slate-800">Data de Entrega: {shipment.deliveredAt ? new Date(shipment.deliveredAt).toLocaleString() : "-"}</p>
                 </div>
               )}
             </div>

@@ -32,25 +32,16 @@ export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('accessToken');
-      setAccessToken(token);
-      setIsAuthenticated(!!token);
-      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
-    }
-  }, []);
-
+  
   const login = async (credentials: FieldValues) => {
     if (typeof window !== 'undefined') {
       try {
         const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
-
+        
         if (response.data.accessToken) {
           const user = response.data.user;
           localStorage.setItem('accessToken', response.data.accessToken);
@@ -68,10 +59,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             cpf: user.cpf || null,
             provider: user.provider || null,
           });
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-          if (response.data.user.isAdmin) {
-            setIsAdmin(true);
-          }
+          setIsAdmin(user.isAdmin || false);
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem("isAdmin", JSON.stringify(user.isAdmin || false));
         }
         return { status: response.status, data: response.data };
       } catch (error: any) {
@@ -84,9 +74,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = useCallback(async () => {
     if (typeof window !== 'undefined') {
       localStorage.clear();
-      setIsAdmin(false);
       setIsAuthenticated(false);
-
+      
       try {
         await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
       } catch (error) {
@@ -94,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
   }, []);
-
+  
   const renewToken = async () => {
     if (typeof window !== 'undefined') {
       try {
@@ -107,7 +96,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
   };
+  
+  // Load accessToken and isAdmin from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("accessToken");
+      setAccessToken(token);
+      setIsAuthenticated(!!token);
 
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsAdmin(parsedUser.isAdmin || false); // Garante que `isAdmin` seja inicializado corretamente
+      }
+    }
+  }, []);
+  
   // Sincronize `isAuthenticated` between tabs
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -123,7 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-
+  
   // Sincronize token and between tabs
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -139,7 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     };
   }, []);
-
+  
   // Periodicaly renew the access token
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -147,20 +152,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (localStorage.getItem('accessToken')) {
           renewToken();
         }
-      }, 90 * 60 * 1000); // Renovar a cada 90 minutos
+      }, 30 * 60 * 1000); // Renovar a cada 90 minutos
 
       return () => clearInterval(interval);
     }
   }, []);
 
-  // Change accessToken when updated
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const newToken = localStorage.getItem('accessToken')
-  //     setAccessToken(newToken)
-  //   };
-  // }, [localStorage.getItem('accessToken')])
-
+  // Saves isAdmin in localstorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("isAdmin", JSON.stringify(isAdmin));
+    }
+  }, [isAdmin]);
 
   // Logout automatically when inactive
   useEffect(() => {
@@ -174,14 +177,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const resetTimeout = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(handleTimeout, 90 * 60 * 1000); // 30 minutos de inatividade
+        timeout = setTimeout(handleTimeout, 30 * 60 * 1000); // 30 minutos de inatividade
       };
 
       window.addEventListener('mousemove', resetTimeout);
       window.addEventListener('click', resetTimeout);
       window.addEventListener('keydown', resetTimeout);
-
-      resetTimeout();
 
       return () => {
         window.removeEventListener('mousemove', resetTimeout);
@@ -192,13 +193,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [logout, router]);
 
-  // Sincronize the initial state with localStorage
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const token = localStorage.getItem('accessToken');
-  //     setIsAuthenticated(!!token);
-  //   };
-  // }, []);
+
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, isAdmin, login, logout, accessToken }}>

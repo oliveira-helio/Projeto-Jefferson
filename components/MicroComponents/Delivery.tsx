@@ -89,7 +89,7 @@ const Delivery: React.FC<DeliveryProps> = ({
         }}
       >
         <div className="flex flex-col w-fit">
-          <div className="flex gap-2">
+          <div className="flex gap-2 my-1">
             <span className="text-lg font-medium">Calcule o frete: </span>
             <button type="button" onClick={openCorreiosPopup} className="text-xs">Não sei meu CEP</button>
           </div>
@@ -118,7 +118,7 @@ const Delivery: React.FC<DeliveryProps> = ({
 
       {deliveryOptions.length > 0 && (
         <div>
-          <h3 className="text-lg font-medium">Opções de frete:</h3>
+          <h3 className="text-lg font-medium my-2">Opções de frete:</h3>
           <ul className="flex flex-col gap-4">
             {deliveryOptions.map((option, index) => (
               !option.name || !option.price || !option.delivery_time ?
@@ -128,17 +128,6 @@ const Delivery: React.FC<DeliveryProps> = ({
                 <li key={index}>
                   <label>
                     <div className="w-full relative flex flex-row gap-4 justify-around">
-                      <input
-                        type="radio"
-                        name="frete"
-                        onChange={() =>
-                          handleDeliverySelection(
-                            option.name,
-                            Number(option.price),
-                            option.delivery_time
-                          )
-                        }
-                      />
                       <div className=" w-full relative flex flex-row justify-start items-center gap-2 justify-items-start">
                         <div className="w-1/4">
                           <Image

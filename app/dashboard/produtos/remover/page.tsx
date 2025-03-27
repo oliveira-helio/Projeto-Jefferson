@@ -136,7 +136,7 @@ export default function EditProduct() {
         errors={errors}
         handleSubmit={handleSubmit}
         onSubmit={onSubmit}
-        buttonLabel="Remover"
+        buttonLabel="Remover produto"
         initialImages={images}
         setImages={setImages}
         disabledFields={[

@@ -3,9 +3,10 @@ import React, { useState } from "react";
 
 interface ImageInputProps {
   onFileAdded: ( signedUrl: string, isGeneric: boolean, file?: File) => void;
+  disabled?: boolean;
 }
 
-const ImageInput: React.FC<ImageInputProps> = ({ onFileAdded }) => {
+const ImageInput: React.FC<ImageInputProps> = ({ onFileAdded, disabled }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   // const [signedUrl, setSignedUrl] = useState<string | null>(null);
   const [isGeneric, setIsGeneric] = useState<boolean>(false);
@@ -47,9 +48,19 @@ const ImageInput: React.FC<ImageInputProps> = ({ onFileAdded }) => {
 
   return (
     <div>
-      <input type="file" accept="image/*" onChange={handleFileChange}/>
+      <input 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileChange}
+        disabled={disabled}
+      />
       <label>
-        <input type="checkbox" checked={isGeneric} onChange={handleIsGenericChange} />
+        <input 
+          type="checkbox" 
+          checked={isGeneric} 
+          onChange={handleIsGenericChange}
+          disabled={disabled}
+        />
         É genérica?
       </label>
       {selectedFile && <p>Arquivo: {selectedFile.name}</p>}

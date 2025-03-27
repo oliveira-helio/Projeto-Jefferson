@@ -35,31 +35,27 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-blue-700 text-white h-screen flex flex-col">
+    <aside className="w-64 bg-pink-500 text-white h-screen flex flex-col">
       <div className="p-4 font-bold text-xl">Painel Administrativo</div>
       <nav className="flex-grow">
         <ul>
           {links.map((link) => (
             <li key={link.href}>
             <div
-              className={`flex flex-row justify-between hover:bg-blue-600  ${
-                pathname === link.href ? 'bg-blue-500' : ''
-              }`}
+              className={`flex flex-row justify-between hover:bg-pink-600 hover:shadow-md ${pathname === link.href ? 'bg-pink-400' : ''}`}
             >
               {link.subLinks.length === 0 ? (
                 // Se não houver subLinks, envolvemos o label com o Link
                 <Link
                   href={link.href}
-                  className={`block px-4 py-2 w-full${
-                    pathname === link.href ? 'bg-blue-500' : ''
-                  } hover:bg-blue-600`}
+                  className={`block px-4 py-2 w-full hover:bg-pink-600 hover:shadow-md ${pathname === link.href ? 'bg-pink-400' : ''}`}
                 >
                   {link.label}
                 </Link>
               ) : (
                 <button
                   onClick={() => toggleMenu(link.label)}
-                  className="text-lg text-black hover:text-gray-300 flex justify-between w-full items-center"
+                  className="text-lg hover:text-gray-300 flex justify-between w-full items-center"
                 >
                   <div className="block px-4 py-2">{link.label}</div>
                   {expandedMenus.includes(link.label) ? (
@@ -77,8 +73,8 @@ const Sidebar = () => {
                     <Link
                       href={subLink.href}
                       className={`block px-4 py-2 ${
-                        pathname === subLink.href ? 'bg-blue-500' : ''
-                      } hover:bg-blue-600`}
+                        pathname === subLink.href ? 'bg-pink-400' : ''
+                      } hover:bg-pink-600 hover:shadow-md`}
                     >
                       {subLink.label}
                     </Link>
@@ -99,7 +95,7 @@ const Sidebar = () => {
             }
             router.push('/dashboard/login');
           }}
-          className="w-full bg-red-500 py-2 rounded hover:bg-red-600 transition"
+          className="w-full bg-red-600 py-2 rounded hover:bg-red-500 transition text-xl hover:text-black hover:shadow-md"
         >
           Sair
         </button>

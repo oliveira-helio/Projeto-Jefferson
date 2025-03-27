@@ -103,7 +103,7 @@ const OrdersDashboard = () => {
         <div>Detalhes</div>
       </div>
       {orders.map((order) => (
-        <div key={order.orderId} className="grid grid-cols-8 bg-pink-200 p-2 border-0 border-b border-pink-300 border-solid items-center">
+        <div key={order.orderId} className="grid grid-cols-8 bg-pink-100 p-2 border-0 border-b border-pink-200 border-solid items-center">
           <div>{order.orderId}</div>
           <div>R$ {order.orderTotal}</div>
           <div>

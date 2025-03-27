@@ -10,6 +10,7 @@ import ItemContent from "./ItemContent";
 import { useRouter } from "next/navigation";
 import { DeliveryInfoType } from "@/utils/types";
 import { useAddress } from "@/Hooks/useAddress";
+import { useAuth } from "@/Contexts/AuthContext";
 
 const CartClient = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const CartClient = () => {
   const { selectedAddress, selectedDelivery, handleSelectDeliveryType, fetchDeliveryOptions } = useAddress();
   const [selectedSubTotal, setSelectedSubTotal] = useState(0);
   const [selectedTotal, setSelectedTotal] = useState(0);
+  const { accessToken } = useAuth();
 
 
   const calculateDelivery = useCallback(async () => {
@@ -54,6 +56,8 @@ const CartClient = () => {
     calculateDelivery();
   }, [selectedProducts, selectedAddress]);
 
+
+  
   useEffect(() => {
     setSelectedProducts((prevSelectedProducts) =>
       prevSelectedProducts.map(selectedProduct => {
@@ -63,14 +67,21 @@ const CartClient = () => {
     );
   }, [cart, setSelectedProducts]);  
   
+  
   const handleCheckout = () => {
     if (selectedProducts.length === 0) {
       alert("Selecione pelo menos um produto para pagar.");
       return;
     }
+    if (!accessToken || accessToken === "") {
+      console.log("Usuário não autenticado");
+      
+      router.push(`/login`);
+      return;
+    }
     router.push(`/checkout/address`);
   };
-
+  
   useEffect(() => {
     if (typeof window !== "undefined"){
       if (selectedProducts.length === 0) {
@@ -78,6 +89,21 @@ const CartClient = () => {
       }
     }
   }, [selectedProducts]);
+  
+  // ############ debug
+  useEffect(() => {
+    console.log('selectedProducts', selectedProducts);
+  }, [selectedProducts]);
+
+  useEffect(() => {
+    console.log('selectedAddress', selectedAddress);
+    
+  }, [selectedAddress]);
+
+  useEffect(() => {
+    console.log('selectedAddress', selectedAddress);
+    
+  }, [selectedAddress]);
   
   if (!cart || cart.length === 0){
     return (
