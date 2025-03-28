@@ -1,10 +1,9 @@
 'use client'
 import { useState, useEffect } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { saveAs } from "file-saver";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import apiAdress from "@/utils/api";
 import axios from "axios";
-import { set } from "react-hook-form";
 import { useAuth } from "@/Contexts/AuthContext";
 import Button from "@/components/MicroComponents/Button";
 
@@ -14,9 +13,18 @@ type SalesData = {
 };
 
 export default function DashboardHome() {
-  const [data, setData] = useState({ products: 0, orders: 0, sales: 0, salesData: [], categoryDistribution: [] });
-  const [filters, setFilters] = useState({ period: "month", category: "", status: "" });
   const { accessToken } = useAuth();
+  const today = new Date().toISOString().split("T")[0];
+  const firstDayOfMonth = new Date();
+  firstDayOfMonth.setDate(1);
+  const firstDay = firstDayOfMonth.toISOString().split("T")[0];
+  const [data, setData] = useState({ products: 0, orders: 0, sales: 0, salesData: [], categoryDistribution: [] });
+  const [filters, setFilters] = useState({
+    startDate: firstDay,
+    endDate: today,
+    category: "",
+    status: "",
+  });
 
   // useEffect(() => {
   //   fetch(`${apiAdress}/api/orders/dashboard`, {
@@ -35,7 +43,13 @@ export default function DashboardHome() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${apiAdress}/api/orders/dashboard?period=${filters.period}&category=${filters.category}&status=${filters.status}`, {
+      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {
+        params: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          category: filters.category,
+          status: filters.status,
+        },
         headers: {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
@@ -43,7 +57,7 @@ export default function DashboardHome() {
       });
       setData(response.data);
       console.log('Data:', response.data);
-      
+
     } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
     } finally {
@@ -51,11 +65,8 @@ export default function DashboardHome() {
   };
 
   useEffect(() => {
-    if (!accessToken
-      || !accessToken.length) {
-      return;
-    }
-    
+    if (!accessToken || !accessToken.length) return;
+
     fetchData();    
   }, [accessToken]);
 
@@ -91,88 +102,68 @@ export default function DashboardHome() {
           <p className="text-2xl">R$ {Number(data.sales).toFixed(2)}</p>
         </div>
       </div>
-      <div>
-      </div>
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-          <select
-            className="p-2 border rounded"
-            value={filters.period}
-            onChange={(e) => setFilters({ ...filters, period: e.target.value })}
-          >
-            <option value="day">Hoje</option>
-            <option value="week">Última semana</option>
-            <option value="month">Último mês</option>
-          </select>
-          
-          <input
-            type="text"
-            className="p-2 border rounded"
-            placeholder="Categoria"
-            value={filters.category}
-            onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-          />
-          
-          <select
-            className="p-2 border rounded"
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-          >
-            <option value="">Todos</option>
-            <option value="pending">Pendente</option>
-            <option value="shipped">Enviado</option>
-            <option value="delivered">Entregue</option>
-          </select>
+          {/* 📅 Filtro de Data Inicial */}
+          <div>
+            <label className="block text-sm font-medium">Data Inicial</label>
+            <input
+              type="date"
+              className="p-2 border rounded w-full"
+              value={filters.startDate}
+              onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+            />
+          </div>
+
+          {/* 📅 Filtro de Data Final */}
+          <div>
+            <label className="block text-sm font-medium">Data Final</label>
+            <input
+              type="date"
+              className="p-2 border rounded w-full"
+              value={filters.endDate}
+              onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+            />
+          </div>
+
+          {/* 🏷️ Filtro de Categoria */}
+          <div>
+            <label className="block text-sm font-medium">Categoria</label>
+            <input
+              type="text"
+              className="p-2 border rounded w-full"
+              placeholder="Digite a categoria"
+              value={filters.category}
+              onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+            />
+          </div>
+
+          {/* 📦 Filtro de Status */}
+          <div>
+            <label className="block text-sm font-medium">Status do Pedido</label>
+            <select
+              className="p-2 border rounded w-full"
+              value={filters.status}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            >
+              <option value="">Todos</option>
+              <option value="pending">Pendente</option>
+              <option value="shipped">Enviado</option>
+              <option value="delivered">Entregue</option>
+            </select>
+          </div>
         </div>
+
         <Button
           onClick={fetchData}
-          custom="mt-4 p-2 bg-blue-600 text-white rounded"
-          label='Atualizar Dados'
+          custom="mt-4 p-2 bg-blue-600 text-white rounded w-full"
+          label="Atualizar Dados"
         />
       </div>
 
-      <div className="mt-6">
-        <h2 className="text-xl font-bold">Gráficos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Gráfico de Barras */}
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.salesData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-          
-          {/* Gráfico de Pizza */}
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie data={data.categoryDistribution} dataKey="value" nameKey="category" outerRadius={100} label>
-                {data.categoryDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Gráfico de Linha */}
-        <div className="mt-6">
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data.salesData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#82ca9d" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      
-      <button onClick={exportToCSV} className="mt-4 p-2 bg-blue-600 text-white rounded">
+      <button onClick={exportToCSV} className="mt-4 p-2 bg-blue-600 text-white rounded w-full">
         Exportar Dados para CSV
       </button>
     </div>
