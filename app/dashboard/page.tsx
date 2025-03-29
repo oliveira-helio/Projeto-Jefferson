@@ -12,6 +12,54 @@ type SalesData = {
   total: number;
 };
 
+type dataContent = {
+  orderId: number;
+  orderStatus: string;
+  orderTotal: number;
+  paymentStatus: string;
+  installments: number;
+  mpFee: number;
+  installmentFee: number;
+  paymentType: string;
+  liquidAmount: number;
+  createdAt: Date;
+  products?: {
+    color: string;
+    price: number;
+    ratting: number;
+    category: string;
+    productId: number;
+    productName: string;
+    productType: string;
+    recommended: boolean;
+    subCategory: string;
+    quantitySold: number;
+    rattingQuantity: number;
+  }[];
+  shipments?: {
+    carrier: string;
+    ShipmentStatus: string;
+  }[]
+}
+
+const SalesSummary = ( {data} : {data: dataContent[]}) => {
+  const totalOrders = data.length;
+  const totalAmount = data.reduce((acc, order) => acc + order.orderTotal, 0);
+  const totalLiquidAmount = data.reduce((acc, order) => acc + order.liquidAmount, 0);
+  const totalInstallments = data.reduce((acc, order) => acc + order.installments, 0);
+  const approvalRate = (data.filter(order => order.paymentStatus === "approved").length / totalOrders) * 100;
+
+  return (
+    <div className="sales-summary">
+      <div className="summary-item">Número de Pedidos: {totalOrders}</div>
+      <div className="summary-item">Valor Total: R$ {totalAmount.toFixed(2)}</div>
+      <div className="summary-item">Valor Líquido: R$ {totalLiquidAmount.toFixed(2)}</div>
+      <div className="summary-item">Taxa de Aprovação: {approvalRate.toFixed(2)}%</div>
+      <div className="summary-item">Parcelamento Médio: {totalInstallments / totalOrders}</div>
+    </div>
+  );
+};
+
 export default function DashboardHome() {
   const { accessToken } = useAuth();
   const today = new Date().toISOString().split("T")[0];
@@ -37,7 +85,7 @@ export default function DashboardHome() {
   //     .then((data) => {
   //       setData(data)
   //       console.log(data);
-        
+
   //   });
   // }, [filters]);
 
@@ -67,7 +115,7 @@ export default function DashboardHome() {
   useEffect(() => {
     if (!accessToken || !accessToken.length) return;
 
-    fetchData();    
+    fetchData();
   }, [accessToken]);
 
   const exportToCSV = () => {
@@ -85,23 +133,24 @@ export default function DashboardHome() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Bem-vindo ao Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-4 bg-white shadow rounded">
           <h2 className="text-lg font-bold">Total de Produtos</h2>
           <p className="text-2xl">{data.products}</p>
         </div>
-        
+
         <div className="p-4 bg-white shadow rounded">
           <h2 className="text-lg font-bold">Pedidos em Aberto</h2>
           <p className="text-2xl">{data.orders}</p>
         </div>
-        
+
         <div className="p-4 bg-white shadow rounded">
           <h2 className="text-lg font-bold">Vendas Este Mês</h2>
           <p className="text-2xl">R$ {Number(data.sales).toFixed(2)}</p>
         </div>
-      </div>
+      </div> */}
+      <SalesSummary data={data.salesData} />
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
