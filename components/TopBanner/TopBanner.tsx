@@ -9,9 +9,6 @@ const TopBanner = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Descontos
           </h1>
-          <p className="text-lg md:text-xl text-white mb-2">
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-          </p>
           <p className="text-2xl md:text-5xl text-yellow-300 font-bold">
             DE ATÉ 50%
           </p>

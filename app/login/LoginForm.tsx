@@ -10,6 +10,7 @@ import { useCart } from "@/Hooks/useCart";
 import { useRouter } from "next/navigation";
 import Input from "../../components/Inputs/Input";
 import Button from "../../components/MicroComponents/Button";
+import apiAdress from "@/utils/api";
 
 type logInResponse = {
   status: number;
@@ -47,6 +48,18 @@ const LoginForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { syncLocalCartToBackend } = useCart();
+
+  const handleGoogleLogin = () => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID; // ID do cliente do Google
+    const redirectUri = "http://localhost:3000/user/auth/google"; // Callback do Google para o seu frontend
+    const scope = "openid email profile"; // Dados que você quer acessar
+    const responseType = "token"; // Ou "code" se for usar um backend depois
+  
+    const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&scope=${scope}`;
+  
+    window.location.href = authUrl; // Redireciona o usuário para o Google
+  };
+  
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
@@ -134,7 +147,7 @@ const LoginForm = () => {
         outline
         label="Acesse com Google"
         icon={AiOutlineGoogle}
-        onClick={() => {}}
+        onClick={handleGoogleLogin}
         custom="w-[65%] text-4xl"
         customsize={28}
       />
