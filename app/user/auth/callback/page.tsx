@@ -1,6 +1,6 @@
 'use client';
-
 import apiAdress from "@/utils/api";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,25 +9,18 @@ const UserAuth = () => {
     
     useEffect(() => {
         if (typeof window === "undefined") return;
-            const fetchSession = async () => {
+
+        const fetchSession = async () => {
             try {
-                const response = await fetch(`${apiAdress}/token/refresh`, {
-                    credentials: "include" // Necessário para enviar cookies cross-site
-                });
-
-                console.log("response", response);
-                
-    
-                if (!response.ok) throw new Error("Erro ao obter sessão");
-
-                const data = await response.json();
-                localStorage.setItem("accessToken", data.accessToken);
+                const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
+                const data = response.data;
+                localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem("user", JSON.stringify(data.user));
     
                 router.push("/login/update-cart"); // Redireciona para a home
             } catch (error) {
                 console.error("Erro ao autenticar usuário", error);
-                router.push("/register"); // Se falhar, volta para registro
+                // router.push("/register"); // Se falhar, volta para registro
             }
         };
     

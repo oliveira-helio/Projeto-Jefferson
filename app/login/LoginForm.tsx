@@ -49,16 +49,16 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { syncLocalCartToBackend } = useCart();
 
-  const handleGoogleLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID; // ID do cliente do Google
-    const redirectUri = "http://localhost:3000/user/auth/google"; // Callback do Google para o seu frontend
-    const scope = "openid email profile"; // Dados que você quer acessar
-    const responseType = "token"; // Ou "code" se for usar um backend depois
+  // const handleGoogleLogin = () => {
+  //   const clientId = "SEU_CLIENT_ID";
+  //   const redirectUri = "http://localhost:3000/auth/callback"; // Callback do Google para o seu frontend
+  //   const scope = "openid email profile"; // Dados que você quer acessar
+  //   const responseType = "token"; // Ou "code" se for usar um backend depois
   
-    const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&scope=${scope}`;
+  //   const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}`;
   
-    window.location.href = authUrl; // Redireciona o usuário para o Google
-  };
+  //   window.location.href = authUrl; // Redireciona o usuário para o Google
+  // };
   
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -147,7 +147,7 @@ const LoginForm = () => {
         outline
         label="Acesse com Google"
         icon={AiOutlineGoogle}
-        onClick={handleGoogleLogin}
+        onClick={() => router.push(`${apiAdress}/user/auth/google`)}	
         custom="w-[65%] text-4xl"
         customsize={28}
       />
