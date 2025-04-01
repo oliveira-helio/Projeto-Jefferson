@@ -1,9 +1,10 @@
 'use client'
 import React, { createContext, useEffect, useState, useContext, useCallback } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import apiAdress from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import { FieldValues } from 'react-hook-form';
+import { User } from '@/utils/types';
 
 interface AuthContextData {
   isAuthenticated: boolean;
@@ -12,20 +13,6 @@ interface AuthContextData {
   user: User | null;
   logout: () => void;
   accessToken: string | null;
-}
-
-interface User {
-  id: number | null,
-  name: string | null,
-  surname?: string | null,
-  gender?: string | null,
-  profilePicture?: string | null,
-  email: string | null,
-  birthDate?: Date | null,
-  phone?: string | null,
-  cpf?: string | null,
-  isAdmin?: boolean,
-  provider?: string | null,
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -136,6 +123,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (event.key === "accessToken") {
           const updatedToken = localStorage.getItem("accessToken");
           setAccessToken(updatedToken);
+          setIsAuthenticated(!!updatedToken);
+        }
+      };
+      window.addEventListener("storage", handleStorage);
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+      };
+    };
+  }, []);
+
+  
+
+  // Sincronize user and between tabs
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleStorage = (event: StorageEvent) => {
+        if (event.key === "user") {
+          const userString = localStorage.getItem("user");
+          if (userString) {
+            try {
+              const updatedUser: User = JSON.parse(userString); // Parse the string into a User object
+              setUser({
+                id: updatedUser.id,
+                name: updatedUser.name,
+                surname: updatedUser.surname || null,
+                gender: updatedUser.gender || null,
+                profilePicture: updatedUser.profilePicture || null,
+                email: updatedUser.email,
+                birthDate: updatedUser.birthDate || null,
+                phone: updatedUser.phone || null,
+                cpf: updatedUser.cpf || null,
+                provider: updatedUser.provider || null,
+              });
+              setIsAdmin(updatedUser.isAdmin || false);
+            } catch (error) {
+              console.error("Failed to parse user from localStorage:", error);
+              setUser(null); // Handle invalid JSON gracefully
+            }
+          } else {
+            setUser(null); // Handle the case where user is removed from localStorage
+          }
         }
       };
       window.addEventListener("storage", handleStorage);

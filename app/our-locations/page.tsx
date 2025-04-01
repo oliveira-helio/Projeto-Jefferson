@@ -3,19 +3,19 @@ import Link from "next/link";
 export default function NossosEnderecos() {
   const lojas = [
     {
-      nome: "Loja Centro",
-      endereco: "Rua das Flores, 123 - Centro, Goiânia - GO",
-      telefone: '📞(62) 98877-6655 / 📞(62) 98877-6655',
+      nome: "Loja Parque Hayala",
+      endereco: "Avenida Argélia, S/N, Qd 23 LT 01 SL 02 - Parque Hayala, Aparecida de Goiânia - GO",
+      telefone: "📞(62) 99557-8640",
       horario: "Seg-Sex: 9h às 18h / Sab: 9h às 13h",
-      linkMapa: "https://www.google.com/maps?q=-16.6799,-49.255",
+      linkMapa: "https://maps.app.goo.gl/9ju7fnTXbrAXvmzt9",
     },
-    {
-      nome: "Loja Shopping X",
-      endereco: "Av. das Américas, 456 - Setor Sul, Goiânia - GO",
-      telefone: '📞(62) 98877-6655 / 📞(62) 98877-6655',
-      horario: "Seg-Sáb: 9h às 18h",
-      linkMapa: "https://www.google.com/maps?q=-16.6805,-49.256",
-    },
+    // {
+    //   nome: "Loja Shopping X",
+    //   endereco: "Av. das Américas, 456 - Setor Sul, Goiânia - GO",
+    //   telefone: '📞(62) 999557-8640 / 📞(62) 98877-6655',
+    //   horario: "Seg-Sáb: 9h às 18h",
+    //   linkMapa: "https://www.google.com/maps?q=-16.6805,-49.256",
+    // },
   ];
 
   return (
@@ -28,11 +28,11 @@ export default function NossosEnderecos() {
 
 
       {/* Lista de Endereços */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full p-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 w-full p-4 ${lojas.length > 1 ? "items-center" : "items-start"}`}>
 
-        <div className="grid grid-cols-2 gap-4 md:flex  md:flex-col justify-evenly">
+        <div className="grid grid-cols-2 gap-4 md:flex md:flex-col justify-evenly">
           {lojas.map((loja, index) => (
-            <div key={index} className="border border-gray-300 rounded-lg p-4 max-w-3xl shadow-md shadow-pink-300">
+            <div key={index} className="border border-gray-300 rounded-lg p-4 max-w-3xl bg-pink-50 shadow-md shadow-pink-300">
               <h2 className="text-lg font-semibold text-gray-800">{loja.nome}</h2>
               <p className="text-gray-700">{loja.endereco}</p>
               <p className="text-gray-700">{loja.telefone}</p>
@@ -55,18 +55,17 @@ export default function NossosEnderecos() {
         <div className="flex justify-center items-center w-full">
           <iframe
             className="w-full aspect-video rounded-lg shadow-lg"
-            src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d122297.04737289976!2d-49.40739695284596!3d-16.68775241283275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sescola%20do%20futuro%20de%20goi%C3%A1s!5e0!3m2!1spt-BR!2sbr!4v1741637480925!5m2!1spt-BR!2sbr"
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d954.8056643007396!2d-49.30885273037828!3d-16.81530671523625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTbCsDQ4JzU1LjEiUyA0OcKwMTgnMjkuNiJX!5e0!3m2!1spt-BR!2sbr!4v1743529580071!5m2!1spt-BR!2sbr"
             allowFullScreen
             loading="lazy"
           ></iframe>
         </div>
 
-
       </div>
       {/* Botão para abrir Google Maps */}
       <div className="mt-4 flex justify-center w-full">
         <Link
-          href="https://www.google.com/maps/dir/?api=1&destination=-23.550519,-46.633309"
+          href="https://www.google.com/maps/dir/?api=1&destination=-16.8152421,-49.3083483"
           target="_blank"
           className="bg-pink-400 text-white font-medium px-4 py-2 rounded-lg shadow-md hover:bg-pink-500"
         >

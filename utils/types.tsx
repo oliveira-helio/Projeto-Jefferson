@@ -73,3 +73,17 @@ export type DeliveryAdressType = {
   city: string;
   state: string;
 };
+
+export type User = {
+  id: number | null,
+  name: string | null,
+  surname?: string | null,
+  gender?: string | null,
+  profilePicture?: string | null,
+  email: string | null,
+  birthDate?: Date | null,
+  phone?: string | null,
+  cpf?: string | null,
+  isAdmin?: boolean,
+  provider?: string | null,
+};

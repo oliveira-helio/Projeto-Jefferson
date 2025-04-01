@@ -16,7 +16,7 @@ const UserAuth = () => {
                 const data = response.data;
                 localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem("user", JSON.stringify(data.user));
-    
+                
                 router.push("/login/update-cart"); // Redireciona para a home
             } catch (error) {
                 console.error("Erro ao autenticar usuário", error);
