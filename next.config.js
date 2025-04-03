@@ -22,9 +22,8 @@ const nextConfig = {
         hostname: 'melhorenvio.com.br',
         pathname: '/images/shipping-companies/**',
       },{
-        protocol: 'https',
-        hostname: 'pincel-e-posia.s3.amazonaws.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "pincel-e-poesia.s3.amazonaws.com",
       },{
         protocol: 'https',
         hostname: 'pincel-e-posia-teste.s3.amazonaws.com',
