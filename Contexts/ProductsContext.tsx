@@ -21,7 +21,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     
     try {
       const response = await axios.get(`${apiAdress}/product`, {
-        params: data, // Passa os dados como parâmetros de URL
+        params: data,
+        withCredentials: true, 
       });
       
       console.log('response:',response.data);
@@ -69,6 +70,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
       toast.success("Produto cadastrado com sucesso!");
       return response.data;
@@ -100,6 +102,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
       toast.success("Produto alterado com sucesso!");
       return response.data;
@@ -112,7 +115,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const productDelete = async (data: FieldValues) => {
     try {
-      const response = await axios.delete(`${apiAdress}/product/delete`, { data });
+      const response = await axios.delete(`${apiAdress}/product/delete`, { data, withCredentials: true, });
       toast.success("Produto excluído com sucesso!");
       return response.data;
     } catch (error) {
