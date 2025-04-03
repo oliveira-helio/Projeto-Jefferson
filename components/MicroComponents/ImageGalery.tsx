@@ -51,7 +51,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               }
               alt={`Imagem principal de ${productName}`}
               className="object-cover w-full h-full"
-              fill
+              width={800}
+              height={970}
             />
           </div>
         </div>

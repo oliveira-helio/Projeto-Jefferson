@@ -63,7 +63,7 @@ const Carousel: React.FC<CarouselProps> = ({
               <Image 
                 src={image.image_url}
                 alt={`Imagem ${startIndex + idx + 1} de ${productName}`}
-                className="object-cover w-full h-full aspect-square"
+                className="object-cover w-full aspect-square"
                 width={500}
                 height={500}
               />
