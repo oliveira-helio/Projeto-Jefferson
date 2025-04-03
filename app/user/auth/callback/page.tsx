@@ -12,7 +12,7 @@ const UserAuth = () => {
 
 		const fetchSession = async () => {
 			try {
-				const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
+				const response = await axios.post(`${apiAdress}/users/token/refresh`, {}, { withCredentials: true });
 				const data = response.data;
 				localStorage.setItem('accessToken', response.data.accessToken);
 				localStorage.setItem("user", JSON.stringify(data.user));

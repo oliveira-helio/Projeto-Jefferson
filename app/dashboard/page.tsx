@@ -61,7 +61,7 @@ const SalesSummary = ( {data} : {data: dataContent[]}) => {
 };
 
 export default function DashboardHome() {
-  const { accessToken } = useAuth();
+  const { accessToken, isAdmin } = useAuth();
   const today = new Date().toISOString().split("T")[0];
   const firstDayOfMonth = new Date();
   firstDayOfMonth.setDate(1);
@@ -104,17 +104,33 @@ export default function DashboardHome() {
         },
       });
       setData(response.data);
-      console.log('Data:', response.data);
-
-    } catch (error) {
+    } catch (error) {      
       console.error("Erro ao buscar pedidos:", error);
+    } finally {
+    }
+  };
+
+  const fetchData2 = async () => {
+    try {
+      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {headers: {
+          "Content-Type": "application/json",
+          accessToken: `Bearer ${accessToken}`,
+        },
+        withCredentials: true
+      },
+    );
+      console.log('Data:', response.data);
+    } catch (error: any) {
+      console.error("Erro no teste:", error);
+      console.log({status: error.status, data: error.response.data.message});
     } finally {
     }
   };
 
   useEffect(() => {
     if (!accessToken || !accessToken.length) return;
-
+    console.log("isAdmin:", isAdmin);
+    
     fetchData();
   }, [accessToken]);
 
@@ -209,6 +225,12 @@ export default function DashboardHome() {
           onClick={fetchData}
           custom="mt-4 p-2 bg-blue-600 text-white rounded w-full"
           label="Atualizar Dados"
+        />
+
+        <Button
+          onClick={fetchData2}
+          custom="mt-4 p-2 bg-blue-600 text-white rounded w-full"
+          label="teste"
         />
       </div>
 

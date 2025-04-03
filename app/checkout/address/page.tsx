@@ -35,9 +35,11 @@ const Checkout = () => {
 
   return (
     <div className="relative flex flex-col md:flex-row p-4 gap-4">
+
       <div className="p-4 w-fit flex-auto">
         <span className="text-2xl font-bold flex justify-center">Selecione um endereço de entrega</span>
         <hr className="border-solid border-[1px] border-pink-400 my-4" />
+
         {userAddresses?.map((address, index) => (
           <AddressCard
             key={address.addressId}
@@ -48,6 +50,7 @@ const Checkout = () => {
             onUpdate={handleUpdateAddress}
           />
         ))}
+
         <div className="flex flex-row gap-4">
           <button
             onClick={handleProceedToPayment}
@@ -55,6 +58,7 @@ const Checkout = () => {
           >
             Prosseguir para o Pagamento
           </button>
+          
           <button
             onClick={() => setShowForm(true)}
             className="bg-pink-400 text-white py-2 px-4 mt-4 rounded-lg"
@@ -63,6 +67,7 @@ const Checkout = () => {
           </button>
         </div>
       </div>
+
       <div className="p-4 flex-auto max-w-[50%]">
         <div className="flex flex-col h-full">
           <span className="text-2xl font-bold flex justify-center">Selecione a forma de entrega</span>
@@ -83,6 +88,7 @@ const Checkout = () => {
           </div>
         </div>
       </div>
+      
       {showForm && (
         <div className="flex fixed z-50">
           <AddressForm
@@ -91,6 +97,7 @@ const Checkout = () => {
           />
         </div>
       )}
+
     </div>
   );
 };
