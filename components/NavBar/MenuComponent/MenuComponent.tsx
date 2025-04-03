@@ -1,6 +1,5 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
-import Container from "../../Container";
 import apiAdress from '@/utils/api';
 import { useMediaQuery } from 'react-responsive';
 import { FaBars, FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
@@ -100,6 +99,7 @@ const MenuContainer = () => {
                 <ul className="list-none flex flex-col gap-4 p-6">
                   {categories.map((category) => (
                     <li key={category.category} className="border-b pb-2">
+
                       <button
                         className="flex justify-between items-center w-full text-[#a3115f] text-lg font-semibold"
                         onClick={() => toggleCategory(category.category)}
@@ -110,21 +110,25 @@ const MenuContainer = () => {
 
                       {openCategories[category.category] && (
                         <ul className="pl-4 mt-2">
+
                           {category.subcategories.map((subCategory) => (
                             <li key={subCategory.subCategory} className="mb-2">
+
                               <button
                                 className="flex justify-between items-center w-full text-[#e65ba5] text-md font-medium"
                                 onClick={() => toggleSubCategory(subCategory.subCategory)}
                               >
                                 {subCategory.subCategory}
-                                {/* {openSubcategories[subCategory.subCategory] ? (
+                                {openSubcategories[subCategory.subCategory] ? (
                                   <FaChevronUp />
                                 ) : (
                                   <FaChevronDown />
-                                )} */}
+                                )}
                               </button>
 
+                              {openSubcategories[subCategory.subCategory] && (
                                 <ul className="pl-4 mt-1">
+
                                   {subCategory.productTypes.map((productType) => (
                                     <li key={productType}>
                                       <a
@@ -135,8 +139,10 @@ const MenuContainer = () => {
                                       </a>
                                     </li>
                                   ))}
+
                                 </ul>
-                              
+                              )}
+
                             </li>
                           ))}
                         </ul>

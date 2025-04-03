@@ -15,19 +15,15 @@ const UserAuth = () => {
                     credentials: "include" // Necessário para enviar cookies cross-site
                 });
 
-                console.log("response", response);
-                
-    
                 if (!response.ok) throw new Error("Erro ao obter sessão");
-
+                
                 const data = await response.json();
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("user", JSON.stringify(data.user));
-    
                 router.push("/login/update-cart"); // Redireciona para a home
             } catch (error) {
                 console.error("Erro ao autenticar usuário", error);
-                router.push("/register"); // Se falhar, volta para registro
+                router.push("/login"); // Se falhar, volta para registro
             }
         };
     

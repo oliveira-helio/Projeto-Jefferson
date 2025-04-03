@@ -10,6 +10,7 @@ interface AuthContextData {
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (credentials: { email: string; password: string } | FieldValues) => Promise<unknown>;
+  registerUser: (credentials: { name: string, email: string; password: string } | FieldValues) => Promise<unknown>;
   user: User | null;
   logout: () => void;
   accessToken: string | null;
@@ -27,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (credentials: FieldValues) => {
     if (typeof window !== 'undefined') {
       try {
-        const response = await axios.post(`${apiAdress}/login`, credentials, { withCredentials: true });
+        const response = await axios.post(`${apiAdress}/users/login`, credentials, { withCredentials: true });
         
         if (response.data.accessToken) {
           const user = response.data.user;
@@ -52,19 +53,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         return { status: response.status, data: response.data };
       } catch (error: any) {
-        // return error
         return { status: error.status, data: error.response.data.error }
       }
     }
-  };
+  }
+
+  const registerUser = async (credentials: FieldValues) => {
+    if (typeof window !== 'undefined') {
+      try { 
+        const response = await axios.post(`${apiAdress}/users/register`, credentials, { withCredentials: true });
+        if (response.data.accessToken) {
+          const user = response.data.user;
+          localStorage.setItem('accessToken', response.data.accessToken);
+          setAccessToken(response.data.accessToken);
+          setIsAuthenticated(true);
+          setUser({
+            id: user.id,
+            name: user.name,
+            surname: user.surname || null,
+            gender: user.gender || null,
+            profilePicture: user.profilePicture || null,
+            email: user.email,
+            birthDate: user.birthDate || null,
+            phone: user.phone || null,
+            cpf: user.cpf || null,
+            provider: user.provider || null,
+          });
+          setIsAdmin(user.isAdmin || false);
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem("isAdmin", JSON.stringify(user.isAdmin || false));
+        }
+        return { status: response.status, data: response.data };
+      } catch (error: any) {
+        return { status: error.status, data: error.response.data.error }
+      };
+    };
+  }
 
   const logout = useCallback(async () => {
     if (typeof window !== 'undefined') {
-      localStorage.clear();
-      setIsAuthenticated(false);
-      
       try {
-        await axios.post(`${apiAdress}/logout`, {}, { withCredentials: true });
+        await axios.post(`${apiAdress}/users/logout`, {}, { withCredentials: true });
+        setUser(null);
+        setAccessToken(null);
+        localStorage.clear();
+        setIsAuthenticated(false);
       } catch (error) {
         console.error('Erro ao fazer logout:', error);
       }
@@ -74,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const renewToken = async () => {
     if (typeof window !== 'undefined') {
       try {
-        const response = await axios.post(`${apiAdress}/token/refresh`, {}, { withCredentials: true });
+        const response = await axios.post(`${apiAdress}/users/token/refresh`, {}, { withCredentials: true });
         localStorage.setItem('accessToken', response.data.accessToken);
         setAccessToken(response.data.accessToken);
       } catch (error) {
@@ -224,7 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, isAdmin, login, logout, accessToken }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, isAdmin, login, logout, registerUser, accessToken }}>
       {children}
     </AuthContext.Provider>
   );

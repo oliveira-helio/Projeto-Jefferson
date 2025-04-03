@@ -20,7 +20,7 @@ type logInResponse = {
 type data = {
   accessToken: string,
   message: string,
-  user:{
+  user: {
     birthDate?: string,
     cpf?: string,
     email: string,
@@ -39,6 +39,7 @@ type data = {
 const LoginForm = () => {
   const router = useRouter();
   const { login } = useContext(AuthContext); // Obtendo o método login do AuthContext
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -46,20 +47,6 @@ const LoginForm = () => {
   } = useForm<FieldValues>({
     defaultValues: { email: "", password: "" },
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const { syncLocalCartToBackend } = useCart();
-
-  // const handleGoogleLogin = () => {
-  //   const clientId = "SEU_CLIENT_ID";
-  //   const redirectUri = "http://localhost:3000/auth/callback"; // Callback do Google para o seu frontend
-  //   const scope = "openid email profile"; // Dados que você quer acessar
-  //   const responseType = "token"; // Ou "code" se for usar um backend depois
-  
-  //   const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}`;
-  
-  //   window.location.href = authUrl; // Redireciona o usuário para o Google
-  // };
-  
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
@@ -69,7 +56,7 @@ const LoginForm = () => {
         router.push("/login/update-cart"); // Redireciona para a página de sincronização
       } else if ((logInResponse as logInResponse).status < 200 || (logInResponse as logInResponse).status >= 300) {
         toast.error("Falha ao realizar o login", { id: "login-error-toast-1" });
-      } 
+      }
     } catch (error) {
       toast.error("Erro ao fazer login");
       console.error("Erro ao realizar o login:", error);
@@ -80,57 +67,60 @@ const LoginForm = () => {
 
   return (
     <>
-      <h1 className="self-center text-pink-500 font-bold text-3xl z-10 w-fit">
+      <h1 className="self-center text-pink-500 font-bold text-3xl z-10 w-fit justify-center">
         Acesse sua conta
       </h1>
 
-      <Input
-        id="email"
-        label="E-mail"
-        disabled={isLoading}
-        register={register}
-        errors={errors}
-        required
-        type="e-mail"
-        custom="
-                    peer
-					w-full
-                    p-4
-                    pt-6
-                    outline-none
-                    bg-white
-                    font-light
-                    border-2
-                    rounded-md
-                    border-solid
-                "
-      />
-      <Input
-        id="password"
-        label="Senha"
-        disabled={isLoading}
-        register={register}
-        errors={errors}
-        required
-        type="password"
-        custom="
-                    peer
-					w-full
-                    p-4
-                    pt-6
-                    outline-none
-                    bg-white
-                    font-light
-                    border-2
-                    rounded-md
-                    border-solid
-                "
-      />
-      <Button
-        label={isLoading ? "Carregando" : "Acessar"}
-        onClick={handleSubmit(onSubmit)}
-        custom="w-[65%] text-3xl"
-      />
+      <form className="flex flex-col gap-6 w-full">
+        <Input
+          id="email"
+          label="E-mail"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+          type="e-mail"
+          custom="
+        peer
+        w-full
+        p-4
+        pt-6
+        outline-none
+        bg-white
+        font-light
+        border-2
+        rounded-md
+        border-solid
+        "
+        />
+        <Input
+          id="password"
+          label="Senha"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+          type="password"
+          custom="
+        peer
+        w-full
+        p-4
+        pt-6
+        outline-none
+        bg-white
+        font-light
+        border-2
+        rounded-md
+        border-solid
+        "
+        />
+        <Button
+          label={isLoading ? "Carregando" : "Acessar"}
+          onClick={handleSubmit(onSubmit)}
+          custom="w-[65%] text-3xl self-center"
+        />
+      </form>
+
       <p>
         Não possui uma conta?{" "}
         <Link
@@ -147,7 +137,7 @@ const LoginForm = () => {
         outline
         label="Acesse com Google"
         icon={AiOutlineGoogle}
-        onClick={() => router.push(`${apiAdress}/user/auth/google`)}	
+        onClick={() => router.push(`${apiAdress}/user/auth/google`)}
         custom="w-[65%] text-4xl"
         customsize={28}
       />
