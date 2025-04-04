@@ -35,19 +35,6 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  // const productRegister = async (data: FieldValues) => {
-  //   console.log('data no product register: ',data);
-  //   try {
-  //     const response = await axios.post(`${apiAdress}/product/register`, data);
-  //     toast.success("Produto cadastrado com sucesso!");
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Erro ao cadastrar o produto:", error);
-  //     toast.error("Erro ao cadastrar o produto. Tente novamente.");
-  //     throw error;
-  //   }
-  // };
-
   const productRegister = async (data: FieldValues) => {
     
     const formData = new FormData();

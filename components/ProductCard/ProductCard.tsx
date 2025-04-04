@@ -145,10 +145,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             <div
               className=" m-2 items-start justify-start flex flex-col gap-3"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("adiciona ao carrinho"); // TODO : esta botão deve adicionar ao carrinho.
-              }}
+              onClick={() => { router.push(`/product/${product.product_id}`); }}
             >
               <div className="justify-center w-full bg-pinkSecondary hover:bg-black hover:text-pinkSecondary text-black rounded-3xl p-2 font-medium text-lg">
                 <button> VER DETALHES DO PRODUTO</button> 

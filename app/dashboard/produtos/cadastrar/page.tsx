@@ -46,11 +46,7 @@ export default function CreateProduct() {
     try {
       // O produto inclui os dados do formulário e a lista de imagens com URLs pré-assinadas
       await productRegister({ ...data, images });
-      toast.success("Produto cadastrado com sucesso!", {
-        id: "product-toast-1",
-      });
     } catch (error) {
-      toast.error("Erro ao cadastrar o produto.");
       console.error("Erro ao cadastrar o produto.", error);
     } finally {
       setIsLoading(false);

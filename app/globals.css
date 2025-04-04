@@ -15,31 +15,80 @@ a {
   text-decoration: none;
 }
 
-/* h2 {
-  color: #a10971;
-} */
+@layer components {
+  /* Títulos */
+  .ql-editor h1 {
+    @apply text-3xl font-bold text-zinc-800 my-4;
+  }
 
-/* DARK MODE???
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+  .ql-editor h2 {
+    @apply text-2xl font-semibold text-zinc-800 my-3;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+  .ql-editor h3 {
+    @apply text-xl font-medium text-zinc-800 my-2;
+  }
+
+  /* Parágrafos */
+  .ql-editor p {
+    @apply text-base leading-relaxed text-zinc-700 ;
+  }
+
+  /* Negrito e Itálico */
+  .ql-editor strong {
+    @apply font-bold;
+  }
+
+  .ql-editor em {
+    @apply italic;
+  }
+
+  /* Listas ordenadas e não ordenadas */
+  .ql-editor ol {
+    @apply list-decimal list-inside ml-5 my-2;
+  }
+
+  .ql-editor ul {
+    @apply list-disc list-inside ml-5 my-2;
+  }
+
+  .ql-editor li {
+    @apply my-1;
+  }
+
+  /* Removendo espaçamentos visuais dos spans do Quill */
+  .ql-editor .ql-ui {
+    @apply hidden;
+  }
+
+  /* Links (caso futuramente ative) */
+  .ql-editor a {
+    @apply text-blue-600 underline hover:text-blue-800;
+  }
+
+  /* Lista ordenada (números) */
+  .ql-editor ol li[data-list="ordered"] {
+    list-style-type: decimal;
+  }
+
+  /* Lista não ordenada (bolinhas) */
+  .ql-editor ol li[data-list="bullet"] {
+    list-style-type: disc;
+  }
+
+  /* Remove o número padrão */
+  .ql-editor ol {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  /* Itens da lista com espaçamento */
+  .ql-editor li {
+    @apply my-1;
+  }
+
+  /* Oculta os spans usados internamente pelo Quill */
+  .ql-editor .ql-ui {
+    display: none;
   }
 }
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */

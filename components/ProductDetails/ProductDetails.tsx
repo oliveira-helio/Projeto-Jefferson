@@ -229,9 +229,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     <>
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+          
           {/* IMAGES SECTION */}
           <div className="flex flex-row w-full gap-2">
-            {/* IMAGE GALERY */}
             <ImageGallery
               images={sortedImages}
               productName={product.name}
@@ -253,14 +253,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
             </div>
             <div className="flex items-center gap-2">
               <StyledRattingHeart product={product} />
-              <p className="text-xs">({product.ratting_qt}) avaliaçôes</p>
+              <p className="text-xs">({product.ratting_qt || 0}) avaliaçôes</p>
             </div>
             <div id="Color__Selector">
-              <ColorSelector
-                colors={uniqueColors}
-                selectedColor={selectedColor}
-                onColorSelect={handleColorSelect}
-              />
+              {product.color_code && product.color_code.length > 0 && (
+                <ColorSelector
+                  colors={uniqueColors}
+                  selectedColor={selectedColor}
+                  onColorSelect={handleColorSelect}
+                />
+              )}
             </div>
             <div className=" ">
               <p>
@@ -346,8 +348,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
           {/* DESCRIPTION FULL */}
 
           
-          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.details }} />
-          <p>Avaliaçoes: {product.ratting_qt}</p>{/* TODO  criar um novo banco de dados para armazenar os produtos vendidos, qtd vendida, data e ratings (ou um banco separado para ratings e so pode avaliar quem já comprou)*/}{" "}
+          <div className="ql-editor prose max-w-none" dangerouslySetInnerHTML={{ __html: product.details }} />
+          <p className="mt-2">Avaliaçoes: {product.ratting_qt || 0}</p>{/* TODO  criar um novo banco de dados para armazenar os produtos vendidos, qtd vendida, data e ratings (ou um banco separado para ratings e so pode avaliar quem já comprou)*/}{" "}
         </div>
       </section>
     </>
