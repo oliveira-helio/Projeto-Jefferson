@@ -53,11 +53,11 @@ const Delivery: React.FC<DeliveryProps> = ({
       { withCredentials: true });
 
       const data = JSON.stringify(response.data.products);
-      console.log('res cep', data);
 
+      console.log('response.data', response.data);
+      
       if (response.data) {
         setDeliveryOptions(response.data); // Processar os dados de resposta
-        console.log("res cep2", response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar opções de frete:", error);
