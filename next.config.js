@@ -19,7 +19,7 @@ const nextConfig = {
         pathname: '/images/shipping-companies/**',
       },{
         protocol: 'https',
-        hostname: 'melhorenvio.com.br',
+        hostname: 'www.melhorenvio.com.br',
         pathname: '/images/shipping-companies/**',
       },{
         protocol: "https",
