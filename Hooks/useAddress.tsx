@@ -138,7 +138,7 @@ export const AddressContextProvider: React.FC<AddressContextProviderProps> = ({
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
-
+        withCredentials: true
       });
       setDeliveryOptions(response.data);
       return response.data;

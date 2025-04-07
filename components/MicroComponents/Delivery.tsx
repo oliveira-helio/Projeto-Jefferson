@@ -49,7 +49,8 @@ const Delivery: React.FC<DeliveryProps> = ({
         height: productHeight,
         width: productWidth,
         price: productPrice,
-      });
+      },
+      { withCredentials: true });
 
       const data = JSON.stringify(response.data.products);
       console.log('res cep', data);

@@ -51,7 +51,7 @@ const OrdersDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${apiAdress}/api/orders/${orderId}`, {
+        const response = await axios.get(`${apiAdress}/api/orders/details/${orderId}`, {
           headers: {
             "Content-Type": "application/json",
             accessToken: `Bearer ${accessToken}`,
