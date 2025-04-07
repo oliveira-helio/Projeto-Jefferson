@@ -122,7 +122,7 @@ const Delivery: React.FC<DeliveryProps> = ({
           <h3 className="text-lg font-medium my-2">Opções de frete:</h3>
           <ul className="flex flex-col gap-4">
             {deliveryOptions.map((option, index) => (
-              !option.name || !option.price || !option.delivery_time  || (option.name.id !== 2 && option.name.id !== 4) ?
+              !option.name || !option.price || !option.delivery_time  || (option.company.id !== 2 && option.company.id !== 4) ?
                 null
               :
                 <li key={index}>
