@@ -36,7 +36,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     price: 0,
     barCode: 0,
     image: "",
-    quantity: 0,
+    quantity: 1,
   });
   const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null

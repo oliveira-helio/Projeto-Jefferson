@@ -2,12 +2,12 @@
 
 import { useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContext } from '@/hooks/UseAuth/useAuth';
 import { useCart } from '@/hooks/UseCart/useCart';
+import { useAuth } from '@/hooks/UseAuth/useAuth';
 
 function Logout() {
   const router = useRouter();
-  const { logout } = useContext(AuthContext);
+  const { logout } = useAuth();
   const { handleclearLocalCart } = useCart();
 
   useEffect(() => {

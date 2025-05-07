@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect, useContext } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
-import Button from "../MicroComponents/Default/Button";
-import Input from "../Inputs/Input";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { FaFacebookF } from "react-icons/fa";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
@@ -12,6 +10,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import apiAdress from '@/utils/variables/api';
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import { useRouter } from "next/navigation";
+import Button from "@/components/MicroComponents/Default/Button";
+import Input from "@/components/Inputs/Input";
 
 type Response = {
   status: number;
