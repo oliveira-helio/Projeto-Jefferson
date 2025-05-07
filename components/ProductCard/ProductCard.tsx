@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Product } from "@/utils/interfaces";
+import { Product } from "@/interfaces/ProductInterfaces";
 import { styled } from "@mui/material/styles";
 import Rating from "@mui/material/Rating";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -65,8 +65,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   src={mainImageUrl}
                   className="items-center justify-center object-cover w-full h-full rounded-2xl"
                   alt={product.name}
-                  // placeholder="/assets/numeros/1.jpg" // TODO  corrigir placeholder
-                  // TODO : criar cores - redondo BackgroundColor
+                  placeholder="blur" // Use the "blur" option
+                  blurDataURL="/assets/img/placeholder.jpeg"
                 />
               </div>
               <div className="flex flex-row gap-2">

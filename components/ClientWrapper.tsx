@@ -1,10 +1,10 @@
 'use client'
 
 import { usePathname } from "next/navigation";
-import NavBar from "../components/NavBar/NavBar";
+import NavBar from "./NavBar/NavBarContainer/NavBarContainer";
 import Footer from "../components/Footer/Footer";
 import Container from "../components/Container";
-import WhatsAppButon from "../components/MicroComponents/WhatsappButon";
+import WhatsAppButon from "./WhatsApp/WhatsappButon";
 
 
 export default function ClientWrapper({

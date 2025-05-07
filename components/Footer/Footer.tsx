@@ -39,14 +39,13 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* TODO: Add the following features to the footer component: in email create a link to send a mail to us, in telefone create a link to call us, in whatsapp create a link to send a message to us, in instagram create a link to our instagram page, in facebook create a link to our facebook page */}
           <div className="flex flex-col gap-6 text-center align-top h-full mb-4">
             <div className="text-center h-full">
               <h2 className="font-semibold text-black mb-0.5">CONTATO</h2>
               <ul className="flex flex-col gap-0.5 text-gray-800">
-                <li><Link href={"tel:+5562988776655"} className="text-gray-800">TELEFONE: (62) 98877-6655</Link></li>
-                <li><Link href={"mailto:contato@empresa.com"} className="text-gray-800">E-MAIL: contato@empresa.com</Link></li>
-                <li><Link href={"https://wa.me/5562988776655"} className="text-gray-800">WHATSAPP: (62) 98877-6655</Link></li>
+                <li><Link href={"tel:+5562995578640"} className="text-gray-800">TELEFONE: (62) 99557-8640</Link></li>
+                <li><Link href={"mailto:atendimento@pincelepoesia.com"} className="text-gray-800">E-MAIL: atendimento@pincelepoesia.com</Link></li>
+                <li><Link href={"https://wa.me/5562995578640"} className="text-gray-800">WHATSAPP: (62) 99557-8640</Link></li>
               </ul>
             </div>
 

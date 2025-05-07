@@ -1,9 +1,9 @@
 "use client";
-import AddressCard from "@/components/AdressCard/AddressCard";
-import { useAddress } from "@/Hooks/useAddress";
+import AddressCard from "@/components/Adress/AdressCard/AddressCard";
+import { useAddress } from "@/hooks/UseAdress/useAddress";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import AddressForm from "@/components/AdressCard/AddressForm";
+import AddressForm from "@/components/Adress/AdressForm/AddressForm";
 import DeliveryContentCheckout from "@/components/Checkout/DeliveryOptions";
 
 const Checkout = () => {

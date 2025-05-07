@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "@/Contexts/AuthContext";
-import apiAdress from '@/utils/api';
-import { UserAddressType } from "@/utils/types";
+import { useAuth } from "@/hooks/UseAuth/useAuth";
+import apiAdress from '@/utils/variables/api';
+import { UserAddressType } from "@/types/UserTypes";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 interface Order {

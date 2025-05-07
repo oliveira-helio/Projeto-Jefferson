@@ -1,5 +1,5 @@
 'use client'
-import { useCart } from "@/Hooks/useCart";
+import { useCart } from "@/hooks/UseCart/useCart";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 

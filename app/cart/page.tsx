@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Container from "../../components/Container";
-import CartClient from "./CartClient";
+import CartClient from "../../components/Cart/CartClient";
 
 const Cart = () => {
   return (

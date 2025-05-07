@@ -1,7 +1,5 @@
-import { CartProductType, DeliveryInfoType } from "@/utils/types";
-import { formatCurrency } from "@/utils/utilitaryFunctions";
-import Link from "next/link";
-import { useAddress } from "@/Hooks/useAddress";
+import {  DeliveryInfoType } from "@/types/DeliveryTypes";
+import { formatCurrency } from "@/utils/functions/formatCurrency";
 import Image from "next/image";
 
 interface ItemContentProps {
@@ -10,8 +8,6 @@ interface ItemContentProps {
   selected: boolean;
   onSelect: () => void;
 }
-
-
 
 const DeliveryContentCheckout: React.FC<ItemContentProps> = ({
   delivery,

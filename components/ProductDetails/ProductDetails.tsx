@@ -2,19 +2,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MdCheckCircle } from "react-icons/md";
-import { Product, ProductDetailsProps } from "@/utils/interfaces";
-import apiAdress from '@/utils/api';
-import { CartProductType, SelectedColorType } from "@/utils/types";
-import ColorSelector from "../MicroComponents/ColorSelector";
-import QuantitySelector from "../MicroComponents/QuantitySelector";
-import Button from "../MicroComponents/Button";
-import ImageGallery from "../MicroComponents/ImageGalery";
-import StyledRattingHeart from "../MicroComponents/StyledRattingHeart";
-import { useCart } from "@/Hooks/useCart";
-import { formatCurrency } from "@/utils/utilitaryFunctions";
-import Delivery from "../MicroComponents/Delivery";
+import { Product, ProductDetailsProps } from "@/interfaces/ProductInterfaces";
+import apiAdress from '@/utils/variables/api';
+import { CartProductType, SelectedColorType } from "@/types/ProductTypes";
+import ColorSelector from "../MicroComponents/Default/ColorSelector";
+import QuantitySelector from "../MicroComponents/Default/QuantitySelector";
+import Button from "../MicroComponents/Default/Button";
+import ImageGallery from "../Images/Galery/ImageGalery";
+import StyledRattingHeart from "../MicroComponents/Default/StyledRattingHeart";
+import { useCart } from "@/hooks/UseCart/useCart";
+import { formatCurrency } from "@/utils/functions/formatCurrency";
+import Delivery from "../MicroComponents/Default/DeliveryOptions";
 import axios from "axios";
-import { useAddress } from "@/Hooks/useAddress";
+import { useAddress } from "@/hooks/UseAdress/useAddress";
 import toast from "react-hot-toast";
 
 const ProductDetails: React.FC<ProductDetailsProps> = () => {
@@ -37,10 +37,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
     barCode: 0,
     image: "",
     quantity: 0,
-    // deliveryFee: 0,
-    // deliveryCep: selectedAddress?.cep,
-    // deliveryType: null,
-    // deliveryTime: null,
   });
   const [selectedColor, setSelectedColor] = useState<SelectedColorType | null>(
     null
@@ -58,9 +54,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = () => {
   };
 
   const handleAddToCartClick = () => {
-    // cartProduct.deliveryType
-    //   ? handleAddProductToCart(cartProduct)
-    //   : toast.error("Selecione uma modalidade de entrega");
       handleAddProductToCart(cartProduct)
   };
 

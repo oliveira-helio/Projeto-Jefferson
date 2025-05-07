@@ -1,6 +1,6 @@
 import Container from "../../components/Container";
-import FormWrap from "../../components/FormWrap";
-import LoginForm from "./LoginForm";
+import FormWrap from "../../components/Forms/FormWrap";
+import LoginForm from "../../components/Forms/LoginForm/LoginForm";
 
 
 const login = () => {

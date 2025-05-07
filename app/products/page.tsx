@@ -2,10 +2,10 @@
 
 import React, { Suspense, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Product } from "@/utils/interfaces";
+import { Product } from "@/interfaces/ProductInterfaces";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { Range } from "react-range";
-import apiAdress from '@/utils/api';
+import apiAdress from '@/utils/variables/api';
 import debounce from "lodash.debounce";
 
 const Loading = () => (

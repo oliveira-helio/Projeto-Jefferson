@@ -5,13 +5,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useAuth } from '@/Contexts/AuthContext';
+import { useAuth } from '@/hooks/UseAuth/useAuth';
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const router = useRouter();
-  const { isAdmin } = useAuth();
+  const { logout } = useAuth();
 
   // Toggle the expanded state of a specific menu
   const toggleMenu = (label: string) => {
@@ -93,12 +93,7 @@ const Sidebar = () => {
       </nav>
       <div className="p-4">
         <button
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              localStorage.removeItem('admToken');
-            }
-            router.push('/dashboard/login');
-          }}
+          onClick={logout}
           className="w-full bg-red-600 py-2 rounded hover:bg-red-500 transition text-xl hover:text-black hover:shadow-md"
         >
           Sair

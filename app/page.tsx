@@ -1,5 +1,5 @@
 "use client";
-import TopBanner from "../components/TopBanner/TopBanner";
+import TopBanner from "../components/Banners/TopBanner/TopBanner";
 import TopSellers from "../components/TopSellers/TopSellers";
 import Recommended from "../components/Recomended/Recommended";
 

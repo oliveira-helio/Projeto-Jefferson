@@ -1,6 +1,6 @@
 import Container from "../../components/Container";
-import FormWrap from "../../components/FormWrap";
-import RegisterForm from "./RegisterForm";
+import FormWrap from "../../components/Forms/FormWrap";
+import RegisterForm from "../../components/RegisterForm/RegisterForm";
 
 const register = () => {
     return ( 

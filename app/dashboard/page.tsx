@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import apiAdress from "@/utils/api";
+import apiAdress from "@/utils/variables/api";
 import axios from "axios";
-import { useAuth } from "@/Contexts/AuthContext";
-import Button from "@/components/MicroComponents/Button";
+import { useAuth } from "@/hooks/UseAuth/useAuth";
+import Button from "@/components/MicroComponents/Default/Button";
 
 type SalesData = {
   date: string;

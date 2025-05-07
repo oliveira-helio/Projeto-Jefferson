@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Product } from "@/utils/interfaces";
+import { Product } from "@/interfaces/ProductInterfaces";
 import ProductCard from "../ProductCard/ProductCard";
-import apiAdress from '@/utils/api'
-import Carrossel from "../MicroComponents/Carrossel";
+import apiAdress from '@/utils/variables/api'
+import Carrossel from "../ProductsCarroussel/Carrossel";
 
 export default function TopSellers() {
   const [products, setProducts] = useState<Product[]>([]);

@@ -1,14 +1,14 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ProductContext } from "@/Contexts/ProductsContext";
 import Input from "@/components/Inputs/Input";
-import Button from "@/components/MicroComponents/Button";
-import ProductForm from "@/components/ProductForm/ProductForm";
+import Button from "@/components/MicroComponents/Default/Button";
+import ProductForm from "@/components/Forms/ProductForm/ProductForm";
+import { useProducts } from "@/hooks/UseProducts/useProducts";
 
 export default function EditProduct() {
-  const { productEdit, searchProduct } = useContext(ProductContext);
+  const { productEdit, searchProduct } = useProducts();
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<{ image_url: string; is_generic: boolean }[]>([]);
   const [searchParam, setSearchParam] = useState<string | null>(null);

@@ -1,5 +1,5 @@
 'use client';
-import apiAdress from "@/utils/api";
+import apiAdress from "@/utils/variables/api";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

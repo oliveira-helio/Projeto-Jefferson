@@ -1,9 +1,9 @@
 'use client';
-import { useAddress } from "@/Hooks/useAddress";
+import { useAddress } from "@/hooks/UseAdress/useAddress";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/Hooks/useCart";
-import ItemContentCheckout from "@/app/cart/ItemContentCheckout";
-import AddressCheckoutCard from "@/components/AdressCard/AddressCheckout";
+import { useCart } from "@/hooks/UseCart/useCart";
+import ItemContentCheckout from "@/components/Cart/ItemContentCheckout";
+import AddressCheckoutCard from "@/components/Adress/AdressCheckout/AddressCheckout";
 import { useEffect } from "react";
 
 

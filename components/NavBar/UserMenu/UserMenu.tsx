@@ -1,18 +1,18 @@
 "use client";
 
 import { useCallback, useState, useContext } from "react";
-import Avatar from "../../MicroComponents/Avatar";
+import Avatar from "../../Images/Avatar/Avatar";
 import { AiFillCaretDown } from "react-icons/ai";
 import Link from "next/link";
 import UserMenuItem from "./UserMenuItens";
-import BackDrop from "../../MicroComponents/BackDrop";
-import { AuthContext } from "@/Contexts/AuthContext";
-import { useCart } from "@/Hooks/useCart";
+import BackDrop from "../../MicroComponents/Default/BackDrop";
+import { useCart } from "@/hooks/UseCart/useCart";
 import { LocalMallRounded } from "@mui/icons-material";
+import { useAuth } from "@/hooks/UseAuth/useAuth";
 
 const UserMenu = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { isAuthenticated, isAdmin } = useContext(AuthContext);
+  const { isAuthenticated, isAdmin } = useAuth();
   const { cartTotalQty } = useCart();
 
   const toggleOpen = useCallback(() => {

@@ -2,8 +2,8 @@
 
 import { useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContext } from '@/Contexts/AuthContext';
-import { useCart } from '@/Hooks/useCart';
+import { AuthContext } from '@/hooks/UseAuth/useAuth';
+import { useCart } from '@/hooks/UseCart/useCart';
 
 function Logout() {
   const router = useRouter();

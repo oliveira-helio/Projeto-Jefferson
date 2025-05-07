@@ -1,6 +1,6 @@
 'use client'
-import { useAuth } from "@/Contexts/AuthContext";
-import apiAdress from '@/utils/api';
+import { useAuth } from "@/hooks/UseAuth/useAuth";
+import apiAdress from '@/utils/variables/api';
 import axios from "axios";
 import Link from "next/link";
 import React, { useState, useEffect, Suspense } from "react";

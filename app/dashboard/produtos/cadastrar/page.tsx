@@ -2,11 +2,11 @@
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ProductContext } from "@/Contexts/ProductsContext";
-import ProductForm from "@/components/ProductForm/ProductForm"; 
+import ProductForm from "@/components/Forms/ProductForm/ProductForm"; 
+import { useProducts } from "@/hooks/UseProducts/useProducts";
 
 export default function CreateProduct() {
-  const { productRegister } = useContext(ProductContext);
+  const { productRegister } = useProducts();
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<{ image_url: string; is_generic: boolean }[]>([]);
   const {

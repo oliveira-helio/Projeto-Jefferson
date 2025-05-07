@@ -1,11 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import CartProvider from "@/providers/CartProvider";
-import { AuthProvider } from "@/Contexts/AuthContext";
-import { Toaster } from "react-hot-toast";
+import CartProvider from "@/providers/CartProvider/CartProvider";
+import AddressProvider from "@/providers/AdressProvider/AddressProvider";
+import AuthProvider from "@/providers/AuthProvider/AuthProvider";
 import ClientWrapper from "@/components/ClientWrapper";
-import AddressProvider from "@/providers/CartProvider copy";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],

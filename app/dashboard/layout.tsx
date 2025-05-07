@@ -1,7 +1,7 @@
 'use client';
 import Sidebar from '@/components/Dashboard/Sidebar';
-import { useAuth } from '@/Contexts/AuthContext';
-import { ProductProvider } from '@/Contexts/ProductsContext';
+import { useAuth } from '@/hooks/UseAuth/useAuth';
+import ProductsProvider from '@/providers/ProductsProvider/ProductsProvider';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ReactNode, use, useEffect } from 'react';
@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: { children: ReactNode; }) 
   // }, [isAdmin]);
     
   return (
-    <ProductProvider>
+    <ProductsProvider>
       {isAdmin && (
         <div className="flex min-h-screen">
           {/* Menu lateral */}
@@ -43,6 +43,6 @@ export default function DashboardLayout({ children }: { children: ReactNode; }) 
           </div>
         </div>
       )}
-    </ProductProvider>
+    </ProductsProvider>
   );
 }

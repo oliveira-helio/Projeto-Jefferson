@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import apiAdress from '@/utils/api';
-import { useAddress } from "@/Hooks/useAddress";
-import { useCart } from "@/Hooks/useCart";
+import apiAdress from '@/utils/variables/api';
+import { useAddress } from "@/hooks/UseAdress/useAddress";
+import { useCart } from "@/hooks/UseCart/useCart";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import { v4 as uuidv4 } from 'uuid';
 
