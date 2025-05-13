@@ -231,6 +231,7 @@ const Checkout = () => {
     return new Promise((resolve, reject) => {
       fetch(`${apiAdress}/api/payments/process-payment`, {
         method: "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json",
           "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`
