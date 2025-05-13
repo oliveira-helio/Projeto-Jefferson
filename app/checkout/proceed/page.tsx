@@ -15,6 +15,7 @@ const Success = () => {
     if ( typeof window !== "undefined" ) {
       const response = await fetch(`${apiAdress}/api/orders/create-shipment`, {
         method: "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json",
           "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`

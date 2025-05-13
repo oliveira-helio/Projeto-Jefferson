@@ -179,6 +179,7 @@ const Checkout = () => {
           `${apiAdress}/api/payments/create-preference`,
           {
             method: "POST",
+            credentials: 'include',
             headers: {
               "Content-Type": "application/json",
               "accessToken": `Bearer ${localStorage.getItem('accessToken') || ""}`,
