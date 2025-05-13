@@ -49,8 +49,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   // Fetch the client cart
   const fetchCart = useCallback(async () => {
     if (typeof window !== "undefined") {
-      console.log('veio no fetchCart:');
-
+      
       try {
         const response = await axios.get(`${apiAdress}/cart/get`, {
           headers: {
