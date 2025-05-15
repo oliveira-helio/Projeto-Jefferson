@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import axios from "axios";
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import apiAdress from '@/utils/variables/api';
@@ -41,6 +41,7 @@ const OrdersDashboard = () => {
             "Content-Type": "application/json",
             accessToken: `Bearer ${accessToken}`,
           },
+          withCredentials: true,
         });
         setOrders(response.data.orders);
       } catch (error) {
@@ -51,6 +52,11 @@ const OrdersDashboard = () => {
     };
     fetchOrders();    
   }, [accessToken]);
+
+  useEffect(() => {
+    console.log("Orders:", orders);
+    
+ }, [orders]);
 
   const handleEdit = (orderId: number) => {
     setEditingOrderId(orderId);
@@ -77,6 +83,7 @@ const OrdersDashboard = () => {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
+        withCredentials: true,
       });
       setOrders((prevOrders) => prevOrders.map(order =>
         order.orderId === orderId ? { ...order, ...editedOrders[orderId] } : order

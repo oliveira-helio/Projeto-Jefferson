@@ -42,7 +42,7 @@ type dataContent = {
   }[]
 }
 
-const SalesSummary = ( {data} : {data: dataContent[]}) => {
+const SalesSummary = ({ data }: { data: dataContent[] }) => {
   const totalOrders = data.length;
   const totalAmount = data.reduce((acc, order) => acc + order.orderTotal, 0);
   const totalLiquidAmount = data.reduce((acc, order) => acc + order.liquidAmount, 0);
@@ -66,7 +66,21 @@ export default function DashboardHome() {
   const firstDayOfMonth = new Date();
   firstDayOfMonth.setDate(1);
   const firstDay = firstDayOfMonth.toISOString().split("T")[0];
-  const [data, setData] = useState({ products: 0, orders: 0, sales: 0, salesData: [], categoryDistribution: [] });
+  const [data, setData] = useState<{
+    products: number;
+    orders: number;
+    sales: number;
+    salesData: SalesData[];
+    categoryDistribution: any[];
+    fullOrders: dataContent[];
+  }>({
+    products: 0,
+    orders: 0,
+    sales: 0,
+    salesData: [],
+    categoryDistribution: [],
+    fullOrders: [],
+  });
   const [filters, setFilters] = useState({
     startDate: firstDay,
     endDate: today,
@@ -102,9 +116,16 @@ export default function DashboardHome() {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
+        withCredentials: true
       });
-      setData(response.data);
-    } catch (error) {      
+      console.log('Data:', response.data);
+
+      setData({
+        ...response.data,
+        fullOrders: response.data.fullOrders || response.data.orders || []
+      });
+
+    } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
     } finally {
     }
@@ -112,17 +133,18 @@ export default function DashboardHome() {
 
   const fetchData2 = async () => {
     try {
-      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {headers: {
+      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {
+        headers: {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
         withCredentials: true
       },
-    );
+      );
       console.log('Data:', response.data);
     } catch (error: any) {
       console.error("Erro no teste:", error);
-      console.log({status: error.status, data: error.response.data.message});
+      console.log({ status: error.status, data: error.response.data.message });
     } finally {
     }
   };
@@ -130,7 +152,7 @@ export default function DashboardHome() {
   useEffect(() => {
     if (!accessToken || !accessToken.length) return;
     console.log("isAdmin:", isAdmin);
-    
+
     fetchData();
   }, [accessToken]);
 
@@ -166,7 +188,7 @@ export default function DashboardHome() {
           <p className="text-2xl">R$ {Number(data.sales).toFixed(2)}</p>
         </div>
       </div> */}
-      <SalesSummary data={data.salesData} />
+      <SalesSummary data={data.fullOrders} />
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
