@@ -13,8 +13,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const parcelasValor = product.price;
-  const parcelas = 1; //TODO : Pegar o valor de parcelas do produto
+  const parcelasValor = product.price/6;
+  const parcelas = 6; 
   const router = useRouter();
   const [mainImageUrl, setMainImageUrl] = useState<string>(
     "/assets/numeros/1.jpg"
@@ -55,9 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div>
             <div
               className="m-2 items-start justify-start flex flex-col gap-2 text-slate-900"
-              onClick={() => {
-                router.push(`/product/${product.product_id}`);
-              }}
+              onClick={() => { router.push(`/product/${product.product_id}`); }}
             >
               <div className="relative w-full h-full overflow-hidden aspect-square">
                 <Image
@@ -125,7 +123,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <p>
                   (ou em até {parcelas}x de R${" "}
                   <span className="text-slate-950 font-medium">
-                    {parcelasValor}
+                    {parcelasValor.toFixed(2)}
                   </span>
                   )
                 </p>
