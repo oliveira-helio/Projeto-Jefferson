@@ -9,6 +9,7 @@ import Button from "@/components/MicroComponents/Default/Button";
 import { log } from "console";
 import SalesChart from "@/components/Dashboard/charts/SalesSumary";
 import keysCounter from "@/utils/functions/keyCounter";
+import PieChartWithCustomizedLabel from "@/components/Dashboard/charts/PizzaChart";
 
 type SalesData = {
   date: string;
@@ -240,20 +241,25 @@ export default function DashboardHome() {
         </div>
       </div> */}
 
+        <div className="flex gap-2">
+
       <SalesChart
         data={data}
         statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
-      />
+        />
+      <PieChartWithCustomizedLabel 
+        data={data.categoryDistribution}
+        />
+        </div>
 
       <p>filtros ficarão aqui</p>
       <SalesSummary data={salesData} />
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-          📅 Filtro de Data Inicial
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">         
           <div>
-            <label className="block text-sm font-medium">Data Inicial</label>
+            <label className="block text-sm font-medium">📅 Data Inicial</label>
             <input
               type="date"
               className="p-2 border rounded w-full"
@@ -262,9 +268,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          📅 Filtro de Data Final
           <div>
-            <label className="block text-sm font-medium">Data Final</label>
+            <label className="block text-sm font-medium">📅 Data Final</label>
             <input
               type="date"
               className="p-2 border rounded w-full"
@@ -273,9 +278,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          🏷️ Filtro de Categoria
           <div>
-            <label className="block text-sm font-medium">Categoria</label>
+            <label className="block text-sm font-medium">🏷️ Categoria</label>
             <input
               type="text"
               className="p-2 border rounded w-full"
@@ -285,9 +289,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          📦 Filtro de Status
           <div>
-            <label className="block text-sm font-medium">Status do Pedido</label>
+            <label className="block text-sm font-medium">📦 Status do Pedido</label>
             <select
               className="p-2 border rounded w-full"
               value={filters.status}

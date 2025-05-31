@@ -1,5 +1,4 @@
-import { log } from 'console';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -14,10 +13,9 @@ import {
 } from 'recharts';
 
 interface SalesData {
-  data: any;
+  data: any; // TODO: Define a more specific type for the data structure
   statuses: string[];
 }
-
 
 export default function SalesChart( salesData : SalesData) {
   const acceptedStatuses = salesData.statuses || ['shipped', 'delivered', 'completed', 'processing', 'approved'];
@@ -60,23 +58,20 @@ export default function SalesChart( salesData : SalesData) {
     const [monthA, yearA] = a.month.split('/');
     const [monthB, yearB] = b.month.split('/');
     return new Date(`20${yearA}-${monthA}-01`).getTime() - new Date(`20${yearB}-${monthB}-01`).getTime();
-  });
-
-  console.log('chartData:', chartData);
-  
+  });  
 
   return (
     <div style={{ width: '100%', height: 300, maxWidth: 500 }}>
       <ResponsiveContainer>
         <ComposedChart
-          width={500}
+          width={400}
           height={400}
           data={chartData}
           margin={{
             top: 20,
             right: 20,
             bottom: 20,
-            left: 20,
+            left: 5,
           }}
           style={{ backgroundColor: '#f5f5f5', borderRadius: '12px', padding: '5px' }}
         >
@@ -84,12 +79,11 @@ export default function SalesChart( salesData : SalesData) {
           <XAxis dataKey="month" scale="band" />
           <YAxis />
           <Tooltip />
-          <Legend />
-          <Area type="monotone" dataKey="totalSold" fill="#8884d8" stroke="#8884d8" />
-          <Bar dataKey="profit" barSize={20} fill="#413ea0" />
-          <Line type="monotone" dataKey="quantity" stroke="#ff7300" />
+          <Area name="Total em vendas" type="monotone" dataKey="totalSold" fill="#8884d8" stroke="#8884d8" />
+          <Bar  name="Lucro" dataKey="profit" barSize={20} fill="#413ea0" />
+          <Line name="Pedidos" type="monotone" dataKey="quantity" stroke="#ff7300" />
           <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc' }} />
-          <Legend wrapperStyle={{ paddingBottom: 20 }} />
+          <Legend wrapperStyle={{ paddingBottom: 0 }} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

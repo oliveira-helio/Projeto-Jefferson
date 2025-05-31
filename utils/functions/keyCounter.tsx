@@ -8,9 +8,9 @@ const keysCounter = (data: any[]) => {
     }
   });
 
-  const countedKeys = Object.entries(keysMap).map(([key, quantity]) => ({
+  const countedKeys = Object.entries(keysMap).map(([key, value]) => ({
     key,
-    quantity
+    value
   }));
   return countedKeys;
 };
