@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Sector, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
@@ -41,7 +41,8 @@ export default function PieChartWithCustomizedLabel({ data }: { data: { key: str
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Legend wrapperStyle={{ paddingBottom: 0 }} key={'key'} />
+        <Tooltip />
+        <Legend wrapperStyle={{ paddingBottom: 0 }} key={'value'} />
       </PieChart>
     </ResponsiveContainer>
   );

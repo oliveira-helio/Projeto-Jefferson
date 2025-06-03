@@ -252,8 +252,7 @@ export default function DashboardHome() {
         />
         </div>
 
-      <p>filtros ficarão aqui</p>
-      <SalesSummary data={salesData} />
+    
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
