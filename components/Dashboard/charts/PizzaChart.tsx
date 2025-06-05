@@ -7,31 +7,63 @@ type CustomizedLabelProps = {
   midAngle: number;
   innerRadius: number;
   outerRadius: number;
-  value: number;
+  value?: number;
+  key?: string;
   index: number;
 };
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 const RADIAN = Math.PI / 180;
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value, index }: CustomizedLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, key, index }: CustomizedLabelProps) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.35; // Adjust label position
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-      {`${value}`}
+    <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${key}`}
     </text>
   );
 };
+
+const renderCustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div style={{ background: '#fff', border: '1px solid #ccc', padding: 10, borderRadius: 5 }}>
+        <p style={{ margin: 0 }}><strong>Categoria:</strong> {data.key}</p>
+        <p style={{ margin: 0 }}><strong>Quantidade:</strong> {data.value}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+
+const renderLegend = (props: any) => {
+  const { payload } = props;
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-evenly', padding: '10px'}}>
+      {payload.map((entry: any, index: number) => (
+        <p key={`item-${index}`} style={{ color: entry.color, marginBottom: 4 }}>
+          
+          {entry.payload.key} ({entry.payload.value})
+        </p>
+      ))}
+    </div>
+  );
+};
+
 
 export default function PieChartWithCustomizedLabel({ data }: { data: { key: string; value: number }[] }) {
 
   console.log("PieChart data:", data);
 
   return (
-    <ResponsiveContainer width="50%" height={300} aspect={1.5}>
+    <ResponsiveContainer width="49%" height={300} aspect={1.5}>
       <PieChart
         width={400}
         height={400}
@@ -41,18 +73,18 @@ export default function PieChartWithCustomizedLabel({ data }: { data: { key: str
           data={data}
           cx="50%"
           cy="50%"
-          labelLine={false}
+          labelLine={true}
           label={renderCustomizedLabel}
           outerRadius={80}
           fill="#8884d8"
           dataKey="value"
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Cell key={`cell-${entry.key}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip />
-        <Legend wrapperStyle={{ paddingBottom: 0 }} key={'value'} />
+        <Tooltip content={renderCustomTooltip} />
+        <Legend content={renderLegend} />
       </PieChart>
     </ResponsiveContainer>
   );

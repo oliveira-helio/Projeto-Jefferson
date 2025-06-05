@@ -4,6 +4,7 @@ import apiAdress from '@/utils/variables/api';
 import { useMediaQuery } from 'react-responsive';
 import { FaBars, FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 import SearchBar from "../SearchBar/SearchBar";
+import { useMobile } from "@/hooks/UseMobile/useMobile";
 
 type categoryProps = {
   category: string;
@@ -18,7 +19,7 @@ const MenuContainer = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>({});
   const [openSubcategories, setOpenSubcategories] = useState<{ [key: string]: boolean }>({});
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { isMobile } = useMobile();
 
   useEffect(() => {
     const fetchCategories = async () => {

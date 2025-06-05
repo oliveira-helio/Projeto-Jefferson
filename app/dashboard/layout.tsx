@@ -1,22 +1,26 @@
 'use client';
 
-import Sidebar from '@/components/Dashboard/Sidebar';
+import Sidebar from '@/components/Dashboard/Menus/DashboardSidebar';
 import { useAuth } from '@/hooks/UseAuth/useAuth';
+import { useMobile } from '@/hooks/UseMobile/useMobile';
 import ProductsProvider from '@/providers/ProductsProvider/ProductsProvider';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { ReactNode, useState, useEffect } from 'react';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const { isMobile } = useMobile();
   const { isAdmin } = useAuth();
-  const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    setIsMobile(window.innerWidth < 768);
   }, []);
+
+  useEffect(() => {
+    console.log('isMobile:', isMobile);
+    console.log('isClient:', isClient);
+  }, [isMobile, isClient]);
+  
 
   if (isAdmin === undefined) return null;
 
@@ -24,7 +28,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <ProductsProvider>
       {isAdmin ? (
         <div className="flex min-h-screen">
-          {isClient && !isMobile && <Sidebar />}
+          {isClient && !isMobile ? <Sidebar /> : null}
           <div className="flex-grow p-6 bg-pink-300">{children}</div>
         </div>
       ) : (

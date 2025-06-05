@@ -1,12 +1,9 @@
 'use client'
 import { useState, useEffect } from "react";
-import { saveAs } from "file-saver";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import apiAdress from "@/utils/variables/api";
 import axios from "axios";
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import Button from "@/components/MicroComponents/Default/Button";
-import { log } from "console";
 import SalesChart from "@/components/Dashboard/charts/SalesSumary";
 import keysCounter from "@/utils/functions/keyCounter";
 import PieChartWithCustomizedLabel from "@/components/Dashboard/charts/PizzaChart";
@@ -241,22 +238,22 @@ export default function DashboardHome() {
         </div>
       </div> */}
 
-        <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
 
-      <SalesChart
-        data={data}
-        statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
+        <SalesChart
+          data={data}
+          statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
         />
-      <PieChartWithCustomizedLabel 
-        data={data.categoryDistribution}
+        <PieChartWithCustomizedLabel
+          data={data.categoryDistribution}
         />
-        </div>
+      </div>
 
-    
+
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">         
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
           <div>
             <label className="block text-sm font-medium">📅 Data Inicial</label>
             <input

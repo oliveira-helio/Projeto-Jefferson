@@ -4,9 +4,10 @@ import SearchBar from "../SearchBar/SearchBar";
 import UserMenu from "../UserMenu/UserMenu";
 import MenuContainer from "../ProductMenu/ProductMenu";
 import { Suspense } from "react";
+import { useMobile } from "@/hooks/UseMobile/useMobile";
 
 const NewNavBar = () => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { isMobile } = useMobile();
 
   return (
     <Suspense fallback={<div>Carregando no NewNavBar...</div>}>

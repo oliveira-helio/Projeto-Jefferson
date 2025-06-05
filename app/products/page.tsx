@@ -7,6 +7,7 @@ import ProductCard from "../../components/ProductCard/ProductCard";
 import { Range } from "react-range";
 import apiAdress from '@/utils/variables/api';
 import debounce from "lodash.debounce";
+import { useMobile } from "@/hooks/UseMobile/useMobile";
 
 const Loading = () => (
   <div className="flex justify-center items-center h-screen">
@@ -38,19 +39,9 @@ function Products() {
     productTypes: [],
   });
 
-  const [isMobile, setIsMobile] = useState(false); // Verifica se é mobile
+  const { isMobile } = useMobile();
   const [showFilters, setShowFilters] = useState(false); // Estado para o modal de filtros
   const modalRef = useRef<HTMLDivElement>(null);
-
-
-useEffect(() => {
-  if (typeof window !== 'undefined') {
-    const updateIsMobile = () => setIsMobile(window.innerWidth < 768);
-    updateIsMobile();
-    window.addEventListener("resize", updateIsMobile);
-    return () => window.removeEventListener("resize", updateIsMobile);
-  }
-}, []);
 
   // Fecha o modal ao clicar fora
   useEffect(() => {

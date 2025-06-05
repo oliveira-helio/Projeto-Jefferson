@@ -61,8 +61,7 @@ export default function SalesChart( salesData : SalesData) {
   });  
 
   return (
-    <div style={{ width: '100%', height: 300, maxWidth: 500 }}>
-      <ResponsiveContainer>
+      <ResponsiveContainer width="49%" height={300} aspect={1.5}>
         <ComposedChart
           width={400}
           height={400}
@@ -86,7 +85,6 @@ export default function SalesChart( salesData : SalesData) {
           <Legend wrapperStyle={{ paddingBottom: 0 }} />
         </ComposedChart>
       </ResponsiveContainer>
-    </div>
   );
 
 }
