@@ -290,7 +290,7 @@ const Checkout = () => {
         .catch((error) => {
           console.error('error:', error);
 
-          // reject(error);
+          reject(error);
         });
     });
   };

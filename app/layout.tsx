@@ -6,6 +6,7 @@ import AddressProvider from "@/providers/AdressProvider/AddressProvider";
 import AuthProvider from "@/providers/AuthProvider/AuthProvider";
 import ClientWrapper from "@/components/ClientWrapper";
 import { Toaster } from "react-hot-toast";
+import MobileProvider from "@/providers/MobileProvider/MobileProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -33,15 +34,17 @@ export default function RootLayout({
             },
           }}
         />
-        <AuthProvider>
-          <CartProvider>
-            <AddressProvider>
-              <ClientWrapper>
+        <MobileProvider>
+          <AuthProvider>
+            <CartProvider>
+              <AddressProvider>
+                <ClientWrapper>
                   {children}
-              </ClientWrapper>
-            </AddressProvider>
-          </CartProvider>
-        </AuthProvider>
+                </ClientWrapper>
+              </AddressProvider>
+            </CartProvider>
+          </AuthProvider>
+        </MobileProvider>
       </body>
     </html>
   );

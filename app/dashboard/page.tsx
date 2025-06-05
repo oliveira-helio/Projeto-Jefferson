@@ -1,18 +1,19 @@
 'use client'
 import { useState, useEffect } from "react";
-import { saveAs } from "file-saver";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import apiAdress from "@/utils/variables/api";
 import axios from "axios";
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import Button from "@/components/MicroComponents/Default/Button";
+import SalesChart from "@/components/Dashboard/charts/SalesSumary";
+import keysCounter from "@/utils/functions/keyCounter";
+import PieChartWithCustomizedLabel from "@/components/Dashboard/charts/PizzaChart";
 
 type SalesData = {
   date: string;
   total: number;
 };
 
-type dataContent = {
+type orderData = {
   orderId: number;
   orderStatus: string;
   orderTotal: number;
@@ -42,22 +43,27 @@ type dataContent = {
   }[]
 }
 
-const SalesSummary = ( {data} : {data: dataContent[]}) => {
-  const totalOrders = data.length;
-  const totalAmount = data.reduce((acc, order) => acc + order.orderTotal, 0);
-  const totalLiquidAmount = data.reduce((acc, order) => acc + order.liquidAmount, 0);
-  const totalInstallments = data.reduce((acc, order) => acc + order.installments, 0);
-  const approvalRate = (data.filter(order => order.paymentStatus === "approved").length / totalOrders) * 100;
+const SalesSummary = ({ data }: { data: orderData[] }) => {
 
-  return (
+  const totalOrders = data?.length || 0;
+  const totalAmount = data?.reduce((acc, order) => acc + order.orderTotal, 0);
+  const totalLiquidAmount = data?.reduce((acc, order) => acc + order.liquidAmount, 0);
+  const totalInstallments = data?.reduce((acc, order) => acc + order.installments, 0);
+  const approvalRate = (data?.filter(order => order.paymentStatus === "approved").length / totalOrders) * 100;
+  console.log('totalAmount:', totalAmount);
+  
+  return data?.length > 0 ? (
     <div className="sales-summary">
+
       <div className="summary-item">Número de Pedidos: {totalOrders}</div>
-      <div className="summary-item">Valor Total: R$ {totalAmount.toFixed(2)}</div>
-      <div className="summary-item">Valor Líquido: R$ {totalLiquidAmount.toFixed(2)}</div>
-      <div className="summary-item">Taxa de Aprovação: {approvalRate.toFixed(2)}%</div>
-      <div className="summary-item">Parcelamento Médio: {totalInstallments / totalOrders}</div>
+      <div className="summary-item">Valor Total Bruto: R$ {totalAmount.toFixed(2)}</div>
+      <div className="summary-item">Valor Total Líquido: R$ {totalLiquidAmount.toFixed(2)}</div>
+      <div className="summary-item">Taxa de Aprovação de pedidos: {approvalRate}%</div>
+      <div className="summary-item">Parcelamento Médio dos pedidos: {totalInstallments / totalOrders}</div>
+
     </div>
-  );
+  )
+    : (null);
 };
 
 export default function DashboardHome() {
@@ -66,7 +72,22 @@ export default function DashboardHome() {
   const firstDayOfMonth = new Date();
   firstDayOfMonth.setDate(1);
   const firstDay = firstDayOfMonth.toISOString().split("T")[0];
-  const [data, setData] = useState({ products: 0, orders: 0, sales: 0, salesData: [], categoryDistribution: [] });
+  const [salesData, setSalesData] = useState<any>(null);
+  const [data, setData] = useState<{
+    products: number;
+    orders: number;
+    sales: number;
+    deliveryStatus: SalesData[];
+    categoryDistribution: any[];
+    fullOrders: orderData[];
+  }>({
+    products: 0,
+    orders: 0,
+    sales: 0,
+    deliveryStatus: [],
+    categoryDistribution: [],
+    fullOrders: [],
+  });
   const [filters, setFilters] = useState({
     startDate: firstDay,
     endDate: today,
@@ -102,47 +123,89 @@ export default function DashboardHome() {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
+        withCredentials: true
       });
-      setData(response.data);
-    } catch (error) {      
+
+
+      let sales = [];
+      let orders = response.data.length;
+
+      const keysCounterData = response.data.flatMap((order: any) =>
+        order.products?.map((product: any) => product.category) || []
+      );
+      const deliveriesCounterData = response.data.flatMap((item: any) =>
+        item.shipments?.map((delivery: any) => delivery.shipmentStatus
+        ));
+      const categories = keysCounter(keysCounterData);
+      const deliveries = keysCounter(deliveriesCounterData)
+
+      setData({
+        ...response.data,
+        categoryDistribution: categories,
+        deliveryStatus: deliveries,
+        fullOrders: response.data || []
+      });
+      console.log("Dados atualizados:", data);
+
+
+    } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
     } finally {
     }
   };
 
+  const updateDataChart = (data: orderData[] | null) => {
+    const salesData = data?.map((item: orderData) => ({
+      status: item.orderStatus,
+      mpFee: item.mpFee,
+      instalmentFee: item.installmentFee,
+      liquidAmount: item.liquidAmount,
+      total: item.orderTotal,
+      category: item.products?.map((product) => product.category).join(", "),
+    }));
+    return salesData;
+  }
+
   const fetchData2 = async () => {
     try {
-      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {headers: {
+      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {
+        headers: {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
         withCredentials: true
       },
-    );
-      console.log('Data:', response.data);
+      );
+      console.log('fetchData2:', response.data);
+
+      setData(response.data);
     } catch (error: any) {
       console.error("Erro no teste:", error);
-      console.log({status: error.status, data: error.response.data.message});
+      console.log({ status: error.status, data: error.response.data.message });
     } finally {
     }
   };
 
   useEffect(() => {
     if (!accessToken || !accessToken.length) return;
-    console.log("isAdmin:", isAdmin);
-    
     fetchData();
   }, [accessToken]);
 
-  const exportToCSV = () => {
-    const csvData = [
-      ["Data", "Total de Vendas"],
-      ...data.salesData.map((item: SalesData) => [item.date, item.total]),
-    ].map((row) => row.join(",")).join("\n");
+  useEffect(() => {
+    const newSalesData = updateDataChart(data.fullOrders);
+    setSalesData(newSalesData);
 
-    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "relatorio_vendas.csv");
-  };
+  }, [data]);
+
+  // const exportToCSV = () => {
+  //   const csvData = [
+  //     ["Data", "Total de Vendas"],
+  //     ...data?.salesData.map((item: SalesData) => [item.date, item.total]),
+  //   ].map((row) => row.join(",")).join("\n");
+
+  //   const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  //   saveAs(blob, "relatorio_vendas.csv");
+  // };
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -166,14 +229,25 @@ export default function DashboardHome() {
           <p className="text-2xl">R$ {Number(data.sales).toFixed(2)}</p>
         </div>
       </div> */}
-      <SalesSummary data={data.salesData} />
+
+      <div className="flex gap-2 flex-wrap">
+
+        <SalesChart
+          data={data}
+          statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
+        />
+        <PieChartWithCustomizedLabel
+          data={data.categoryDistribution}
+        />
+      </div>
+
+
 
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-          {/* 📅 Filtro de Data Inicial */}
           <div>
-            <label className="block text-sm font-medium">Data Inicial</label>
+            <label className="block text-sm font-medium">📅 Data Inicial</label>
             <input
               type="date"
               className="p-2 border rounded w-full"
@@ -182,9 +256,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          {/* 📅 Filtro de Data Final */}
           <div>
-            <label className="block text-sm font-medium">Data Final</label>
+            <label className="block text-sm font-medium">📅 Data Final</label>
             <input
               type="date"
               className="p-2 border rounded w-full"
@@ -193,9 +266,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          {/* 🏷️ Filtro de Categoria */}
           <div>
-            <label className="block text-sm font-medium">Categoria</label>
+            <label className="block text-sm font-medium">🏷️ Categoria</label>
             <input
               type="text"
               className="p-2 border rounded w-full"
@@ -205,9 +277,8 @@ export default function DashboardHome() {
             />
           </div>
 
-          {/* 📦 Filtro de Status */}
           <div>
-            <label className="block text-sm font-medium">Status do Pedido</label>
+            <label className="block text-sm font-medium">📦 Status do Pedido</label>
             <select
               className="p-2 border rounded w-full"
               value={filters.status}
@@ -234,9 +305,9 @@ export default function DashboardHome() {
         />
       </div>
 
-      <button onClick={exportToCSV} className="mt-4 p-2 bg-blue-600 text-white rounded w-full">
+      {/* <button onClick={exportToCSV} className="mt-4 p-2 bg-blue-600 text-white rounded w-full">
         Exportar Dados para CSV
-      </button>
+      </button> */}
     </div>
   );
 }

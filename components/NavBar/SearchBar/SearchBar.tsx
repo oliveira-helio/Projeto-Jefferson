@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMediaQuery } from "react-responsive";
 import { FaSearch, FaTimes } from "react-icons/fa";
+import { useMobile } from "@/hooks/UseMobile/useMobile";
 
 
 type SearchBarProps = {
@@ -11,7 +11,7 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const router = useRouter(); 
   const searchParams = useSearchParams();
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { isMobile } = useMobile();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   

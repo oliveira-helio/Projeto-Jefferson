@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import axios from "axios";
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import apiAdress from '@/utils/variables/api';
@@ -41,7 +41,10 @@ const OrdersDashboard = () => {
             "Content-Type": "application/json",
             accessToken: `Bearer ${accessToken}`,
           },
+          withCredentials: true,
         });
+        console.log('dataa:', response.data.orders);
+        
         setOrders(response.data.orders);
       } catch (error) {
         console.error("Erro ao buscar pedidos:", error);
@@ -52,6 +55,7 @@ const OrdersDashboard = () => {
     fetchOrders();    
   }, [accessToken]);
 
+  
   const handleEdit = (orderId: number) => {
     setEditingOrderId(orderId);
     setEditedOrders((prev) => ({ ...prev, [orderId]: {} }));
@@ -77,6 +81,7 @@ const OrdersDashboard = () => {
           "Content-Type": "application/json",
           accessToken: `Bearer ${accessToken}`,
         },
+        withCredentials: true,
       });
       setOrders((prevOrders) => prevOrders.map(order =>
         order.orderId === orderId ? { ...order, ...editedOrders[orderId] } : order
@@ -87,9 +92,14 @@ const OrdersDashboard = () => {
       console.error("Erro ao atualizar pedido:", error);
     }
   };
+  
+  useEffect(() => {
+    console.log("Orders:", orders);
+    
+ }, [orders]);
 
   if (loading) return <div className="flex justify-center items-center h-screen text-xl">Carregando...</div>;
-
+  
   return (
     <div className="w-full text-center">
       <div className="grid grid-cols-8 bg-pink-400 font-semibold p-2">

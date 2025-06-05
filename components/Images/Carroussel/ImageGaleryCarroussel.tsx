@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import Image from "next/image";
+import { useMobile } from "@/hooks/UseMobile/useMobile";
 
 interface Image {
   product_id: number;
@@ -24,7 +25,7 @@ const Carousel: React.FC<CarouselProps> = ({
   selectedImageIndex,
   onItemSelect,
 }) => {
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const { isMobile } = useMobile();
   const [startIndex, setStartIndex] = useState(0);
   const visibleCount = isMobile ? 1 : 3;
 
