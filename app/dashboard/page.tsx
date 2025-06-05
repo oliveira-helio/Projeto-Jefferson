@@ -51,15 +51,7 @@ const SalesSummary = ({ data }: { data: orderData[] }) => {
   const totalInstallments = data?.reduce((acc, order) => acc + order.installments, 0);
   const approvalRate = (data?.filter(order => order.paymentStatus === "approved").length / totalOrders) * 100;
   console.log('totalAmount:', totalAmount);
-
-  // data?.map((order => {
-  //   console.log('order.orderTotal:', order.orderTotal);
-  //   console.log('order.liquidAmount:', order.liquidAmount);
-  //   console.log('order.installments:', order.installments);
-  // }
-  // ));
-
-
+  
   return data?.length > 0 ? (
     <div className="sales-summary">
 
