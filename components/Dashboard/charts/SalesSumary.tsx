@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  Label,
 } from 'recharts';
 
 interface SalesData {
@@ -60,8 +61,39 @@ export default function SalesChart( salesData : SalesData) {
     return new Date(`20${yearA}-${monthA}-01`).getTime() - new Date(`20${yearB}-${monthB}-01`).getTime();
   });  
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const totalSold = payload.find((p: any) => p.dataKey === 'totalSold')?.value ?? 0;
+    const profit = payload.find((p: any) => p.dataKey === 'profit')?.value ?? 0;
+    const quantity = payload.find((p: any) => p.dataKey === 'quantity')?.value ?? 0;
+
+    return (
+      <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', padding: '10px' }}>
+        <p><strong>{label}</strong></p>
+        <p>Total em vendas: R$ {Number(totalSold).toFixed(2)}</p>
+        <p>Lucro: R$ {Number(profit).toFixed(2)}</p>
+        <p>Pedidos: {quantity}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+  const aspectRatio = () => {
+    const width = window.innerWidth;
+
+    if (width < 768) {
+      return 1.5;
+    } else if (width < 1024) {
+      return 1.2;
+    } else {
+      return 1.5;
+    }
+  }
+
   return (
-      <ResponsiveContainer width="49%" height={300} aspect={1.5}>
+      <ResponsiveContainer width="100%" maxHeight={300} aspect={aspectRatio()}>
         <ComposedChart
           width={400}
           height={400}
@@ -75,13 +107,13 @@ export default function SalesChart( salesData : SalesData) {
           style={{ backgroundColor: '#f5f5f5', borderRadius: '12px', padding: '5px' }}
         >
           <CartesianGrid stroke="#f5f5f5"  />
-          <XAxis dataKey="month" scale="band" />
+          <XAxis  dataKey="month"  >
+          </XAxis>
           <YAxis />
-          <Tooltip />
-          <Area name="Total em vendas" type="monotone" dataKey="totalSold" fill="#8884d8" stroke="#8884d8" />
+          <Bar name="Total em vendas" type="monotone" dataKey="totalSold" fill="#8884d8" stroke="#8884d8" />
           <Bar  name="Lucro" dataKey="profit" barSize={20} fill="#413ea0" />
           <Line name="Pedidos" type="monotone" dataKey="quantity" stroke="#ff7300" />
-          <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc' }} />
+           <Tooltip content={CustomTooltip} contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc' }} /> 
           <Legend wrapperStyle={{ paddingBottom: 0 }} />
         </ComposedChart>
       </ResponsiveContainer>

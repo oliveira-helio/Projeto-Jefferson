@@ -46,10 +46,10 @@ const renderLegend = (props: any) => {
   const { payload } = props;
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-evenly', padding: '10px'}}>
+    <div style={{ display: 'flex', justifyContent: 'space-evenly', padding: '10px' }}>
       {payload.map((entry: any, index: number) => (
         <p key={`item-${index}`} style={{ color: entry.color, marginBottom: 4 }}>
-          
+
           {entry.payload.key} ({entry.payload.value})
         </p>
       ))}
@@ -60,10 +60,44 @@ const renderLegend = (props: any) => {
 
 export default function PieChartWithCustomizedLabel({ data }: { data: { key: string; value: number }[] }) {
 
-  console.log("PieChart data:", data);
+  const outerRadius = () => {
+    const width = window.innerWidth;
+
+    if (width < 360) {
+      return 40;
+    } else if (width < 395) {
+      return 50;
+    } else if (width < 500) {
+      return 60;
+    } else if (width < 600) {
+      return 80;
+    } else if (width < 768) {
+      return 80;
+    } else if (width < 820) {
+      return 45;
+    } else if (width < 860) {
+      return 55;
+    } else if (width <= 1024) {
+      return 70;
+    } else {
+      return 80;
+    }
+  }
+
+  const aspectRatio = () => {
+    const width = window.innerWidth;
+
+    if (width < 768) {
+      return 1.5;
+    } else if (width < 1024) {
+      return 1.2;
+    } else {
+      return 1.5;
+    }
+  }
 
   return (
-    <ResponsiveContainer width="49%" height={300} aspect={1.5}>
+    <ResponsiveContainer width="100%" maxHeight={300} aspect={aspectRatio()}>
       <PieChart
         width={400}
         height={400}
@@ -75,7 +109,7 @@ export default function PieChartWithCustomizedLabel({ data }: { data: { key: str
           cy="50%"
           labelLine={true}
           label={renderCustomizedLabel}
-          outerRadius={80}
+          outerRadius={outerRadius()}
           fill="#8884d8"
           dataKey="value"
         >

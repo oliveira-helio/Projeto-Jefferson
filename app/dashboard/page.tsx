@@ -9,8 +9,8 @@ import keysCounter from "@/utils/functions/keyCounter";
 import PieChartWithCustomizedLabel from "@/components/Dashboard/charts/PizzaChart";
 
 type SalesData = {
-  date: string;
-  total: number;
+  key: string;
+  value: number;
 };
 
 type orderData = {
@@ -51,7 +51,7 @@ const SalesSummary = ({ data }: { data: orderData[] }) => {
   const totalInstallments = data?.reduce((acc, order) => acc + order.installments, 0);
   const approvalRate = (data?.filter(order => order.paymentStatus === "approved").length / totalOrders) * 100;
   console.log('totalAmount:', totalAmount);
-  
+
   return data?.length > 0 ? (
     <div className="sales-summary">
 
@@ -73,17 +73,19 @@ export default function DashboardHome() {
   firstDayOfMonth.setDate(1);
   const firstDay = firstDayOfMonth.toISOString().split("T")[0];
   const [salesData, setSalesData] = useState<any>(null);
+  const [totalSales, setTotalSales] = useState<number>(0);
+  const [totalProfit, setTotalProfit] = useState<number>(0);
   const [data, setData] = useState<{
     products: number;
     orders: number;
-    sales: number;
+    salesTotal: number;
     deliveryStatus: SalesData[];
     categoryDistribution: any[];
     fullOrders: orderData[];
   }>({
     products: 0,
     orders: 0,
-    sales: 0,
+    salesTotal: 0,
     deliveryStatus: [],
     categoryDistribution: [],
     fullOrders: [],
@@ -126,8 +128,6 @@ export default function DashboardHome() {
         withCredentials: true
       });
 
-
-      let sales = [];
       let orders = response.data.length;
 
       const keysCounterData = response.data.flatMap((order: any) =>
@@ -140,7 +140,9 @@ export default function DashboardHome() {
       const deliveries = keysCounter(deliveriesCounterData)
 
       setData({
-        ...response.data,
+        products: response.data.reduce((acc: number, order: any) => acc + (order.products?.length || 0), 0),
+        orders: orders,
+        salesTotal: response.data.reduce((acc: number, order: any) => acc + order.orderTotal, 0),
         categoryDistribution: categories,
         deliveryStatus: deliveries,
         fullOrders: response.data || []
@@ -166,26 +168,6 @@ export default function DashboardHome() {
     return salesData;
   }
 
-  const fetchData2 = async () => {
-    try {
-      const response = await axios.get(`${apiAdress}/api/orders/dashboard`, {
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: `Bearer ${accessToken}`,
-        },
-        withCredentials: true
-      },
-      );
-      console.log('fetchData2:', response.data);
-
-      setData(response.data);
-    } catch (error: any) {
-      console.error("Erro no teste:", error);
-      console.log({ status: error.status, data: error.response.data.message });
-    } finally {
-    }
-  };
-
   useEffect(() => {
     if (!accessToken || !accessToken.length) return;
     fetchData();
@@ -194,7 +176,14 @@ export default function DashboardHome() {
   useEffect(() => {
     const newSalesData = updateDataChart(data.fullOrders);
     setSalesData(newSalesData);
-
+    const newTotalSales = data.fullOrders
+      .filter((pedido: orderData) => pedido.orderStatus !== 'pending' && pedido.orderStatus !== 'cancelled')
+      .reduce((acc, pedido) => acc + pedido.orderTotal,0)
+    setTotalSales(newTotalSales);
+    const newTotalProfit = data.fullOrders
+      .filter((pedido: orderData) => pedido.orderStatus !== 'pending' && pedido.orderStatus !== 'cancelled')
+      .reduce((acc, pedido) => acc + pedido.liquidAmount, 0);
+    setTotalProfit(newTotalProfit);
   }, [data]);
 
   // const exportToCSV = () => {
@@ -207,45 +196,14 @@ export default function DashboardHome() {
   //   saveAs(blob, "relatorio_vendas.csv");
   // };
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Bem-vindo ao Dashboard</h1>
 
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-lg font-bold">Total de Produtos</h2>
-          <p className="text-2xl">{data.products}</p>
-        </div>
-
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-lg font-bold">Pedidos em Aberto</h2>
-          <p className="text-2xl">{data.orders}</p>
-        </div>
-
-        <div className="p-4 bg-white shadow rounded">
-          <h2 className="text-lg font-bold">Vendas Este Mês</h2>
-          <p className="text-2xl">R$ {Number(data.sales).toFixed(2)}</p>
-        </div>
-      </div> */}
-
-      <div className="flex gap-2 flex-wrap">
-
-        <SalesChart
-          data={data}
-          statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
-        />
-        <PieChartWithCustomizedLabel
-          data={data.categoryDistribution}
-        />
-      </div>
-
-
-
       <div className="mt-6">
         <h2 className="text-xl font-bold">Filtros</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium">📅 Data Inicial</label>
             <input
@@ -291,23 +249,65 @@ export default function DashboardHome() {
             </select>
           </div>
         </div>
-
-        <Button
-          onClick={fetchData}
-          custom="mt-4 p-2 bg-blue-600 text-white rounded w-full"
-          label="Atualizar Dados"
-        />
-
-        <Button
-          onClick={fetchData2}
-          custom="mt-4 p-2 bg-blue-600 text-white rounded w-full"
-          label="teste"
-        />
+        <div className="flex justify-center">
+          <Button
+            onClick={fetchData}
+            custom="my-3 p-2 bg-blue-600 text-white rounded w-fit my-4"
+            label="Atualizar Dados"
+          />
+        </div>
       </div>
 
-      {/* <button onClick={exportToCSV} className="mt-4 p-2 bg-blue-600 text-white rounded w-full">
-        Exportar Dados para CSV
-      </button> */}
+      <div className="flex gap-2 flex-wrap">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="md:text-lg font-bold">Pedidos concluídos</h2>
+            <p className="text-xl">
+              {data.fullOrders.filter(
+                (pedido: orderData) => pedido.orderStatus !== 'pending' && pedido.orderStatus !== 'cancelled'
+              ).length}
+            </p>
+          </div>
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="md:text-lg font-bold">Pedidos Totais</h2>
+            <p className="text-xl">{data.fullOrders.length}</p>
+          </div>
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="text-nowrap md:text-lg font-bold">Total Previsto</h2>
+            <p className="text-xl">R$ {data.salesTotal.toFixed(2)}</p>
+          </div>
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="md:text-lg font-bold">Lucro Previsto</h2>
+            <p className="text-xl">R$ {data.salesTotal.toFixed(2)}</p>
+          </div>
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="text-nowrap md:text-lg font-bold">Total Faturado</h2>
+            <p className="text-xl">{totalSales.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+          </div>
+
+          <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
+            <h2 className="md:text-lg font-bold">Lucro Liquido</h2>
+            <p className="text-xl">{totalProfit.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+          </div>
+        </div>
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 p-4 rounded-xl w-full shadow shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300 gap-8">
+
+          <SalesChart
+            data={data}
+            statuses={['shipped', 'delivered', 'completed', 'processing', 'approved', 'pending']}
+          />
+          <PieChartWithCustomizedLabel
+            data={data.categoryDistribution}
+          />
+        </div>
+      </div>
     </div>
   );
 }

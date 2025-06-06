@@ -1,7 +1,7 @@
 import {
   createContext,
   useState,
-//   useContext,
+  //   useContext,
   useEffect,
   useCallback,
   ReactNode,
@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import apiAdress from '@/utils/variables/api';
 import { useAuth } from "@/hooks/UseAuth/useAuth";
 import { useRouter } from "next/navigation";
+import { set } from "react-hook-form";
 
 interface CartContextType {
   cart: CartProductType[];
@@ -45,11 +46,12 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
   const { accessToken } = useAuth()
   const [cart, setCart] = useState<CartProductType[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<CartProductType[]>([]);
+  const [cartTotalQty, setCartTotalQty] = useState<number>(0);
 
   // Fetch the client cart
   const fetchCart = useCallback(async () => {
     if (typeof window !== "undefined") {
-      
+
       try {
         const response = await axios.get(`${apiAdress}/cart/get`, {
           headers: {
@@ -395,6 +397,12 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+      setCartTotalQty(cart.length);
+      if(!accessToken || accessToken === null || accessToken === undefined) {
+        setCartTotalQty(0);
+      }
+  }, [cart, accessToken]);
 
   // Debug: 
   // // ---------- Watch changes in cart
@@ -415,7 +423,7 @@ export const CartContextProvider: React.FC<CartContextProviderProps> = ({
     <CartContext.Provider
       value={{
         cart,
-        cartTotalQty: cart.length,
+        cartTotalQty,
         selectedProducts,
         setSelectedProducts,
         handleSelectProduct,

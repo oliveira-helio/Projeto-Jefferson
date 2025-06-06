@@ -1,6 +1,7 @@
 'use client';
 
 import Sidebar from '@/components/Dashboard/Menus/DashboardSidebar';
+import Button from '@/components/MicroComponents/Default/Button';
 import { useAuth } from '@/hooks/UseAuth/useAuth';
 import { useMobile } from '@/hooks/UseMobile/useMobile';
 import ProductsProvider from '@/providers/ProductsProvider/ProductsProvider';
@@ -20,7 +21,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     console.log('isMobile:', isMobile);
     console.log('isClient:', isClient);
   }, [isMobile, isClient]);
-  
+
 
   if (isAdmin === undefined) return null;
 
@@ -42,6 +43,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               height={200}
             />
             <h1 className="text-pink-500 font-bold text-4xl">Acesso Negado</h1>
+
+            <h2 className="text-pink-500 font-bold text-2xl">Você não tem permissão para acessar esta área.</h2>
+            <p className="text-gray-700 mt-2">Por favor, entre em contato com o administrador do sistema.</p>
+            <Button
+              label='voltar para a página inicial'
+              onClick={() => window.location.href = '/'}
+            />
           </div>
         </div>
       )}
