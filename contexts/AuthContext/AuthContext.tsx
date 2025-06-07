@@ -96,8 +96,8 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         await axios.post(`${apiAdress}/users/logout`, {}, { withCredentials: true });
         setUser(null);
         setAccessToken(null);
-        localStorage.clear();
         setIsAuthenticated(false);
+        localStorage.clear();
       } catch (error) {
         console.error('Erro ao fazer logout:', error);
       }
@@ -213,7 +213,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (localStorage.getItem('accessToken')) {
           renewToken();
         }
-      }, 30 * 60 * 1000); // Renovar a cada 90 minutos
+      }, 30 * 60 * 1000); // Renovar a cada 60 minutos
 
       return () => clearInterval(interval);
     }
@@ -232,8 +232,8 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       let timeout: NodeJS.Timeout;
       const handleTimeout = async () => {
         await logout();
-        router.push('/');
         localStorage.clear();
+        router.push('/');
       };
 
       const resetTimeout = () => {
