@@ -79,6 +79,7 @@ export default function DashboardHome() {
     products: number;
     orders: number;
     salesTotal: number;
+    salesProfit: number;
     deliveryStatus: SalesData[];
     categoryDistribution: any[];
     fullOrders: orderData[];
@@ -86,6 +87,7 @@ export default function DashboardHome() {
     products: 0,
     orders: 0,
     salesTotal: 0,
+    salesProfit: 0,
     deliveryStatus: [],
     categoryDistribution: [],
     fullOrders: [],
@@ -143,6 +145,7 @@ export default function DashboardHome() {
         products: response.data.reduce((acc: number, order: any) => acc + (order.products?.length || 0), 0),
         orders: orders,
         salesTotal: response.data.reduce((acc: number, order: any) => acc + order.orderTotal, 0),
+        salesProfit: response.data.reduce((acc: number, order: any) => acc + order.liquidAmount, 0),
         categoryDistribution: categories,
         deliveryStatus: deliveries,
         fullOrders: response.data || []
@@ -178,7 +181,7 @@ export default function DashboardHome() {
     setSalesData(newSalesData);
     const newTotalSales = data.fullOrders
       .filter((pedido: orderData) => pedido.orderStatus !== 'pending' && pedido.orderStatus !== 'cancelled')
-      .reduce((acc, pedido) => acc + pedido.orderTotal,0)
+      .reduce((acc, pedido) => acc + pedido.orderTotal, 0)
     setTotalSales(newTotalSales);
     const newTotalProfit = data.fullOrders
       .filter((pedido: orderData) => pedido.orderStatus !== 'pending' && pedido.orderStatus !== 'cancelled')
@@ -277,22 +280,22 @@ export default function DashboardHome() {
 
           <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
             <h2 className="text-nowrap md:text-lg font-bold">Total Previsto</h2>
-            <p className="text-xl">R$ {data.salesTotal.toFixed(2)}</p>
+            <p className="text-xl">R$ {data.salesTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
           </div>
 
           <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
             <h2 className="md:text-lg font-bold">Lucro Previsto</h2>
-            <p className="text-xl">R$ {data.salesTotal.toFixed(2)}</p>
+            <p className="text-xl">R$ {data.salesProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
           </div>
 
           <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
             <h2 className="text-nowrap md:text-lg font-bold">Total Faturado</h2>
-            <p className="text-xl">{totalSales.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+            <p className="text-xl">{totalSales.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
           </div>
 
           <div className="py-2 px-4 bg-white  rounded-xl w-full shadow  shadow-pink-400 hover:shadow-pink-500 hover:scale-[1.01] transition-shadow duration-300">
             <h2 className="md:text-lg font-bold">Lucro Liquido</h2>
-            <p className="text-xl">{totalProfit.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+            <p className="text-xl">{totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
           </div>
         </div>
 
